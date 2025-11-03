@@ -1,0 +1,28 @@
+# Source: clabernetes/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: clabernetes-ui
+  namespace: nok-base
+  labels:
+    chart: clabernetes-0.3.3
+    release: clabernetes
+    heritage: Helm
+    revision: "1"
+    app.kubernetes.io/name: clabernetes-ui
+    clabernetes/app: clabernetes
+    clabernetes/name: clabernetes-ui
+    clabernetes/component: ui
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ui.clabernetes.containerlab.dev
+      http:
+        paths:
+          - backend:
+              service:
+                name: clabernetes-ui
+                port:
+                  number: 443
+            path: /
+            pathType: ImplementationSpecific

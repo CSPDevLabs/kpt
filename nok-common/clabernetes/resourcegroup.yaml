@@ -1,0 +1,7 @@
+apiVersion: kpt.dev/v1alpha1
+kind: ResourceGroup
+metadata:
+  name: inventory-89742598
+  namespace: nok-base
+  labels:
+    cli-utils.sigs.k8s.io/inventory-id: ea5b7990f06f8b631e53ab08376375034a48d336-1762188314968650095

@@ -1,0 +1,17 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: clabernetes
+  annotations:
+    config.kubernetes.io/local-config: "true"
+  namespace: nok-base
+info:
+  description: clabernetes package for nok
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+      configMap:
+        namespace: nok-base
+    - image: gcr.io/kpt-fn/starlark:v0.5.0
+      configMap:
+        source: "def apply(resource_list):\n    # Initialize results list if it doesn't exist\n    if \"results\" not in resource_list:\n        resource_list[\"results\"] = []\n\n    resource_list[\"results\"].append({\"message\": \"--- Starlark Function Debug Start ---\", \"severity\": \"info\"})\n    found_deployments = 0\n    modified_deployments = 0\n\n    for resource in resource_list[\"items\"]:\n        resource_kind = resource.get(\"kind\", \"UnknownKind\")\n        resource_name = resource.get(\"metadata\", {}).get(\"name\", \"UnknownName\")\n        \n        resource_list[\"results\"].append({\"message\": \"Processing resource: Kind='\" + resource_kind + \"', Name='\" + resource_name + \"'\", \"severity\": \"info\"})\n\n        if resource_kind == \"Deployment\":\n            found_deployments += 1\n            resource_list[\"results\"].append({\"message\": \"  -> Identified as Deployment: '\" + resource_name + \"'\", \"severity\": \"info\"})\n            \n            if \"spec\" in resource and \"replicas\" in resource[\"spec\"]:\n                original_replicas = resource[\"spec\"][\"replicas\"]\n                resource[\"spec\"][\"replicas\"] = 1\n                modified_deployments += 1\n                resource_list[\"results\"].append({\"message\": \"  -> Modified replicas for '\" + resource_name + \"' from \" + str(original_replicas) + \" to 1\", \"severity\": \"info\"})\n            else:\n                resource_list[\"results\"].append({\"message\": \"  -> Deployment '\" + resource_name + \"' does not have 'spec.replicas' or 'spec' field.\", \"severity\": \"info\"})\n        # else:\n        #     resource_list[\"results\"].append({\"message\": \"  -> Skipping non-Deployment resource: '\" + resource_kind + \"'\", \"severity\": \"info\"})\n\n    resource_list[\"results\"].append({\"message\": \"--- Starlark Function Debug End ---\", \"severity\": \"info\"})\n    resource_list[\"results\"].append({\"message\": \"Summary: Found \" + str(found_deployments) + \" Deployments, successfully modified \" + str(modified_deployments) + \".\", \"severity\": \"info\"})\n    return resource_list"

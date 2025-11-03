@@ -1,0 +1,40 @@
+# Source: clabernetes/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clabernetes-config
+  namespace: nok-base
+  labels:
+    chart: clabernetes-0.3.3
+    release: clabernetes
+    heritage: Helm
+    revision: "1"
+    clabernetes/app: clabernetes
+    clabernetes/name: clabernetes-config
+    clabernetes/component: config
+data:
+  mergeMode: merge
+  globalAnnotations: |-
+    ---
+    {}
+  globalLabels: |-
+    ---
+    {}
+  resourcesDefault: |-
+    ---
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  resourcesByContainerlabKind: |-
+    ---
+    {}
+  nodeSelectorsByImage: |-
+    {}
+    ---
+  privilegedLauncher: "true"
+  containerlabDebug: "false"
+  inClusterDNSSuffix: svc.cluster.local
+  imagePullThroughMode: auto
+  launcherImagePullPolicy: IfNotPresent
+  launcherLogLevel: info
+  naming: prefixed
