@@ -12,33 +12,34 @@ metadata:
   namespace: nok-base
 data:
   config.yaml: |
-    insecure: true
+
+    username: admin
+    password: NokiaSrl1! 
+    skip-verify: true
     encoding: json_ietf
     log: true
 
-    clustering:
-      cluster-name: cluster1
-      targets-watch-timer: 30s
-      locker:
-        type: consul
-        address: consul-svc:8500
+    # clustering:
+    #   cluster-name: cluster1
+    #   targets-watch-timer: 30s
+    #   locker:
+    #     type: consul
+    #     address: consul-svc:8500
 
     targets:
-      # Add targets configuration here
-      # e.g:
-      192.168.1.131:57400:
-        username: gnmic
-        password: secret_password
+      srl1:
+        subscriptions:
+          - sub1
 
     subscriptions:
-      # Add subscriptions configuration here
-      # e.g:
       sub1:
         paths:
-        - /interface/statistics
+        - interface[name=ethernet-1/1]/statistics/in-packets
         stream-mode: sample
-        sample-interval: 1s
+        sample-interval: 10s
+        encoding: ascii
 
     outputs:
-      output1:
+      prom-output:
         type: prometheus
+

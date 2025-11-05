@@ -20,4 +20,18 @@ spec:
     targetPort: 9804
   selector:
     app: gnmic
-  clusterIP: None
+  type: ClusterIP    
+#  clusterIP: None
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: consul-svc
+#   namespace: nok-base
+# spec:
+#   ports:
+#   - name: http
+#     port: 8500
+#     protocol: TCP
+#   selector:
+#     app: consul

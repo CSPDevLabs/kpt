@@ -45,7 +45,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: prometheus
-  namespace: monitoring # Or your desired namespace
+  namespace: nok-base # Or your desired namespace
 roleRef:
   kind: ClusterRole
   name: prometheus
@@ -109,6 +109,10 @@ data:
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: kubernetes_pod_name
+      - job_name: 'gnmic'
+        static_configs:
+          - targets: ['gnmic-ss-0:9804']
+        metrics_path: /metrics            
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -155,16 +159,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-service
+  name: prometheus-svc
   namespace: nok-base # Or your desired namespace
   labels:
     app: prometheus
 spec:
   selector:
     app: prometheus
-  type: NodePort # Or ClusterIP if you prefer internal access
+  type: ClusterIP # Or ClusterIP if you prefer internal access
   ports:
     - protocol: TCP
       port: 9090
       targetPort: 9090
-      nodePort: 30000 # Example NodePort, choose an available one

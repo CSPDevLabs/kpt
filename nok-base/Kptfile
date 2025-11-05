@@ -6,3 +6,8 @@ metadata:
     config.kubernetes.io/local-config: "true"
 info:
   description: base settings for nok
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+      configMap:
+        namespace: nok-base

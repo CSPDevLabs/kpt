@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lightweight-linux
+  namespace: nok-base
+  labels:
+    app: lightweight-linux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lightweight-linux
+  template:
+    metadata:
+      labels:
+        app: lightweight-linux
+    spec:
+      # initContainers:
+      #   - name: gnmic-installer
+      #     image: ghcr.io/srl-labs/network-multitool 
+      #     command: ["sh", "-c"]
+      #     args:
+      #       - |
+      #         bash -c "$(curl -sL https://get-gnmic.openconfig.net)"
+      #         chmod +x gnmic
+      containers:
+        - name: lightweight-linux
+          image: ghcr.io/srl-labs/network-multitool 
+          command: ["sh", "-c"]
+          args: ["sleep infinity"] # Keeps the container running indefinitely
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
