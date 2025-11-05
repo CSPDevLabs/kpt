@@ -1,7 +1,7 @@
 # nok-tools
 
 ## Description
-some tools for troubleshooting
+tools for troubleshooting
 
 ## Usage
 

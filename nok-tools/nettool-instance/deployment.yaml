@@ -25,7 +25,7 @@ spec:
       #         chmod +x gnmic
       containers:
         - name: lightweight-linux
-          image: ghcr.io/srl-labs/network-multitool 
+          image: ghcr.io/srl-labs/network-multitool
           command: ["sh", "-c"]
           args: ["sleep infinity"] # Keeps the container running indefinitely
           resources:
