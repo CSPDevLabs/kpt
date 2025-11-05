@@ -10,6 +10,22 @@ spec:
     requests:
       storage: 1Gi
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: nok-base
+data:
+  prometheus.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-svc:9090 # Assuming prometheus-svc is in the same namespace
+        access: proxy
+        isDefault: true
+        editable: true
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,6 +54,16 @@ spec:
             - containerPort: 3000
               name: http-grafana
               protocol: TCP
+          env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: "Admin" # Or "Viewer", "Admin" depending on desired access level
+            # Optional: Set a default organization name for anonymous users
+            # - name: GF_AUTH_ANONYMOUS_ORG_NAME
+            #   value: "Main Org."
+            - name: GF_SERVER_ROOT_URL
+              value: "http://nok.localdev.me:8080/grafana" # Adjust if Grafana is behind a proxy or has a different external URL
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -63,10 +89,16 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/grafana
               name: grafana-pv
+            - mountPath: /etc/grafana/provisioning/datasources # Mount point for data sources
+              name: grafana-datasources-volume
+              readOnly: true
       volumes:
         - name: grafana-pv
           persistentVolumeClaim:
             claimName: grafana-pvc
+        - name: grafana-datasources-volume # Volume definition for the ConfigMap
+          configMap:
+            name: grafana-datasources
 ---
 apiVersion: v1
 kind: Service
@@ -75,7 +107,7 @@ metadata:
   namespace: nok-base
 spec:
   selector:
-    app: grafana # Adjust this selector to match your Grafana deployment's labels
+    app: grafana
   ports:
     - protocol: TCP
       port: 3000
