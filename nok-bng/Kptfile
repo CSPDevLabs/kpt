@@ -1,14 +1,14 @@
 apiVersion: kpt.dev/v1
 kind: Kptfile
 metadata:
-  name: nok-observability
+  name: nok-bng
   annotations:
     config.kubernetes.io/local-config: "true"
-  namespace: nok-base
+  namespace: nok-bng
 info:
-  description: observability apps for nok
+  description: observability automation apps for BNG use case
 pipeline:
   mutators:
     - image: gcr.io/kpt-fn/set-namespace:v0.4.1
       configMap:
-        namespace: nok-base
+        namespace: nok-bng

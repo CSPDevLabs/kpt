@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-pvc
-  namespace: nok-base
+  namespace: nok-bng
 spec:
   accessModes:
     - ReadWriteOnce
@@ -14,7 +14,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-datasources
-  namespace: nok-base
+  namespace: nok-bng
 data:
   prometheus.yaml: |
     apiVersion: 1
@@ -32,7 +32,7 @@ metadata:
   labels:
     app: grafana
   name: grafana
-  namespace: nok-base
+  namespace: nok-bng
 spec:
   selector:
     matchLabels:
@@ -104,7 +104,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: grafana-svc
-  namespace: nok-base
+  namespace: nok-bng
 spec:
   selector:
     app: grafana

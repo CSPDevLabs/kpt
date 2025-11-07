@@ -651,7 +651,7 @@ webhooks:
   clientConfig:
     service:
       name: ingress-nginx-controller-admission
-#      namespace: ingress-nginx
+      #      namespace: ingress-nginx
       namespace: nok-base
       path: /networking/v1/ingresses
       port: 443
