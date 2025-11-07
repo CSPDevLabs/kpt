@@ -11,7 +11,7 @@ metadata:
   name: gnmic-ss
   labels:
     app: gnmic
-  namespace: nok-bng
+  namespace: nok-test
 spec:
   replicas: 1
   selector:
@@ -28,7 +28,7 @@ spec:
             - subscribe
             - --config
             - /app/config.yaml
-          image: ghcr.io/openconfig/gnmic
+          image: ghcr.io/openconfig/gnmic:0.42.1 # kpt-set: ghcr.io/openconfig/gnmic:${gnmic-version}
           imagePullPolicy: IfNotPresent
           name: gnmic
           securityContext:

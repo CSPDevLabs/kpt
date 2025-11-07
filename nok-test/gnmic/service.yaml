@@ -11,7 +11,7 @@ metadata:
   name: gnmic-svc
   labels:
     app: gnmic
-  namespace: nok-bng
+  namespace: nok-test
 spec:
   ports:
   - name: http

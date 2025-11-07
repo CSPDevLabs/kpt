@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-pvc
-  namespace: nok-bng
+  namespace: nok-test
 spec:
   accessModes:
     - ReadWriteOnce
@@ -14,7 +14,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-datasources
-  namespace: nok-bng
+  namespace: nok-test
 data:
   prometheus.yaml: |
     apiVersion: 1
@@ -32,7 +32,7 @@ metadata:
   labels:
     app: grafana
   name: grafana
-  namespace: nok-bng
+  namespace: nok-test
 spec:
   selector:
     matchLabels:
@@ -48,7 +48,7 @@ spec:
           - 0
       containers:
         - name: grafana
-          image: grafana/grafana:latest
+          image: grafana/grafana:latest # kpt-set: grafana/grafana:${grafana-version}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -63,7 +63,7 @@ spec:
             # - name: GF_AUTH_ANONYMOUS_ORG_NAME
             #   value: "Main Org."
             - name: GF_SERVER_ROOT_URL
-              value: "http://nok.localdev.me:8080/grafana" # Adjust if Grafana is behind a proxy or has a different external URL
+              value: http://test.nok.local:8080/grafana # kpt-set: http://${ingress-host}:8080/grafana
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -104,7 +104,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: grafana-svc
-  namespace: nok-bng
+  namespace: nok-test
 spec:
   selector:
     app: grafana

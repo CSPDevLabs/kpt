@@ -1,0 +1,20 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: nok-test
+  annotations:
+    config.kubernetes.io/local-config: "true"
+  namespace: nok-test
+info:
+  description: observability automation apps for BNG use case
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+      configMap:
+        namespace: nok-test
+    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+      configMap:
+        ingress-host: test.nok.local
+        gnmic-version: 0.42.1
+        prometheus-version: v2.47.0
+        grafana-version: latest

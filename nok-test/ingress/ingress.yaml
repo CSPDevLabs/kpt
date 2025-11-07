@@ -2,14 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nok-apps-ingress
-  namespace: nok-bng
+  namespace: nok-test
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2 # Rewrites the URL path for the backend service
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
-  - host: nok.localdev.me
+  - host: test.nok.local # kpt-set: ${ingress-host}
     http:
       paths:
       - path: /prometheus(/|$)(.*)
