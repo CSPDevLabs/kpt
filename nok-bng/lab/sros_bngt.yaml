@@ -1,0 +1,68 @@
+apiVersion: clabernetes.containerlab.dev/v1alpha1
+kind: Topology
+metadata:
+  name: sros-bngt
+  namespace: nok-bng
+spec:
+  deployment:
+    filesFromConfigMap:
+      agg:
+        - filePath: sros-lic-24.txt
+          configMapName: sros-lic-24
+          configMapPath: sros-lic-24.txt
+          mode: read
+        - filePath: configs/ne/agg.txt
+          configMapName: sros-bngt-agg-startup-config
+          configMapPath: startup-config
+          mode: read
+      bng1:
+        - filePath: sros-lic-24.txt
+          configMapName: sros-lic-24
+          configMapPath: sros-lic-24.txt
+          mode: read
+        - filePath: configs/ne/bng1.txt
+          configMapName: sros-bngt-bng1-startup-config
+          configMapPath: startup-config
+          mode: read
+      bng2:
+        - filePath: sros-lic-24.txt
+          configMapName: sros-lic-24
+          configMapPath: sros-lic-24.txt
+          mode: read
+        - filePath: configs/ne/bng2.txt
+          configMapName: sros-bngt-bng2-startup-config
+          configMapPath: startup-config
+          mode: read
+      core:
+        - filePath: sros-lic-24.txt
+          configMapName: sros-lic-24
+          configMapPath: sros-lic-24.txt
+          mode: read
+        - filePath: configs/ne/core.txt
+          configMapName: sros-bngt-core-startup-config
+          configMapPath: startup-config
+          mode: read
+      radius:
+        - filePath: configs/radius/raddb/clients.conf
+          configMapName: sros-bngt-radius-files
+          configMapPath: configs-radius-raddb-clients.conf
+          mode: read
+        - filePath: configs/radius/raddb/mods-config/files/authorize
+          configMapName: sros-bngt-radius-files
+          configMapPath: configs-radius-raddb-mods-config-files-authorize
+          mode: read
+        - filePath: logs/radius/.gitkeep
+          configMapName: sros-bngt-radius-files
+          configMapPath: logs-radius-.gitkeep
+          mode: execute
+      bngblaster:
+        - filePath: configs/bngblaster/pppoe.json
+          configMapName: sros-bngt-bngblaster-files
+          configMapPath: configs-bngblaster-pppoe.json
+          mode: read
+  naming: prefixed
+  # imagePull:
+  #   pullSecrets:docker pu
+  #     - ghcr-secret  
+  definition:
+    containerlab: "name: sros_bngt\n\nmgmt:\n  network: bngt\n#  ipv4-subnet: 172.21.20.0/24\n\ntopology:\n  nodes:\n    # SROS NEs\n    agg:\n      kind: nokia_sros\n      image: ttl.sh/uzs5nc:90m\n      type: sr-1\n      license: sros-lic-24.txt\n#      startup-config: configs/ne/agg.txt\n#      mgmt-ipv4: 172.21.20.21\n      group: ne   \n    bng1:\n      kind: nokia_sros\n      image: ttl.sh/uzs5nc:90m\n      type: sr-1s\n      license: sros-lic-24.txt\n#      mgmt-ipv4: 172.21.20.11\n#      startup-config: configs/ne/bng1.txt \n      group: ne     \n    bng2:\n      kind: nokia_sros\n      image: ttl.sh/uzs5nc:90m\n      type: sr-1s\n      license: sros-lic-24.txt\n#      mgmt-ipv4: 172.21.20.12\n#      startup-config: configs/ne/bng2.txt\n      group: ne\n    core:\n      kind: nokia_sros\n      image: ttl.sh/uzs5nc:90m\n      type: sr-1s\n      license: sros-lic-24.txt\n#      mgmt-ipv4: 172.21.20.22\n#      startup-config: configs/ne/core.txt\n      group: ne\n    \n    # Infra services\n    radius:\n      kind: linux\n      image: freeradius/freeradius-server:3.2.3\n      cmd: -X\n#      mgmt-ipv4: 172.21.20.111\n      binds:\n        - configs/radius/raddb/clients.conf:/etc/raddb/clients.conf\n        - configs/radius/raddb/mods-config/files/authorize:/etc/raddb/mods-config/files/authorize\n        - logs/radius:/var/log/radius\n      startup-delay: 10\n      restart-policy: unless-stopped\n    # Run to generate traffic: bngblaster -C pppoe.json -I -l dhcp\n    bngblaster:\n      kind: linux\n      image: azyablov/bng-blaster:latest\n      binds:\n        - configs/bngblaster/pppoe.json:/pppoe.json\n      startup-delay: 10\n      restart-policy: unless-stopped\n\n\n  links:\n    - endpoints: [\"bngblaster:eth1\", \"agg:1/1/1\"]\n    - endpoints: [\"bng1:1/1/1\", \"agg:1/1/2\"]\n    - endpoints: [\"bng2:1/1/1\", \"agg:1/1/3\"]\n    - endpoints: [\"bng1:1/1/2\", \"core:1/1/1\"]\n    - endpoints: [\"bng2:1/1/2\", \"core:1/1/2\"]\n    - endpoints: [\"bng1:1/1/3\", \"bng2:1/1/3\"]\n    - endpoints: [\"bngblaster:eth2\", \"core:1/1/3\"]\n    - endpoints: [\"radius:eth1\", \"core:1/1/4\"]"

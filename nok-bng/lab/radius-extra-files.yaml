@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sros-bngt-radius-files
+  namespace: nok-bng
+data:
+  configs-radius-raddb-clients.conf: |-
+    client srlinux {
+        ipaddr = 172.21.20.0/24
+        secret = clab-demo
+    }
+
+    client BNGv6 {
+        ipv6addr = 2001:172:21:20::/64
+        secret = clab-demo
+    }
+  configs-radius-raddb-mods-config-files-authorize: |-
+    DEFAULT         Auth-Type := Accept
+                    Alc-Subsc-ID-Str = "%{User-Name}",
+                    Alc-Subsc-Prof-Str = "SUB-PROFILE-1",
+                    Alc-SLA-Prof-Str = "SLA-PROFILE-1",
+                    Framed-Pool = "V4Pool",
+                    Alc-SLAAC-IPv6-Pool = "V6Pool",
+                    Alc-Delegated-IPv6-Pool = "V6Pool"
+  logs-radius-.gitkeep: ""
