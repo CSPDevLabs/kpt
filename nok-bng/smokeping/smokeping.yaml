@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smokeping-config
+  namespace: nok-bng
+  labels:
+    app: smokeping-prober
+data:
+  smokeping.yml: |
+    ---
+    targets:
+    - hosts:
+      - 172.21.20.21
+      - 172.21.20.11
+      - 172.21.20.12
+      - 172.21.20.22
+      - 172.21.20.111
+      interval: 10s # Duration, Default 1s.
+      network: ip4 # One of ip, ip4, ip6. Default: ip (automatic IPv4/IPv6)
+      protocol: icmp # One of icmp, udp. Default: icmp (Requires privileged operation)
+      size: 80 # Packet data size in bytes. Default 56 (Range: 24 - 65535)
+      #source: None # Souce IP address to use. Default: None (automatic selection)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smokeping-prober
+  namespace: nok-bng
+  labels:
+    app: smokeping-prober
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smokeping-prober
+  template:
+    metadata:
+      labels:
+        app: smokeping-prober
+    spec:
+      containers:
+      - name: smokeping-prober
+        image: quay.io/superq/smokeping-prober:v0.9.0
+        args:
+        - --config.file=/etc/smokeping/smokeping.yml
+        env:
+        - name: GOMAXPROCS
+          value: "1"
+        ports:
+        - containerPort: 9370 # Default port for smokeping-prober metrics
+          name: http-metrics
+        securityContext:
+          capabilities:
+            add: ["NET_RAW"] # Required for ICMP probing
+        volumeMounts:
+        - name: smokeping-config-volume
+          mountPath: /etc/smokeping/smokeping.yml
+          subPath: smokeping.yml # Mounts the file directly, not the directory
+      volumes:
+      - name: smokeping-config-volume
+        configMap:
+          name: smokeping-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smokeping-prober
+  namespace: nok-bng
+  labels:
+    app: smokeping-prober
+spec:
+  selector:
+    app: smokeping-prober
+  ports:
+  - protocol: TCP
+    port: 9370
+    targetPort: http-metrics
+    name: http-metrics
+  type: ClusterIP # Exposes the service internally within the cluster

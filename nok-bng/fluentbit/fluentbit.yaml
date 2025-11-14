@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  labels:
+    app: fluent-bit
+  namespace: nok-bng
+data:
+  fluent-bit.conf: |
+    [INPUT]
+      Name tcp
+      Listen 0.0.0.0
+      Port 6000
+      Format json
+      Separator \n
+      Tag gnmic-state
+
+    [OUTPUT]
+      Name loki
+      Match gnmic-state
+      Host tel-loki
+      Port 3100
+      tls off
+      Labels job=gnmic-state
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluent-bit
+  labels:
+    app: fluent-bit
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+    spec:
+      containers:
+      - name: fluent-bit
+        image: cr.fluentbit.io/fluent/fluent-bit:3.2.10
+        args:
+        - -c
+        - /fluent-bit/etc/fluent-bit.conf
+        ports:
+        - containerPort: 6000 # TCP input port for Fluent Bit
+          name: tcp-input
+          protocol: TCP
+        volumeMounts:
+        - name: fluent-bit-config-volume
+          mountPath: /fluent-bit/etc/fluent-bit.conf
+          subPath: fluent-bit.conf # Mounts the file directly
+      volumes:
+      - name: fluent-bit-config-volume
+        configMap:
+          name: fluent-bit-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tel-fb
+  labels:
+    app: fluent-bit
+  namespace: nok-bng
+spec:
+  selector:
+    app: fluent-bit
+  ports:
+  - protocol: TCP
+    port: 6000
+    targetPort: tcp-input
+    name: tcp-input
+  type: ClusterIP

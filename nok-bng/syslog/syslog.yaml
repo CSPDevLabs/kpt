@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syslog-ng-config
+  namespace: nok-bng
+  labels:
+    app: syslog-ng
+data:
+  syslog-ng.conf: |
+    @version: 3.38
+    @include "scl.conf"
+
+    options {
+        chain-hostnames(no);
+        flush-lines(0);
+        use-dns(no);
+        use-fqdn(no);
+        owner("root");
+        group("root");
+        perm(0644);
+        stats_freq(0);
+        mark_freq(0);
+        log_msg_size(8192);
+        keep-hostname(yes);
+    };
+
+    # Receive RFC3164 messages from SROS on UDP port 1514
+    source s_rfc3164_udp_sros {
+        udp(
+            ip(0.0.0.0)
+            port(1514)
+        );
+    };
+
+    # Promtail RFC5424
+    destination d_rfc5424 {
+      network(
+    	"tel-pt"
+    	port(1514)
+    	transport("tcp")
+      flags(syslog-protocol));
+    };
+
+    destination d_file {
+      file("/var/log/validate.log"
+        owner("root")
+        group("root")
+        perm(0644)
+        dir_perm(0755)
+        create_dirs(yes));
+    };
+
+    log {
+      source(s_rfc3164_udp_sros);
+      destination(d_rfc5424);
+    };
+
+    # For debug / test purposes
+    log {
+        source(s_rfc3164_udp_sros);
+        destination(d_file);
+    };
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syslog-ng
+  namespace: nok-bng
+  labels:
+    app: syslog-ng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: syslog-ng
+  template:
+    metadata:
+      labels:
+        app: syslog-ng
+    spec:
+      containers:
+      - name: syslog-ng
+        image: linuxserver/syslog-ng:4.8.1-r1-ls153
+        ports:
+        - containerPort: 1514
+          name: syslog-udp
+          protocol: UDP # Specify UDP protocol
+        volumeMounts:
+        - name: syslog-ng-config-volume
+          mountPath: /config/syslog-ng.conf
+          subPath: syslog-ng.conf # Mounts the file directly
+        - name: localtime-volume
+          mountPath: /etc/localtime
+          readOnly: true
+        - name: syslog-log-volume
+          mountPath: /var/log # Mounts the /var/log directory
+      volumes:
+      - name: syslog-ng-config-volume
+        configMap:
+          name: syslog-ng-config
+      - name: localtime-volume
+        hostPath: # Using hostPath for /etc/localtime
+          path: /etc/localtime
+          type: FileOrCreate
+      - name: syslog-log-volume
+        emptyDir: {} # Using emptyDir for /var/log. Consider PVC for persistence.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tel-syslog
+  namespace: nok-bng
+  labels:
+    app: syslog-ng
+spec:
+  selector:
+    app: syslog-ng
+  ports:
+  - protocol: UDP # Specify UDP protocol for the service
+    port: 1514
+    targetPort: syslog-udp
+    name: syslog-udp
+  type: ClusterIP

@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: nok-bng
+  labels:
+    app: alertmanager
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 10m
+
+    route:
+      receiver: 'telegram_bot'
+      group_by: ['alertname', 'job']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 3h
+
+    receivers:
+      - name: telegram_bot
+        telegram_configs:
+          - bot_token_file: /telegram_bot.token
+            chat_id: 132186797
+            message: '{{ template "telegram.default.message" . }}'
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: telegram-bot-token
+  namespace: nok-bng
+  labels:
+    app: alertmanager
+stringData: # Use stringData for plain text, kubectl will base64 encode it
+  telegram_bot.token: "YOUR_TELEGRAM_BOT_TOKEN_HERE" # IMPORTANT: Replace with your actual bot token
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+  labels:
+    app: alertmanager
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+      - name: alertmanager
+        image: quay.io/prometheus/alertmanager:v0.28.1
+        args:
+        - --config.file=/alertmanager.yml
+        - --storage.path=/alertmanager
+        ports:
+        - containerPort: 9093 # Default Alertmanager UI/API port
+          name: http-am
+        volumeMounts:
+        - name: alertmanager-config-volume
+          mountPath: /alertmanager.yml
+          subPath: alertmanager.yml
+        - name: telegram-bot-token-volume
+          mountPath: /telegram_bot.token
+          subPath: telegram_bot.token
+        - name: alertmanager-data
+          mountPath: /alertmanager
+      volumes:
+      - name: alertmanager-config-volume
+        configMap:
+          name: alertmanager-config
+      - name: telegram-bot-token-volume
+        secret:
+          secretName: telegram-bot-token
+      - name: alertmanager-data
+        emptyDir: {} # For Alertmanager's internal state, consider PersistentVolumeClaim for production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tel-am # Service name matches the Loki config reference
+  namespace: nok-bng
+  labels:
+    app: alertmanager
+spec:
+  selector:
+    app: alertmanager
+  ports:
+  - protocol: TCP
+    port: 9093
+    targetPort: http-am
+    name: http-am
+  type: ClusterIP
