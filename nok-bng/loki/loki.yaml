@@ -73,9 +73,9 @@ spec:
         - -config.file=/etc/loki/local-config.yaml
         ports:
         - containerPort: 3100
-          name: http-metrics
+          name: loki-3100
         - containerPort: 9096
-          name: grpc
+          name: loki-9096
         volumeMounts:
         - name: loki-config-volume
           mountPath: /etc/loki/local-config.yaml
@@ -105,7 +105,9 @@ spec:
   - protocol: TCP
     port: 3100
     targetPort: 3100
+    name: loki-3100
   - protocol: TCP
     port: 9096
     targetPort: 9096
+    name: loki-9096
   type: ClusterIP

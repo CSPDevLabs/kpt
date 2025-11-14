@@ -47,7 +47,7 @@ spec:
         - name: GOMAXPROCS
           value: "1"
         ports:
-        - containerPort: 9370 # Default port for smokeping-prober metrics
+        - containerPort: 9374
           name: sping-metrics
           protocol: TCP        
         securityContext:
@@ -74,7 +74,7 @@ spec:
     app: tel-sping
   ports:
   - protocol: TCP
-    port: 9370
-    targetPort: 9370
+    port: 9374
+    targetPort: 9374
     name: sping-metrics    
   type: ClusterIP # Exposes the service internally within the cluster
