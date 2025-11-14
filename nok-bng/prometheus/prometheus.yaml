@@ -57,7 +57,30 @@ metadata:
   name: prometheus-config
   namespace: nok-bng # Or your desired namespace
 data:
-  prometheus.yml: "global:\n  scrape_interval:     5s\n  evaluation_interval: 10s\n\nrule_files:\n  - \"/etc/prometheus/rules/*\"\n\nalerting:\n  alertmanagers:\n  - static_configs:\n    - targets:\n      - tel-am:9093\n\nscrape_configs:\n  - job_name: smokeping\n    static_configs:\n      - targets: ['tel-sping:9374']\n\n  - job_name: sros_bngt_gnmic\n    static_configs:\n      - targets: ['gnmic-svc:9804']\n    metrics_path: /metrics    "
+  prometheus.yml: |-
+    global:
+      scrape_interval:     5s
+      evaluation_interval: 10s
+
+    rule_files:
+      - \"/etc/prometheus/rules/*\"
+
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          - tel-am:9093
+
+    scrape_configs:
+      - job_name: smokeping
+        static_configs:
+          - targets: ['tel-sping:9374']
+
+      - job_name: sros_bngt_gnmic
+        static_configs:
+          - targets: ['gnmic-metrics-svc:9804']
+        metrics_path: /metrics
+        
 ---
 apiVersion: apps/v1
 kind: Deployment

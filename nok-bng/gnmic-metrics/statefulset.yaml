@@ -8,20 +8,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: gnmic-ss
+  name: gnmic-metrics-ss
   labels:
-    app: gnmic
+    app: gnmic-metrics
   namespace: nok-bng
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gnmic
-  serviceName: gnmic-svc
+      app: gnmic-metrics
+  serviceName: gnmic-metrics-svc
   template:
     metadata:
       labels:
-        app: gnmic
+        app: gnmic-metrics
     spec:
       containers:
         - args:
@@ -30,7 +30,7 @@ spec:
             - /app/config.yaml
           image: ghcr.io/openconfig/gnmic:0.42.1 # kpt-set: ghcr.io/openconfig/gnmic:${gnmic-version}
           imagePullPolicy: IfNotPresent
-          name: gnmic
+          name: gnmic-metrics
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -55,7 +55,7 @@ spec:
               memory: 200Mi
           envFrom:
             - secretRef:
-                name: gnmic-login
+                name: gnmic-metrics-login
           env:
             - name: GNMIC_API
               value: :7890
@@ -74,5 +74,5 @@ spec:
       volumes:
         - configMap:
             defaultMode: 420
-            name: gnmic-config
+            name: gnmic-metrics-config
           name: config

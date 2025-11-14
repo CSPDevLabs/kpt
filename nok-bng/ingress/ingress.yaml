@@ -30,6 +30,20 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: gnmic-svc
+            name: gnmic-metrics-svc
             port:
               number: 9804
+      - path: /alertmanager(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tel-am
+            port:
+              number: 9093
+      - path: /smokeping(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: tel-sping
+            port:
+              number: 9374              

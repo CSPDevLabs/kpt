@@ -4,7 +4,7 @@ metadata:
   name: smokeping-config
   namespace: nok-bng
   labels:
-    app: smokeping-prober
+    app: tel-sping
 data:
   smokeping.yml: |
     ---
@@ -15,31 +15,31 @@ data:
       - 172.21.20.12
       - 172.21.20.22
       - 172.21.20.111
-      interval: 10s # Duration, Default 1s.
-      network: ip4 # One of ip, ip4, ip6. Default: ip (automatic IPv4/IPv6)
-      protocol: icmp # One of icmp, udp. Default: icmp (Requires privileged operation)
-      size: 80 # Packet data size in bytes. Default 56 (Range: 24 - 65535)
-      #source: None # Souce IP address to use. Default: None (automatic selection)
+      interval: 10s 
+      network: ip4 
+      protocol: icmp 
+      size: 80 
+      
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: smokeping-prober
+  name: tel-sping
   namespace: nok-bng
   labels:
-    app: smokeping-prober
+    app: tel-sping
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: smokeping-prober
+      app: tel-sping
   template:
     metadata:
       labels:
-        app: smokeping-prober
+        app: tel-sping
     spec:
       containers:
-      - name: smokeping-prober
+      - name: tel-sping
         image: quay.io/superq/smokeping-prober:v0.9.0
         args:
         - --config.file=/etc/smokeping/smokeping.yml
@@ -48,7 +48,8 @@ spec:
           value: "1"
         ports:
         - containerPort: 9370 # Default port for smokeping-prober metrics
-          name: http-metrics
+          name: sping-metrics
+          protocol: TCP        
         securityContext:
           capabilities:
             add: ["NET_RAW"] # Required for ICMP probing
@@ -64,16 +65,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: smokeping-prober
+  name: tel-sping
   namespace: nok-bng
   labels:
-    app: smokeping-prober
+    app: tel-sping
 spec:
   selector:
-    app: smokeping-prober
+    app: tel-sping
   ports:
   - protocol: TCP
     port: 9370
-    targetPort: http-metrics
-    name: http-metrics
+    targetPort: 9370
+    name: sping-metrics    
   type: ClusterIP # Exposes the service internally within the cluster
