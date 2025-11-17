@@ -1,0 +1,199 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nok-apps-portal-nginx-config
+  namespace: nok-bng
+data:
+  nok-portal.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        root /usr/share/nginx/html;
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+
+        location = /menu-config.json {
+            default_type application/json;
+        }
+
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+            expires 1y;
+            log_not_found off;
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nok-apps-portal-html-config
+  namespace: nok-bng
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Nokia Apps Portal</title>
+        <style>
+            /* Basic styling for a Nokia-like look and feel */
+            :root {
+                --nokia-blue: #003366;
+                --nokia-light-grey: #f0f0f0;
+                --nokia-dark-grey: #333;
+                --nokia-accent-blue: #0078D4; /* A slightly brighter blue for accents */
+            }
+            body {
+                display: flex;
+                margin: 0;
+                font-family: 'Nokia Pure Text', 'Segoe UI', Arial, sans-serif; /* Prioritize Nokia font if available */
+                height: 100vh;
+                width: 100vw; /* Explicitly set body width to full viewport width */
+                overflow: hidden; /* Prevent main scrollbars */
+                background-color: #ffffff;
+                color: var(--nokia-dark-grey);
+            }
+            #left-pane {
+                width: 220px;
+                background-color: var(--nokia-light-grey);
+                padding: 20px 0;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0; /* Prevent shrinking */
+            }
+            #left-pane h2 {
+                color: var(--nokia-blue);
+                text-align: center;
+                margin-bottom: 20px;
+                font-size: 1.4em;
+                padding: 0 15px;
+            }
+            #left-pane ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                flex-grow: 1; /* Allow menu to take available space */
+            }
+            #left-pane li a {
+                display: block;
+                padding: 12px 20px;
+                text-decoration: none;
+                color: var(--nokia-dark-grey);
+                font-size: 1.1em;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                border-left: 4px solid transparent; /* For active indicator */
+            }
+            #left-pane li a:hover {
+                background-color: #e0e0e0;
+                color: var(--nokia-blue);
+            }
+            #left-pane li a.active {
+                background-color: #e0e0e0;
+                color: var(--nokia-blue);
+                font-weight: bold;
+                border-left-color: var(--nokia-accent-blue);
+            }
+            /* Changed from #right-pane to #app-frame to target the iframe directly */
+            #app-frame {
+                flex-grow: 1;
+                flex-shrink: 1; /* Ensures it can shrink if necessary */
+                flex-basis: 0;   /* Allows flex-grow to distribute space from a base of 0 */
+                border: none;
+                height: 100%; /* Take full height */
+            }
+        </style>
+    </head>
+    <body>
+        <div id="left-pane">
+            <h2>NOK Apps Portal</h2>
+            <ul id="app-menu">
+                <!-- Menu items will be dynamically loaded here -->
+            </ul>
+        </div>
+        <iframe id="app-frame" src="" frameborder="0" title="Application Content"></iframe>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const appMenu = document.getElementById('app-menu');
+                const appFrame = document.getElementById('app-frame');
+                let currentActiveLink = null;
+
+                // Function to set active link styling
+                function setActiveLink(linkElement) {
+                    if (currentActiveLink) {
+                        currentActiveLink.classList.remove('active');
+                    }
+                    linkElement.classList.add('active');
+                    currentActiveLink = linkElement;
+                }
+
+                // Fetch menu configuration
+                fetch('/menu-config.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(menuItems => {
+                        menuItems.forEach((item, index) => {
+                            const listItem = document.createElement('li');
+                            const link = document.createElement('a');
+                            link.href = '#'; // Prevent default navigation
+                            link.textContent = item.name;
+                            link.dataset.path = item.path; // Store path for navigation
+                            link.dataset.openInNewTab = item.openInNewTab || false; // Default to false
+
+                            link.addEventListener('click', (event) => {
+                                event.preventDefault(); // Stop default link behavior
+
+                                if (link.dataset.openInNewTab === 'true') {
+                                    window.open(link.dataset.path, '_blank');
+                                    // Do not set active class for external links if you want to keep the current internal app active
+                                } else {
+                                    appFrame.src = link.dataset.path;
+                                    setActiveLink(link);
+                                }
+                            });
+
+                            listItem.appendChild(link);
+                            appMenu.appendChild(listItem);
+
+                            // Load the first non-external app by default
+                            if (index === 0 && link.dataset.openInNewTab !== 'true') {
+                                appFrame.src = link.dataset.path;
+                                setActiveLink(link);
+                            } else if (index === 0 && link.dataset.openInNewTab === 'true' && menuItems.length > 1) {
+                                // If the first item is external, try to load the next internal one
+                                // This is a basic approach; more complex logic might be needed for robust default loading
+                                const firstInternalLink = menuItems.find(mi => !mi.openInNewTab);
+                                if (firstInternalLink) {
+                                    appFrame.src = firstInternalLink.path;
+                                    // Find the actual link element for this and set active
+                                    const correspondingLinkElement = appMenu.querySelector(`a[data-path="${firstInternalLink.path}"]`);
+                                    if (correspondingLinkElement) {
+                                        setActiveLink(correspondingLinkElement);
+                                    }
+                                }
+                            }
+                        });
+
+                        // If no internal apps are found or only external apps, you might want to show a default message
+                        if (!appFrame.src && menuItems.length > 0) {
+                            // Example: display a message in the iframe or load a blank page
+                            appFrame.src = 'about:blank';
+                            // Or, if you have a welcome page: appFrame.src = '/welcome.html';
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error loading menu configuration:', error);
+                        // Display an error message in the iframe or console
+                        appFrame.srcdoc = `<p style="color: red; padding: 20px;">Error loading menu: ${error.message}</p>`;
+                    });
+            });
+        </script>
+    </body>
+    </html>

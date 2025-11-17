@@ -11,7 +11,7 @@ spec:
   rules:
   - host: bng.nok.local # kpt-set: ${ingress-host}
     http:
-      paths:
+      paths:     
       - path: /prometheus(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
