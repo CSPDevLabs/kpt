@@ -22,30 +22,25 @@ spec:
     app: gnmic-metrics
   type: ClusterIP
   #  clusterIP: None
-  # ---
-  # apiVersion: v1
-  # kind: Service
-  # metadata:
-  #   name: consul-svc
-  #   namespace: nok-base
-  # spec:
-  #   ports:
-  #   - name: http
-  #     port: 8500
-  #     protocol: TCP
-  #   selector:
-  #     app: consul
-#  clusterIP: None
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: consul-svc
-#   namespace: nok-base
-# spec:
-#   ports:
-#   - name: http
-#     port: 8500
-#     protocol: TCP
-#   selector:
-#     app: consul
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-svc
+  namespace: nok-bng
+spec:
+  ports:
+  - name: http
+    port: 8500
+    protocol: TCP
+    targetPort: 8500 # Explicitly map to Consul's HTTP port
+  - name: consul-dns-udp # Expose DNS on standard UDP port 53
+    port: 8600
+    protocol: UDP
+    targetPort: 8600 # Map to Consul's internal DNS port 8600
+  - name: consul-dns-tcp # Expose DNS on standard TCP port 53
+    port: 8600
+    protocol: TCP
+    targetPort: 8600 # Map to Consul's internal DNS port 8600
+  selector:
+    app: consul

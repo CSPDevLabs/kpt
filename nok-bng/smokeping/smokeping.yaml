@@ -10,11 +10,11 @@ data:
     ---
     targets:
     - hosts:
-      - 172.21.20.21
-      - 172.21.20.11
-      - 172.21.20.12
-      - 172.21.20.22
-      - 172.21.20.111
+      - clab-sros_bngt-bng1.service.consul
+      - clab-sros_bngt-bng2.service.consul
+      - clab-sros_bngt-agg.service.consul
+      - clab-sros_bngt-core.service.consul
+      - clab-sros_bngt-bngblaster.service.consul
       interval: 10s 
       network: ip4 
       protocol: icmp 

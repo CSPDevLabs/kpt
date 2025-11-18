@@ -22,7 +22,11 @@ spec:
     metadata:
       labels:
         app: gnmic-metrics
-    spec:
+    spec:  
+      # --- START dnsConfig ADDITION ---
+      dnsConfig:
+        searches:
+          - service.consul   
       containers:
         - args:
             - subscribe
@@ -59,14 +63,14 @@ spec:
           env:
             - name: GNMIC_API
               value: :7890
-              # - name: GNMIC_CLUSTERING_INSTANCE_NAME
-              #   valueFrom:
-              #     fieldRef:
-              #       fieldPath: metadata.name
-              # - name: GNMIC_CLUSTERING_SERVICE_ADDRESS
-              #   value: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-svc.gnmic.svc.cluster.local
-              # - name: GNMIC_OUTPUTS_OUTPUT1_LISTEN
-              #   value: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-svc.gnmic.svc.cluster.local:9804
+            - name: GNMIC_CLUSTERING_INSTANCE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: GNMIC_CLUSTERING_SERVICE_ADDRESS
+              value: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-metrics-svc.nok-bng.svc.cluster.local # kpt-set: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-metrics-svc.${namespace}.svc.cluster.local
+            - name: GNMIC_OUTPUTS_OUTPUT1_LISTEN
+              value: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-metrics-svc.nok-bng.svc.cluster.local:9804 # kpt-set: $(GNMIC_CLUSTERING_INSTANCE_NAME).gnmic-metrics-svc.${namespace}.svc.cluster.local:9804
           volumeMounts:
             - mountPath: /app/config.yaml
               name: config

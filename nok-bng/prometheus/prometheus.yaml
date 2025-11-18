@@ -75,11 +75,21 @@ data:
       - job_name: smokeping
         static_configs:
           - targets: ['tel-sping:9374']
+        metric_relabel_configs:
+          - source_labels: [host]
+            regex: '(.*)\.service\.consul'
+            target_label: host
+            replacement: '$1'             
 
       - job_name: sros_bngt_gnmic
         static_configs:
           - targets: ['gnmic-metrics-svc:9804']
         metrics_path: /metrics
+        metric_relabel_configs:
+          - source_labels: [source]
+            regex: '(.*)\.service\.consul'
+            target_label: source
+            replacement: '$1'    
         
 ---
 apiVersion: apps/v1
