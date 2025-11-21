@@ -20,7 +20,7 @@ data:
       targets-watch-timer: 30s
       locker:
         type: consul
-        address: consul-svc:8500
+        address: consul-svc.nok-base.svc.cluster.local:8500
 
     # username: admin
 

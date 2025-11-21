@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: consul-service-registrations
-  namespace: nok-bng # Ensure this matches your Consul namespace
+  namespace: nok-bng 
 data:
   services.json: |
     [
