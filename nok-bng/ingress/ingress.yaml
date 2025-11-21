@@ -26,13 +26,20 @@ spec:
             name: grafana-svc
             port:
               number: 3000
-      - path: /gnmic(/|$)(.*)
+      - path: /gnmic-metrics(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
           service:
             name: gnmic-metrics-svc
             port:
               number: 9804
+      - path: /gnmic-state(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: gnmic-state-svc
+            port:
+              number: 9804              
       - path: /alertmanager(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
