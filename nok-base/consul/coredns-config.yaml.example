@@ -28,7 +28,3 @@ data:
         reload
         loadbalance
     }
-    # block to forward .consul queries to your Consul service
-    consul:53 {
-        forward . consul-svc:8600
-    }
