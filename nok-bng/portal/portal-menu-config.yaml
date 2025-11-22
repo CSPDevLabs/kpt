@@ -8,8 +8,7 @@ data:
     [
       {"name": "Prometheus", "path": "/prometheus/graph", "openInNewTab": false},
       {"name": "Grafana", "path": "/grafana", "openInNewTab": true},
-      {"name": "GNMIC Metrics", "path": "/gnmic-metrics/metrics", "openInNewTab": false},
-      {"name": "GNMIC State", "path": "/gnmic-state/metrics", "openInNewTab": false},      
+      {"name": "GNMIC Metrics", "path": "/gnmic-metrics/metrics", "openInNewTab": false},     
       {"name": "Alertmanager", "path": "/alertmanager", "openInNewTab": false},
       {"name": "Smokeping", "path": "/smokeping/metrics", "openInNewTab": false}
     ]
