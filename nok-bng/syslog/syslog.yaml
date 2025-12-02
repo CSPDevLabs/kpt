@@ -17,8 +17,7 @@ data:
         use-fqdn(no);
         perm(0644);
         stats(freq(0));
-        # new version
-        mark_freq(0); # Corrected: Changed 'mark' to 'mark_freq'
+        mark_freq(0); 
         log_msg_size(8192);
         keep-hostname(yes);
     };

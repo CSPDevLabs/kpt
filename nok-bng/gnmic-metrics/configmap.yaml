@@ -150,7 +150,7 @@ data:
       op-stdout:
         type: file # output type
         file-type: stdout # or stderr
-        format: json
+        format: event
         event-processors:
           - oper-state-to-int
 
@@ -158,13 +158,13 @@ data:
       oper-state-to-int:
         event-strings:
           value-names:
-            - \".*\"
+            - ".*"
           transforms:
             - replace:
-                apply-on: \"value\"
-                old: \"up\"
-                new: \"1\"          
+                apply-on: "value"
+                old: "up"
+                new: "1"          
             - replace:
-                apply-on: \"value\"
-                old: \"down\"
-                new: \"0\"    
+                apply-on: "value"
+                old: "down"
+                new: "0"    

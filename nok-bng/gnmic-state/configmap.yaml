@@ -101,12 +101,14 @@ data:
         delimiter: "\n"
         event-processors: 
           - oper-state-to-int
+          - source-domain-removal
       op-stdout:
         type: file # output type
         file-type: stdout # or stderr
-        format: json
+        format: event
         event-processors:
           - oper-state-to-int
+          - source-domain-removal
 
     processors:
       oper-state-to-int:
@@ -122,3 +124,12 @@ data:
                 apply-on: "value"
                 old: "down"
                 new: "0"
+      source-domain-removal:
+        event-strings:
+          tag-names:
+            - "source"
+          transforms:
+            - trim-suffix:
+                apply-on: "value"
+                suffix: ".service.consul"
+             
