@@ -7,7 +7,7 @@ metadata:
     app: syslog-ng
 data:
   syslog-ng.conf: |
-    @version: 3.38
+    @version: 4.2
     @include "scl.conf"
 
     options {
@@ -15,11 +15,10 @@ data:
         flush-lines(0);
         use-dns(no);
         use-fqdn(no);
-        owner("root");
-        group("root");
         perm(0644);
-        stats_freq(0);
-        mark_freq(0);
+        stats(freq(0));
+        # new version
+        mark_freq(0); # Corrected: Changed 'mark' to 'mark_freq'
         log_msg_size(8192);
         keep-hostname(yes);
     };
@@ -35,19 +34,19 @@ data:
     # Promtail RFC5424
     destination d_rfc5424 {
       network(
-    	"tel-pt"
-    	port(1514)
-    	transport("tcp")
-      flags(syslog-protocol));
+      "tel-pt"
+      port(1514)
+      transport("tcp")
+      flags(syslog-protocol)
+      ); # Added closing parenthesis for network block
     };
 
     destination d_file {
       file("/var/log/validate.log"
-        owner("root")
-        group("root")
         perm(0644)
         dir_perm(0755)
-        create_dirs(yes));
+        create_dirs(yes)
+      ); # Added closing parenthesis for file block
     };
 
     log {
@@ -78,32 +77,52 @@ spec:
       labels:
         app: syslog-ng
     spec:
+      initContainers:
+      - name: copy-syslog-ng-config
+        image: busybox:1.36.1
+        command:
+          - sh
+          - -c
+          - |
+            cp /tmp/config-source/syslog-ng.conf /config/syslog-ng.conf
+            echo "--- syslog-ng.conf content ---"
+            cat /config/syslog-ng.conf
+            echo "-----------------------------"
+        volumeMounts:
+        - name: syslog-ng-config-source
+          mountPath: /tmp/config-source
+        - name: syslog-ng-writable-config
+          mountPath: /config
       containers:
       - name: syslog-ng
         image: linuxserver/syslog-ng:4.8.1-r1-ls153
+        # ADD THESE TWO LINES:
+        command: ["syslog-ng", "-F", "-f", "/config/syslog-ng.conf"]
+        args: [] # Add an empty args array if you don't have other arguments
         ports:
         - containerPort: 1514
           name: syslog-udp
-          protocol: UDP # Specify UDP protocol
+          protocol: UDP
         volumeMounts:
-        - name: syslog-ng-config-volume
-          mountPath: /config/syslog-ng.conf
-          subPath: syslog-ng.conf # Mounts the file directly
+        - name: syslog-ng-writable-config
+          mountPath: /config
         - name: localtime-volume
           mountPath: /etc/localtime
           readOnly: true
         - name: syslog-log-volume
-          mountPath: /var/log # Mounts the /var/log directory
+          mountPath: /var/log
       volumes:
-      - name: syslog-ng-config-volume
+      - name: syslog-ng-config-source
         configMap:
           name: syslog-ng-config
+      - name: syslog-ng-writable-config
+        emptyDir: {}
       - name: localtime-volume
-        hostPath: # Using hostPath for /etc/localtime
+        hostPath:
           path: /etc/localtime
           type: FileOrCreate
       - name: syslog-log-volume
-        emptyDir: {} # Using emptyDir for /var/log. Consider PVC for persistence.
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -120,4 +139,4 @@ spec:
     port: 1514
     targetPort: syslog-udp
     name: syslog-udp
-  type: ClusterIP
+  type: LoadBalancer
