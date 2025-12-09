@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smokeping-config
+  namespace: nok-bng
+  labels:
+    app: tel-sping
+data:
+  smokeping.yml: |
+    ---
+    targets:
+    - hosts:
+      - clab-sros_bngt-bng1.service.consul
+      - clab-sros_bngt-bng2.service.consul
+      - clab-sros_bngt-agg.service.consul
+      - clab-sros_bngt-core.service.consul
+      - clab-sros_bngt-bngblaster.service.consul
+      interval: 10s 
+      network: ip4 
+      protocol: icmp 
+      size: 80 
+      
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tel-sping
+  namespace: nok-bng
+  labels:
+    app: tel-sping
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tel-sping
+  template:
+    metadata:
+      labels:
+        app: tel-sping
+    spec:
+      containers:
+      - name: tel-sping
+        image: quay.io/superq/smokeping-prober:v0.9.0
+        args:
+        - --config.file=/etc/smokeping/smokeping.yml
+        env:
+        - name: GOMAXPROCS
+          value: "1"
+        ports:
+        - containerPort: 9374
+          name: sping-metrics
+          protocol: TCP        
+        securityContext:
+          capabilities:
+            add: ["NET_RAW"] # Required for ICMP probing
+        volumeMounts:
+        - name: smokeping-config-volume
+          mountPath: /etc/smokeping/smokeping.yml
+          subPath: smokeping.yml # Mounts the file directly, not the directory
+      volumes:
+      - name: smokeping-config-volume
+        configMap:
+          name: smokeping-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tel-sping
+  namespace: nok-bng
+  labels:
+    app: tel-sping
+spec:
+  selector:
+    app: tel-sping
+  ports:
+  - protocol: TCP
+    port: 9374
+    targetPort: 9374
+    name: sping-metrics    
+  type: ClusterIP # Exposes the service internally within the cluster

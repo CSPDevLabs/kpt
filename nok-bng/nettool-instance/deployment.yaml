@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lightweight-linux
-  namespace: nok-base
+  namespace: nok-bng
   labels:
     app: lightweight-linux
 spec:

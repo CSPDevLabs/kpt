@@ -1,21 +1,21 @@
-# nok-tools
+# nok-bng
 
 ## Description
-tools for troubleshooting
+sample description
 
 ## Usage
 
 ### Fetch the package
-`kpt pkg get REPO_URI[.git]/PKG_PATH[@VERSION] nok-tools`
+`kpt pkg get REPO_URI[.git]/PKG_PATH[@VERSION] nok-bng`
 Details: https://kpt.dev/reference/cli/pkg/get/
 
 ### View package content
-`kpt pkg tree nok-tools`
+`kpt pkg tree nok-bng`
 Details: https://kpt.dev/reference/cli/pkg/tree/
 
 ### Apply the package
 ```
-kpt live init nok-tools
-kpt live apply nok-tools --reconcile-timeout=2m --output=table
+kpt live init nok-bng
+kpt live apply nok-bng --reconcile-timeout=2m --output=table
 ```
 Details: https://kpt.dev/reference/cli/live/

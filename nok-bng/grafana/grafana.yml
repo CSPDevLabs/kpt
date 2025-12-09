@@ -1,0 +1,186 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+  namespace: nok-bng
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: grafana-datasources
+#   namespace: nok-bng
+# data:
+#   prometheus.yaml: |
+#     apiVersion: 1
+#     datasources:
+#       - name: Prometheus
+#         type: prometheus
+#         url: http://prometheus-svc:9090 # Assuming prometheus-svc is in the same namespace
+#         access: proxy
+#         isDefault: true
+#         editable: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-svc
+  namespace: nok-bng
+spec:
+  selector:
+    app: grafana
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources-config
+  namespace: nok-bng
+data:
+  datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        uid: DS_PROMETHEUS
+        access: proxy
+        url: http://prometheus-svc:9090
+        jsonData:
+          httpMethod: POST
+          timeout: 60
+          manageAlerts: false
+          prometheusType: Prometheus
+          cacheLevel: 'High'
+          disableRecordingRules: false
+          incrementalQueryOverlapWindow: 10m
+      - name: Loki
+        type: loki
+        uid: DS_LOKI
+        access: proxy
+        url: http://tel-loki:3100
+        jsonData:
+          timeout: 60
+          maxLines: 1000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provisioning
+  namespace: nok-bng
+data:
+  dashboards.yml: |
+    apiVersion: 1
+    providers:
+      - name: telemetry
+        type: file
+        updateIntervalSeconds: 10
+        allowUiUpdates: false
+        options:
+          path: /var/lib/grafana/dashboards # This path must match the volume mount in the deployment
+          foldersFromFilesStructure: true            
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+  namespace: nok-bng
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      # Add an initContainer to download dashboards
+      initContainers:
+        - name: download-dashboards
+          image: alpine/git:latest # A lightweight image with git
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              git clone --branch vrsim --single-branch https://github.com/CSPDevLabs/sros_bng_observability.git /tmp/repo;
+              mkdir -p /dashboards-volume;
+              cp /tmp/repo/configs/grafana/dashboards/*.json /dashboards-volume/;
+              rm -rf /tmp/repo; # Clean up the cloned repository
+          volumeMounts:
+            - name: grafana-dashboards-download # Mount the emptyDir volume
+              mountPath: /dashboards-volume
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest # kpt-set: grafana/grafana:${grafana-version}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http-grafana
+              protocol: TCP
+          env:
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: "Admin"
+            - name: GF_SERVER_ROOT_URL
+              value: http://bng.nok.local:8080/grafana # kpt-set: http://${ingress-host}:8080/grafana
+            - name: GF_INSTALL_PLUGINS
+              value: 'andrewbmchugh-flow-panel'  
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /robots.txt
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 250m
+              memory: 750Mi
+          volumeMounts:
+            - mountPath: /var/lib/grafana
+              name: grafana-pv
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: grafana-datasources-volume
+              readOnly: true
+            - mountPath: /var/lib/grafana/dashboards # Mount the downloaded dashboards here
+              name: grafana-dashboards-download
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-dashboard-provisioning-volume  
+      volumes:
+        - name: grafana-pv
+          persistentVolumeClaim:
+            claimName: grafana-pvc
+        - name: grafana-datasources-volume
+          configMap:
+            name: grafana-datasources-config
+        - name: grafana-dashboard-provisioning-volume
+          configMap: 
+            name: grafana-dashboard-provisioning   
+        - name: grafana-dashboards-download 
+          emptyDir: {}

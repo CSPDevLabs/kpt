@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: register-consul-services
+  namespace: nok-bng 
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: consul-service-register
+        image: ghcr.io/srl-labs/network-multitool
+        env:
+        - name: CONSUL_HTTP_ADDR
+          value: "http://consul-svc.nok-base.svc.cluster.local:8500" 
+        volumeMounts:
+        - name: service-definitions
+          mountPath: "/etc/consul-services"
+          readOnly: true
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            # --- Start: Wait for Consul to be ready ---
+            echo "Waiting for Consul API at $CONSUL_HTTP_ADDR to be ready..."
+            until curl -s -f -o /dev/null "$CONSUL_HTTP_ADDR/v1/status/leader"; do
+              echo "Consul API not yet ready. Retrying in 5 seconds..."
+              sleep 5
+            done
+            echo "Consul API is ready. Proceeding with service registration."
+            # --- End: Wait for Consul to be ready ---
+
+            if [ ! -f /etc/consul-services/services.json ]; then
+              echo "Error: services.json not found in ConfigMap."
+              exit 1
+            fi
+            
+            echo "Starting Consul service registration..."
+            jq -c '.[]' /etc/consul-services/services.json | while read i; do
+              SERVICE_ID=$(echo "$i" | jq -r '.ID')
+              echo "Registering service: $SERVICE_ID"
+              
+              RESPONSE=$(curl -s -w "%{http_code}" \
+                --request PUT \
+                --data "$i" \
+                "$CONSUL_HTTP_ADDR/v1/agent/service/register")
+              
+              if [ "$RESPONSE" -eq 200 ]; then
+                echo "Service $SERVICE_ID registered successfully."
+              else
+                echo "Failed to register service $SERVICE_ID. HTTP Status: $RESPONSE"
+                # Optionally, you can choose to exit here if a single failure is critical
+                # exit 1 
+              fi
+            done
+            echo "All services processed."
+      volumes:
+      - name: service-definitions
+        configMap:
+          name: consul-service-registrations
