@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bbm-setters-config
+data:
+  prometheus-version: v2.47.0
+  blackbox-versinon: v0.28.0 
+  # pkg-namespace: nok-bbm

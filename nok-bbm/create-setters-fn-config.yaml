@@ -1,0 +1,7 @@
+# create-setters-fn-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: create-setters-fn-config
+data:
+  pkg-namespace: NAMESPACE

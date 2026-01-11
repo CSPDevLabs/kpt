@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bbm-prometheus-config
+  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
+  labels:
+    app: bbm-prometheus
+data:
+  prometheus.yml: |
+    global:                                                                                                                                                                                                                                                        
+      scrape_interval:     30s
+      scrape_timeout: 7s
+      evaluation_interval: 10s
+    scrape_configs:
+      - job_name: blackbox # To get metrics about the exporter itself
+        metrics_path: /metrics
+        static_configs:
+          - targets:
+            - localhost:9115
+      - job_name: 'bb-http_2xx'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]  # Must match the key in blackbox.yml
+        static_configs:
+          - targets:
+            - https://www.google.com
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: bb-exporter:9115
+      - job_name: 'bb-ssh'
+        metrics_path: /probe
+        params:
+          module: [tcp_connect]          # Must match the key in blackbox.yml
+        static_configs:
+          - targets:
+            - 172.21.20.11:22            # Target BNG1
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: bb-exporter:9115

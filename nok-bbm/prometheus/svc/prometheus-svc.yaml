@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbm-prometheus-svc
+  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
+  labels:
+    app: bbm-prometheus
+spec:
+  selector:
+    app: bbm-prometheus
+  type: ClusterIP # Or ClusterIP if you prefer internal access
+  ports:
+    - protocol: TCP
+      port: 9090
+      targetPort: 9090
