@@ -1,0 +1,22 @@
+apiVersion: inv.sdcio.dev/v1alpha1
+kind: Schema
+metadata:
+  name: sros.nokia.sdcio.dev-25.10.1
+  namespace: nok-bng
+spec:
+  provider: sros.nokia.sdcio.dev
+  version: B-25.10.R1
+  repositories:
+  - repoURL: https://github.com/nokia/7x50_YangModels
+    kind: tag
+    ref: sros_25.10.r1
+    dirs:
+    - src: YANG
+      dst: .
+    schema:
+      models:
+      - nokia-combined
+      includes:
+      - ietf
+      - nokia-sros-yang-extensions.yang
+      excludes: []
