@@ -1,4 +1,3 @@
----
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -53,29 +52,24 @@ spec:
             description: WorkspaceSpec defines the desired state of Workspace
             properties:
               credentials:
-                description: Credentials defines the name of the secret that holds
-                  the credentials to connect to the repo
+                description: Credentials defines the name of the secret that holds the credentials to connect to the repo
                 type: string
               kind:
                 default: tag
-                description: Kind defines the that the BranchOrTag string is a repository
-                  branch or a tag
+                description: Kind defines the that the BranchOrTag string is a repository branch or a tag
                 enum:
                 - branch
                 - tag
                 - hash
                 type: string
               proxy:
-                description: Proxy defines the HTTP/HTTPS proxy to be used to connect
-                  to the repo.
+                description: Proxy defines the HTTP/HTTPS proxy to be used to connect to the repo.
                 properties:
                   URL:
-                    description: URL specifies the base URL of the HTTP/HTTPS proxy
-                      server.
+                    description: URL specifies the base URL of the HTTP/HTTPS proxy server.
                     type: string
                   credentials:
-                    description: Credentials defines the name of the secret that holds
-                      the credentials to connect to the proxy server
+                    description: Credentials defines the name of the secret that holds the credentials to connect to the proxy server
                     type: string
                 required:
                 - URL
@@ -164,8 +158,7 @@ spec:
                 description: DeployedRef is the reference that is deployed
                 type: string
               kind:
-                description: Kind defines the that the BranchOrTag string is a repository
-                  branch or a tag
+                description: Kind defines the that the BranchOrTag string is a repository branch or a tag
                 enum:
                 - branch
                 - tag
@@ -177,7 +170,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -233,29 +225,24 @@ spec:
             description: RolloutSpec defines the desired state of Rollout
             properties:
               credentials:
-                description: Credentials defines the name of the secret that holds
-                  the credentials to connect to the repo
+                description: Credentials defines the name of the secret that holds the credentials to connect to the repo
                 type: string
               kind:
                 default: tag
-                description: Kind defines the that the BranchOrTag string is a repository
-                  branch or a tag
+                description: Kind defines the that the BranchOrTag string is a repository branch or a tag
                 enum:
                 - branch
                 - tag
                 - hash
                 type: string
               proxy:
-                description: Proxy defines the HTTP/HTTPS proxy to be used to connect
-                  to the repo.
+                description: Proxy defines the HTTP/HTTPS proxy to be used to connect to the repo.
                 properties:
                   URL:
-                    description: URL specifies the base URL of the HTTP/HTTPS proxy
-                      server.
+                    description: URL specifies the base URL of the HTTP/HTTPS proxy server.
                     type: string
                   credentials:
-                    description: Credentials defines the name of the secret that holds
-                      the credentials to connect to the proxy server
+                    description: Credentials defines the name of the secret that holds the credentials to connect to the proxy server
                     type: string
                 required:
                 - URL
@@ -346,8 +333,7 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               targets:
-                description: Targets defines the status of the rollout on the respective
-                  target
+                description: Targets defines the status of the rollout on the respective target
                 items:
                   properties:
                     conditions:
@@ -386,8 +372,7 @@ spec:
                             pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
                             type: string
                           status:
-                            description: status of the condition, one of True, False,
-                              Unknown.
+                            description: status of the condition, one of True, False, Unknown.
                             enum:
                             - "True"
                             - "False"
@@ -426,7 +411,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -483,8 +467,7 @@ spec:
                       description: Address (specified as IP or DNS name) of the target/target(s)
                       type: string
                     hostName:
-                      description: HostName of the ip prefix; used for /32 or /128
-                        addresses with discovery disabled
+                      description: HostName of the ip prefix; used for /32 or /128 addresses with discovery disabled
                       type: string
                   required:
                   - address
@@ -510,8 +493,7 @@ spec:
                 - version
                 type: object
               discoveryProfile:
-                description: DiscoveryProfile define the profiles the discovery controller
-                  uses to discover targets
+                description: DiscoveryProfile define the profiles the discovery controller uses to discover targets
                 properties:
                   connectionProfiles:
                     description: |-
@@ -521,36 +503,30 @@ spec:
                       type: string
                     type: array
                   credentials:
-                    description: Credentials defines the name of the secret that holds
-                      the credentials to connect to the target
+                    description: Credentials defines the name of the secret that holds the credentials to connect to the target
                     type: string
                   tlsSecret:
-                    description: TLSSecret defines the name of the TLS secret to connect
-                      to the target if mtls is used
+                    description: TLSSecret defines the name of the TLS secret to connect to the target if mtls is used
                     type: string
                 required:
                 - connectionProfiles
                 - credentials
                 type: object
               period:
-                description: Period defines the wait period between discovery rule
-                  runs
+                description: Period defines the wait period between discovery rule runs
                 type: string
               podSelector:
-                description: PodSelector defines the pod selector for which this discovery
-                  rule applies
+                description: PodSelector defines the pod selector for which this discovery rule applies
                 properties:
                   matchExpressions:
-                    description: matchExpressions is a list of label selector requirements.
-                      The requirements are ANDed.
+                    description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
                     items:
                       description: |-
                         A label selector requirement is a selector that contains values, a key, and an operator that
                         relates the key and values.
                       properties:
                         key:
-                          description: key is the label key that the selector applies
-                            to.
+                          description: key is the label key that the selector applies to.
                           type: string
                         operator:
                           description: |-
@@ -605,20 +581,17 @@ spec:
                   domain name in the k8s cluster where the service reside.
                 type: string
               serviceSelector:
-                description: ServiceSelector defines the service selector for which
-                  this discovery rule applies
+                description: ServiceSelector defines the service selector for which this discovery rule applies
                 properties:
                   matchExpressions:
-                    description: matchExpressions is a list of label selector requirements.
-                      The requirements are ANDed.
+                    description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
                     items:
                       description: |-
                         A label selector requirement is a selector that contains values, a key, and an operator that
                         relates the key and values.
                       properties:
                         key:
-                          description: key is the label key that the selector applies
-                            to.
+                          description: key is the label key that the selector applies to.
                           type: string
                         operator:
                           description: |-
@@ -658,20 +631,16 @@ spec:
                 items:
                   properties:
                     connectionProfile:
-                      description: ConnectionProfile define the profile used to connect
-                        to the target once discovered
+                      description: ConnectionProfile define the profile used to connect to the target once discovered
                       type: string
                     credentials:
-                      description: Credentials defines the name of the secret that
-                        holds the credentials to connect to the target
+                      description: Credentials defines the name of the secret that holds the credentials to connect to the target
                       type: string
                     syncProfile:
-                      description: SyncProfile define the profile used to sync to
-                        the target config once discovered
+                      description: SyncProfile define the profile used to sync to the target config once discovered
                       type: string
                     tlsSecret:
-                      description: TLSSecret defines the name of the TLS secret to
-                        connect to the target if mtls is used
+                      description: TLSSecret defines the name of the TLS secret to connect to the target if mtls is used
                       type: string
                   required:
                   - connectionProfile
@@ -679,20 +648,17 @@ spec:
                   type: object
                 type: array
               targetTemplate:
-                description: TargetTemplate defines the template the discovery controller
-                  uses to create the targets as a result of the discovery
+                description: TargetTemplate defines the template the discovery controller uses to create the targets as a result of the discovery
                 properties:
                   annotations:
                     additionalProperties:
                       type: string
-                    description: Annotations is a key value map to be copied to the
-                      target CR.
+                    description: Annotations is a key value map to be copied to the target CR.
                     type: object
                   labels:
                     additionalProperties:
                       type: string
-                    description: Labels is a key value map to be copied to the target
-                      CR.
+                    description: Labels is a key value map to be copied to the target CR.
                     type: object
                   nameTemplate:
                     description: target name template
@@ -780,7 +746,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -803,8 +768,7 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: DiscoveryVendorProfile is the Schema for the DiscoveryVendorProfile
-          API
+        description: DiscoveryVendorProfile is the Schema for the DiscoveryVendorProfile API
         properties:
           apiVersion:
             description: |-
@@ -858,8 +822,7 @@ spec:
                           description: Regex defines the regex to transform the value
                           type: string
                         script:
-                          description: Script defines the starlark script to transform
-                            the value
+                          description: Script defines the starlark script to transform the value
                           type: string
                       required:
                       - key
@@ -882,7 +845,6 @@ spec:
         type: object
     served: true
     storage: true
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -966,8 +928,7 @@ spec:
                 type: string
               subscriptions:
                 items:
-                  description: SubscriptionSync defines the desired Subscription of
-                    SubscriptionSync
+                  description: SubscriptionSync defines the desired Subscription of SubscriptionSync
                   properties:
                     adminState:
                       default: enabled
@@ -977,8 +938,7 @@ spec:
                       - disabled
                       type: string
                     description:
-                      description: Description details what the Subscription collection
-                        is about
+                      description: Description details what the Subscription collection is about
                       type: string
                     interval:
                       enum:
@@ -991,8 +951,7 @@ spec:
                     labels:
                       additionalProperties:
                         type: string
-                      description: Labels can be defined as user defined data to provide
-                        extra context
+                      description: Labels can be defined as user defined data to provide extra context
                       type: object
                     mode:
                       default: sample
@@ -1002,8 +961,7 @@ spec:
                       - sample
                       type: string
                     name:
-                      description: Name defines the name of the group of the Subscription
-                        to be collected
+                      description: Name defines the name of the group of the Subscription to be collected
                       type: string
                     paths:
                       items:
@@ -1018,24 +976,20 @@ spec:
                 maxItems: 128
                 type: array
               target:
-                description: Targets defines the targets on which this Subscription
-                  applies
+                description: Targets defines the targets on which this Subscription applies
                 properties:
                   targetSelector:
-                    description: TargetSelector defines the selector used to select
-                      the targets to which the config applies
+                    description: TargetSelector defines the selector used to select the targets to which the config applies
                     properties:
                       matchExpressions:
-                        description: matchExpressions is a list of label selector
-                          requirements. The requirements are ANDed.
+                        description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
                         items:
                           description: |-
                             A label selector requirement is a selector that contains values, a key, and an operator that
                             relates the key and values.
                           properties:
                             key:
-                              description: key is the label key that the selector
-                                applies to.
+                              description: key is the label key that the selector applies to.
                               type: string
                             operator:
                               description: |-
@@ -1140,8 +1094,7 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               targets:
-                description: Targets defines the list of targets this resource applies
-                  to
+                description: Targets defines the list of targets this resource applies to
                 items:
                   type: string
                 type: array
@@ -1151,7 +1104,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -1225,23 +1177,19 @@ spec:
                 description: Address defines the address to connect to the target
                 type: string
               connectionProfile:
-                description: ConnectionProfile define the profile used to connect
-                  to the target once discovered
+                description: ConnectionProfile define the profile used to connect to the target once discovered
                 type: string
               credentials:
-                description: Credentials defines the name of the secret that holds
-                  the credentials to connect to the target
+                description: Credentials defines the name of the secret that holds the credentials to connect to the target
                 type: string
               provider:
                 description: Provider specifies the provider using this target.
                 type: string
               syncProfile:
-                description: SyncProfile define the profile used to sync to the target
-                  config once discovered
+                description: SyncProfile define the profile used to sync to the target config once discovered
                 type: string
               tlsSecret:
-                description: TLSSecret defines the name of the TLS secret to connect
-                  to the target if mtls is used
+                description: TLSSecret defines the name of the TLS secret to connect to the target if mtls is used
                 type: string
             required:
             - address
@@ -1316,8 +1264,7 @@ spec:
                 - type
                 x-kubernetes-list-type: map
               discoveryInfo:
-                description: Discovery info defines the information retrieved during
-                  discovery
+                description: Discovery info defines the information retrieved during discovery
                 properties:
                   hostname:
                     description: HostName associated with the target
@@ -1347,8 +1294,7 @@ spec:
                     type: string
                 type: object
               usedReferences:
-                description: UsedReferences track the resource used to reconcile the
-                  cr
+                description: UsedReferences track the resource used to reconcile the cr
                 properties:
                   connectionProfileResourceVersion:
                     type: string
@@ -1368,7 +1314,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -1438,8 +1383,7 @@ spec:
                   rule: self == oldSelf
               sync:
                 items:
-                  description: TargetSyncProfileSync defines the desired state of
-                    TargetSyncProfileSync
+                  description: TargetSyncProfileSync defines the desired state of TargetSyncProfileSync
                   properties:
                     encoding:
                       enum:
@@ -1515,7 +1459,6 @@ spec:
     served: true
     storage: true
     subresources: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -1583,13 +1526,11 @@ spec:
                 - message: provider is immutable
                   rule: self == oldSelf
               repositories:
-                description: Repositories define the repositories used for building
-                  the provider schema
+                description: Repositories define the repositories used for building the provider schema
                 items:
                   properties:
                     credentials:
-                      description: Credentials defines the name of the secret that
-                        holds the credentials to connect to the repo
+                      description: Credentials defines the name of the secret that holds the credentials to connect to the repo
                       type: string
                     dirs:
                       description: |-
@@ -1601,12 +1542,10 @@ spec:
                           in the repository to a given destination in the schema server
                         properties:
                           dst:
-                            description: Dst is the relative directory in the schema
-                              server
+                            description: Dst is the relative directory in the schema server
                             type: string
                           src:
-                            description: Src is the relative directory in the repository
-                              URL
+                            description: Src is the relative directory in the repository URL
                             type: string
                         required:
                         - dst
@@ -1616,24 +1555,20 @@ spec:
                       type: array
                     kind:
                       default: tag
-                      description: Kind defines the that the BranchOrTag string is
-                        a repository branch or a tag
+                      description: Kind defines the that the BranchOrTag string is a repository branch or a tag
                       enum:
                       - branch
                       - tag
                       - hash
                       type: string
                     proxy:
-                      description: Proxy defines the HTTP/HTTPS proxy to be used to
-                        connect to the repo.
+                      description: Proxy defines the HTTP/HTTPS proxy to be used to connect to the repo.
                       properties:
                         URL:
-                          description: URL specifies the base URL of the HTTP/HTTPS
-                            proxy server.
+                          description: URL specifies the base URL of the HTTP/HTTPS proxy server.
                           type: string
                         credentials:
-                          description: Credentials defines the name of the secret
-                            that holds the credentials to connect to the proxy server
+                          description: Credentials defines the name of the secret that holds the credentials to connect to the proxy server
                           type: string
                       required:
                       - URL
@@ -1645,8 +1580,7 @@ spec:
                         provider schema version
                       type: string
                     repoURL:
-                      description: RepositoryURL specifies the base URL for a given
-                        repository
+                      description: RepositoryURL specifies the base URL for a given repository
                       type: string
                     schema:
                       description: |-
@@ -1654,22 +1588,19 @@ spec:
                         cana be excludes
                       properties:
                         excludes:
-                          description: Excludes defines the list of files/directories
-                            to be excluded
+                          description: Excludes defines the list of files/directories to be excluded
                           items:
                             type: string
                           maxItems: 64
                           type: array
                         includes:
-                          description: Excludes defines the list of files/directories
-                            to be excluded
+                          description: Excludes defines the list of files/directories to be excluded
                           items:
                             type: string
                           maxItems: 64
                           type: array
                         models:
-                          description: Models defines the list of files/directories
-                            to be used as a model
+                          description: Models defines the list of files/directories to be used as a model
                           items:
                             type: string
                           maxItems: 64
@@ -1764,8 +1695,7 @@ spec:
               repositories:
                 description: SchemaRepositoryStatus provides the array of repositories
                 items:
-                  description: SchemaRepositoryStatus provides the observed hash of
-                    a repository
+                  description: SchemaRepositoryStatus provides the observed hash of a repository
                   properties:
                     reference:
                       description: Reference indicating version of loaded repository
@@ -1781,7 +1711,6 @@ spec:
     storage: true
     subresources:
       status: {}
-
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -1820,8 +1749,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: TargetConnectionProfile is the Schema for the TargetConnectionProfile
-          API
+        description: TargetConnectionProfile is the Schema for the TargetConnectionProfile API
         properties:
           apiVersion:
             description: |-
@@ -1841,8 +1769,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: TargetConnectionProfileSpec defines the desired state of
-              TargetConnectionProfile
+            description: TargetConnectionProfileSpec defines the desired state of TargetConnectionProfile
             properties:
               commitCandidate:
                 default: candidate
@@ -1941,7 +1868,6 @@ spec:
     served: true
     storage: true
     subresources: {}
-
 ---
 apiVersion: apiregistration.k8s.io/v1
 kind: APIService
@@ -1957,7 +1883,6 @@ spec:
     port: 6443
   version: v1alpha1
   versionPriority: 15
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -2095,7 +2020,6 @@ spec:
       - name: workspace-store
         persistentVolumeClaim:
           claimName: pvc-workspace-store
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -2118,7 +2042,6 @@ spec:
       app.kubernetes.io/name: config-server
   policyTypes:
   - Ingress
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -2140,7 +2063,6 @@ spec:
       app.kubernetes.io/name: config-server
   policyTypes:
   - Ingress
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2335,7 +2257,6 @@ rules:
   - update
   - patch
   - delete
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2354,7 +2275,6 @@ rules:
   - tokenreviews
   verbs:
   - create
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2365,7 +2285,6 @@ rules:
   - /metrics
   verbs:
   - get
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -2379,7 +2298,6 @@ subjects:
 - kind: ServiceAccount
   name: config-server
   namespace: nok-base
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -2393,7 +2311,6 @@ subjects:
 - kind: ServiceAccount
   name: controller-manager
   namespace: nok-base
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -2407,7 +2324,6 @@ subjects:
 - kind: ServiceAccount
   name: config-server
   namespace: nok-base
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -2427,7 +2343,6 @@ rules:
   - serviceaccounts/token
   verbs:
   - create
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -2442,21 +2357,14 @@ subjects:
 - kind: ServiceAccount
   name: config-server
   namespace: nok-base
-
 ---
 apiVersion: v1
 data:
-  data-server.yaml: "grpc-server:\n  schema-server:\n    enabled: true\n    schemas-directory:
-    ./schemas\n\n  data-server:\n    max-candidates: 16\n\n  max-recv-msg-size: 25165824
-    # 24 * 1024 * 1024 (24MB)\n\ndatastores: # this specifies MAIN datastores\n\nschema-store:\n
-    \ # type is either memory or persistent (default)\n  type: persistent\n  path:
-    \"/schemadb\"\n\ncache: \n  type: local\n  store-type: badgerdb\n  dir: \"/cached/caches\"\n\nprometheus:\n
-    \ address: \":56090\""
+  data-server.yaml: "grpc-server:\n  schema-server:\n    enabled: true\n    schemas-directory: ./schemas\n\n  data-server:\n    max-candidates: 16\n\n  max-recv-msg-size: 25165824 # 24 * 1024 * 1024 (24MB)\n\ndatastores: # this specifies MAIN datastores\n\nschema-store:\n  # type is either memory or persistent (default)\n  type: persistent\n  path: \"/schemadb\"\n\ncache: \n  type: local\n  store-type: badgerdb\n  dir: \"/cached/caches\"\n\nprometheus:\n  address: \":56090\""
 kind: ConfigMap
 metadata:
   name: data-server
   namespace: nok-base
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -2469,7 +2377,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -2482,7 +2389,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -2495,7 +2401,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -2508,7 +2413,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 apiVersion: v1
 data:
@@ -2521,7 +2425,6 @@ metadata:
   name: config-server-cert
   namespace: nok-base
 type: kubernetes.io/tls
-
 ---
 apiVersion: v1
 kind: Secret
@@ -2531,7 +2434,6 @@ metadata:
   name: config-server-token
   namespace: nok-base
 type: kubernetes.io/service-account-token
-
 ---
 apiVersion: v1
 kind: Service
@@ -2548,7 +2450,6 @@ spec:
     targetPort: 8443
   selector:
     app.kubernetes.io/name: config-server
-
 ---
 apiVersion: v1
 kind: Service
@@ -2565,7 +2466,6 @@ spec:
     targetPort: 9443
   selector:
     app.kubernetes.io/name: config-server
-
 ---
 apiVersion: v1
 kind: Service
@@ -2581,7 +2481,6 @@ spec:
     targetPort: api-service
   selector:
     app.kubernetes.io/name: config-server
-
 ---
 apiVersion: v1
 kind: Service
@@ -2598,7 +2497,6 @@ spec:
     targetPort: data-service
   selector:
     sdcio.dev/data-server: "true"
-
 ---
 apiVersion: v1
 kind: ServiceAccount

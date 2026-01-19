@@ -13,7 +13,6 @@
 # limitations under the License.
 # Source: cert-manager/templates/crds.yaml
 
-
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
@@ -4748,8 +4747,8 @@ rules:
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
     verbs: ["get", "list", "watch", "create", "delete", "update"]
-  - apiGroups: [ "gateway.networking.k8s.io" ]
-    resources: [ "httproutes" ]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
     verbs: ["get", "list", "watch", "create", "delete", "update"]
   # We require the ability to specify a custom hostname when we are creating
   # new ingress resources.
@@ -5361,18 +5360,18 @@ spec:
           image: "quay.io/jetstack/cert-manager-cainjector:v1.13.3"
           imagePullPolicy: IfNotPresent
           args:
-          - --v=2
-          - --leader-election-namespace=kube-system
+            - --v=2
+            - --leader-election-namespace=kube-system
           env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-              - ALL
+                - ALL
       nodeSelector:
         kubernetes.io/os: linux
 ---
@@ -5419,28 +5418,28 @@ spec:
           image: "quay.io/jetstack/cert-manager-controller:v1.13.3"
           imagePullPolicy: IfNotPresent
           args:
-          - --v=2
-          - --cluster-resource-namespace=$(POD_NAMESPACE)
-          - --leader-election-namespace=kube-system
-          - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.13.3
-          - --max-concurrent-challenges=60
+            - --v=2
+            - --cluster-resource-namespace=$(POD_NAMESPACE)
+            - --leader-election-namespace=kube-system
+            - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.13.3
+            - --max-concurrent-challenges=60
           ports:
-          - containerPort: 9402
-            name: http-metrics
-            protocol: TCP
-          - containerPort: 9403
-            name: http-healthz
-            protocol: TCP
+            - containerPort: 9402
+              name: http-metrics
+              protocol: TCP
+            - containerPort: 9403
+              name: http-healthz
+              protocol: TCP
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-              - ALL
+                - ALL
           env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       nodeSelector:
         kubernetes.io/os: linux
 ---
@@ -5483,21 +5482,20 @@ spec:
           image: "quay.io/jetstack/cert-manager-webhook:v1.13.3"
           imagePullPolicy: IfNotPresent
           args:
-          - --v=2
-          - --secure-port=10250
-          - --dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)
-          - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
-          - --dynamic-serving-dns-names=cert-manager-webhook
-          - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)
-          - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc
-          
+            - --v=2
+            - --secure-port=10250
+            - --dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)
+            - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
+            - --dynamic-serving-dns-names=cert-manager-webhook
+            - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)
+            - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc
           ports:
-          - name: https
-            protocol: TCP
-            containerPort: 10250
-          - name: healthcheck
-            protocol: TCP
-            containerPort: 6080
+            - name: https
+              protocol: TCP
+              containerPort: 10250
+            - name: healthcheck
+              protocol: TCP
+              containerPort: 6080
           livenessProbe:
             httpGet:
               path: /livez
@@ -5522,12 +5520,12 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-              - ALL
+                - ALL
           env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
       nodeSelector:
         kubernetes.io/os: linux
 ---
@@ -5589,10 +5587,10 @@ webhooks:
   - name: webhook.cert-manager.io
     namespaceSelector:
       matchExpressions:
-      - key: "cert-manager.io/disable-validation"
-        operator: "NotIn"
-        values:
-        - "true"
+        - key: "cert-manager.io/disable-validation"
+          operator: "NotIn"
+          values:
+            - "true"
     rules:
       - apiGroups:
           - "cert-manager.io"

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-service-registrations
+  namespace: nok-bng 
+data:
+  services.json: |
+    [
+      {
+        "ID": "clab-sros_bngt-bng1",
+        "Name": "clab-sros_bngt-bng1",
+        "Address": "172.21.20.11",
+        "Port": 57400,
+        "Tags": ["sros", "bng"]
+      },
+      {
+        "ID": "clab-sros_bngt-bng2",
+        "Name": "clab-sros_bngt-bng2",
+        "Address": "172.21.20.12",
+        "Port": 57400,
+        "Tags": ["sros", "bng"]
+      },
+      {
+        "ID": "clab-sros_bngt-agg",
+        "Name": "clab-sros_bngt-agg",
+        "Address": "172.21.20.21",
+        "Port": 57400,
+        "Tags": ["sros", "agg"]
+      },
+      {
+        "ID": "clab-sros_bngt-core",
+        "Name": "clab-sros_bngt-core",
+        "Address": "172.21.20.22",
+        "Port": 57400,
+        "Tags": ["sros", "core"]
+      },
+      {
+        "ID": "clab-sros_bngt-bngblaster",
+        "Name": "clab-sros_bngt-bngblaster",
+        "Address": "172.21.20.2",
+        "Port": 57400,
+        "Tags": ["sros", "bngblaster"]
+      },
+      {
+        "ID": "clab-sros_bngt-radius",
+        "Name": "clab-sros_bngt-radius",
+        "Address": "172.21.20.111",
+        "Port": 57400,
+        "Tags": ["radius"]
+      }
+    ]
