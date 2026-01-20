@@ -116,7 +116,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              git clone --branch vrsim --single-branch https://github.com/CSPDevLabs/sros_bng_observability.git /tmp/repo;
+              git clone --branch mau_vrsim_2 --single-branch https://github.com/CSPDevLabs/sros_bng_observability.git /tmp/repo;
               mkdir -p /dashboards-volume;
               cp /tmp/repo/configs/grafana/dashboards/*.json /dashboards-volume/;
               rm -rf /tmp/repo; # Clean up the cloned repository
