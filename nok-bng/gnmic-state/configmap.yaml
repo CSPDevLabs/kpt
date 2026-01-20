@@ -52,11 +52,11 @@ data:
 
     # Targets
     targets:
-      clab-sros_bngt-bng1.service.consul:
+      clab-sros-bngt-bng1.service.consul:
         <<: *auth_cred
         subscriptions:
           *sub_bng
-      clab-sros_bngt-bng2.service.consul:
+      clab-sros-bngt-bng2.service.consul:
         <<: *auth_cred
         subscriptions:
           *sub_bng
