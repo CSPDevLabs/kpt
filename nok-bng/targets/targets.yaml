@@ -52,13 +52,13 @@ spec:
     version: B-25.10.R1
   addresses:
   - address: 172.21.20.21
-    hostName: clab-sros_bngt-agg
+    hostName: clab-sros-bngt-agg
   - address: 172.21.20.11
-    hostName: clab-sros_bngt-bng1
+    hostName: clab-sros-bngt-bng1
   - address: 172.21.20.12
-    hostName: clab-sros_bngt-bng2
+    hostName: clab-sros-bngt-bng2
   - address: 172.21.20.22
-    hostName: clab-sros_bngt-core            
+    hostName: clab-sros-bngt-core            
   targetConnectionProfiles:
   - credentials: sros.nokia.sdcio.dev 
     connectionProfile: gnmi-skipverify
