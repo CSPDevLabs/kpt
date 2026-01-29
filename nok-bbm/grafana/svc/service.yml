@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbm-grafana-svc
+  namespace: nok-bbm
+  annotations:
+    netopskube.io/bbm: "true"
+spec:
+  selector:
+    app: bbm-grafana
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  sessionAffinity: None
+  type: LoadBalancer
+  allocateLoadBalancerNodePorts: true
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  loadBalancerIP: 172.18.0.114

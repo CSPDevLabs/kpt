@@ -2,46 +2,203 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: bbm-prometheus-config
-  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
+  namespace: nok-bbm
   labels:
     app: bbm-prometheus
 data:
   prometheus.yml: |
-    global:                                                                                                                                                                                                                                                        
-      scrape_interval:     30s
+    global:
+      scrape_interval: 30s
       scrape_timeout: 7s
       evaluation_interval: 10s
+    rule_files:
+      - "/etc/prometheus/rules/*"
     scrape_configs:
-      - job_name: blackbox # To get metrics about the exporter itself
+      # Blackbox exporter metrics
+      - job_name: blackbox 
         metrics_path: /metrics
         static_configs:
           - targets:
-            - localhost:9115
-      - job_name: 'bb-http_2xx'
+              - blackbox-svc:9115
+      # Dynamic srim targets SSH check
+      - job_name: 'ds_file_nokia_srsim_ssh_check'
+        file_sd_configs:
+          - files:
+              - '/opt/targets/nokia_srsim*.json'
+            refresh_interval: 10s
         metrics_path: /probe
         params:
-          module: [http_2xx]  # Must match the key in blackbox.yml
+          module: [ssh_check]
+        relabel_configs:
+          - source_labels: [__address__]
+            regex: (.+)
+            replacement: $1:22
+            target_label: __param_target
+          - source_labels: [hostname]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-svc:9115
+      # Dynamic srim targets gNMI check
+      - job_name: 'ds_file_nokia_srsim_gnmi_check'
+        file_sd_configs:
+          - files:
+              - '/opt/targets/nokia_srsim*.json'
+            refresh_interval: 10s
+        metrics_path: /probe
+        params:
+          module: [tcp_connect]
+        relabel_configs:
+          - source_labels: [__address__]
+            regex: (.+)
+            replacement: $1:57400
+            target_label: __param_target
+          - source_labels: [hostname]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-svc:9115
+      # Kube State Metrics
+      - job_name: 'kube_state_metrics'
         static_configs:
           - targets:
-            - https://www.google.com
+              - kube-state-metrics:8080
+              - kube-state-metrics:8081
+      # Dynamic linux based target ICMP ping check
+      - job_name: 'ds_file_linux_icmp_ping'
+        file_sd_configs:
+          - files:
+              - '/opt/targets/linux*.json'
+            refresh_interval: 10s
+        metrics_path: /probe
+        params:
+          module: [icmp_ping]
         relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
-          - source_labels: [__param_target]
+          - source_labels: [hostname]
             target_label: instance
           - target_label: __address__
-            replacement: bb-exporter:9115
-      - job_name: 'bb-ssh'
+            replacement: blackbox-svc:9115
+      # Dynamic K8s probing HTTP
+      - job_name: 'nok_bng_services_http'
+        scrape_timeout: 5s
+        scrape_interval: 60s
         metrics_path: /probe
         params:
-          module: [tcp_connect]          # Must match the key in blackbox.yml
-        static_configs:
-          - targets:
-            - 172.21.20.11:22            # Target BNG1
+          module: [http_2xx]
+        kubernetes_sd_configs:
+          - role: service
+            namespaces:
+              names:
+                - nok-bng
         relabel_configs:
-          - source_labels: [__address__]
+          # Keep only explicitly annotated by netopskube.io/bbm: "true"
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_bbm]
+            regex: "true"
+            action: keep
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_prober]
+            regex: "http"
+            action: keep
+          # Check the protocol is TCP
+          - source_labels: [__meta_kubernetes_service_port_protocol]
+            regex: "TCP"
+            action: keep
+          # Saving namespace and service labels for the convinience
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          # Identify scheme
+          - target_label: __tmp_scheme
+            replacement: http
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_scheme]
+            regex: (https?)
+            target_label: __tmp_scheme
+          # Identify path
+          - target_label: __tmp_path
+            replacement: /
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_path]
+            regex: (.+)
+            target_label: __tmp_path
+          # build target
+          - source_labels: [__meta_kubernetes_service_name,
+              __meta_kubernetes_namespace,
+              __meta_kubernetes_service_port_number,
+              __tmp_path,
+              __tmp_scheme]
+            regex: (.+);(.+);(.+);(.+);(.+)
+            replacement: $5://$1.$2.svc.cluster.local:$3$4
             target_label: __param_target
+          # Upgrade instance label
           - source_labels: [__param_target]
             target_label: instance
           - target_label: __address__
-            replacement: bb-exporter:9115
+            replacement: blackbox-svc:9115
+      # Dynamic K8s probing TCP
+      - job_name: 'nok_bng_services_tcp'
+        scrape_timeout: 5s
+        scrape_interval: 60s
+        metrics_path: /probe
+        params:
+          module: [tcp_connect]
+        kubernetes_sd_configs:
+          - role: service
+            namespaces:
+              names:
+                - nok-bng
+        relabel_configs:
+          # Keep only explicitly annotated by netopskube.io/bbm: "true"
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_bbm]
+            regex: "true"
+            action: keep
+          - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_prober]
+            regex: "tcp"
+            action: keep
+          # Check the protocol is TCP
+          - source_labels: [__meta_kubernetes_service_port_protocol]
+            regex: "TCP"
+            action: keep
+          # Saving namespace and service labels for the convinience
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          # build target
+          - source_labels: [__meta_kubernetes_service_name,
+              __meta_kubernetes_namespace,
+              __meta_kubernetes_service_port_number]
+            regex: (.+);(.+);(.+)
+            replacement: $1.$2.svc.cluster.local:$3
+            target_label: __param_target
+          # Upgrade instance label
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-svc:9115
+      # Dynamic K8s Ingress probing
+      - job_name: 'nok_bng_ingress'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        kubernetes_sd_configs:
+          - role: ingress
+        relabel_configs:
+          # Keep only explicitly annotated by netopskube.io/bbm: "true"
+          - source_labels: [__meta_kubernetes_ingress_annotation_netopskube_io_bbm]
+            regex: "true"
+            action: keep
+          # Construct target URL from Ingress spec
+          - source_labels: [__meta_kubernetes_ingress_scheme, __meta_kubernetes_ingress_host, __meta_kubernetes_ingress_path]
+            regex: (.+);(.+);(.+)
+            replacement: ${1}://${2}${3}
+            target_label: __param_target
+          # Set instance label
+          - source_labels: [__param_target]
+            target_label: instance
+          # Metadata labels for convenience
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_ingress_name]
+            target_label: ingress
+          # Redirect to blackbox exporter
+          - target_label: __address__
+            replacement: blackbox-svc:9115

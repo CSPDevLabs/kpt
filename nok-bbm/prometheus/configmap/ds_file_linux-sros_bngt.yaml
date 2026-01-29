@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linux-sros-bngt
+  labels:
+    app: bbm-prometheus
+  namespace: nok-bbm
+data:
+  linux-sros_bngt.json: |
+    [
+      {
+        "targets": [
+          "172.21.20.2"
+        ],
+        "labels": {
+          "hostname": "clab-sros_bngt-bngblaster",
+          "kind": "linux"
+        }
+      },
+      {
+        "targets": [
+          "172.21.20.111"
+        ],
+        "labels": {
+          "hostname": "clab-sros_bngt-radius",
+          "kind": "linux"
+        }
+      }
+    ]

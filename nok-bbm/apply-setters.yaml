@@ -2,7 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: bbm-setters-config
+  namespace: nok-bbm
 data:
   prometheus-version: v2.47.0
-  blackbox-versinon: v0.28.0 
-  # pkg-namespace: nok-bbm
+  blackbox-version: v0.28.0
+  grafana-version: v12.3.1
+  ksm-version: v2.18.0

@@ -5,8 +5,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: bbm-prometheus
-  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
-roleRef:
+  namespace: nok-bbm
+roleRef:  
   kind: ClusterRole
   name: bbm-prometheus
   apiGroup: rbac.authorization.k8s.io

@@ -4,7 +4,7 @@ metadata:
   name: blackbox-exporter
   labels:
     app: blackbox-exporter
-  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
+  namespace: nok-bbm
 spec:
   replicas: 1
   selector:
@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
       - name: blackbox-exporter
-        image: prom/blackbox-exporter:v0.25.0 # kpt-set: prom/blackbox-exporter:${blackbox-version}
+        image: prom/blackbox-exporter:${blackbox-version} # kpt-set: ${blackbox-version}
         args:
-          - "--config.file=/etc/blackbox_exporter/blackbox.yml"
+        - "--config.file=/etc/blackbox_exporter/blackbox.yml"
         ports:
         - containerPort: 9115
           name: http
@@ -38,6 +38,7 @@ metadata:
   name: blackbox-exporter
   labels:
     app: blackbox-exporter
+  namespace: nok-bbm
 spec:
   selector:
     app: blackbox-exporter

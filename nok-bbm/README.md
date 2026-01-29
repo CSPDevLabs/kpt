@@ -16,6 +16,7 @@ Details: https://kpt.dev/reference/cli/pkg/tree/
 ### Apply the package
 ```
 kpt live init nok-bbm
-kpt live apply nok-bbm --reconcile-timeout=2m --output=table
+kpt live apply nok-bbm --reconcile-timeout=5m --output=table
 ```
 Details: https://kpt.dev/reference/cli/live/
+

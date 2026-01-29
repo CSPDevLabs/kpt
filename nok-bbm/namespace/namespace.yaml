@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: NAMESPACE # kpt-set: ${pkg-namespace}
+  name: nok-bbm

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bbm-prometheus-deployment
-  namespace: NAMESPACE # kpt-set: ${pkg-namespace}
+  namespace: nok-bbm
   labels:
     app: bbm-prometheus
 spec:
@@ -18,7 +18,7 @@ spec:
       serviceAccountName: bbm-prometheus
       containers:
       - name: prometheus
-        image: prom/prometheus:v2.47.0 # kpt-set: prom/prometheus:${prometheus-version}
+        image: prom/prometheus:${prometheus-version} # kpt-set: ${prometheus-version}
         args:
         - --config.file=/etc/prometheus/prometheus.yml
         - --storage.tsdb.path=/prometheus
@@ -33,11 +33,20 @@ spec:
         - name: bbm-prometheus-config-volume
           mountPath: /etc/prometheus/prometheus.yml
           subPath: prometheus.yml
+        - name: ds-file-configs
+          mountPath: /opt/targets/
         - name: bbm-prometheus-storage
           mountPath: /prometheus
       volumes:
-      - name: prometheus-config-volume
+      - name: bbm-prometheus-config-volume
         configMap:
           name: bbm-prometheus-config
+      - name: ds-file-configs
+        projected:
+          sources:
+          - configMap:
+              name: nokia-srsim-sros-bngt
+          - configMap:
+              name: linux-sros-bngt
       - name: bbm-prometheus-storage
         emptyDir: {} # For local testing, use emptyDir. For production, use PersistentVolumeClaim.
