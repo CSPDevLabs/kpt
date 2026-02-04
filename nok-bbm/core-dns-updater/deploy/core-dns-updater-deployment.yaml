@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coredns-updater
+  namespace: nok-bbm
+spec:
+  selector:
+    matchLabels:
+      app: coredns-updater
+  template:
+    metadata:
+      labels:
+        app: coredns-updater
+    spec:
+      serviceAccountName: coredns-updater
+      restartPolicy: Always
+      containers:
+        - name: updater
+          image: python:3.12.12-bookworm
+          command: ["/bin/sh", "-c"]
+          args:
+            - sleep 180
+            - while true; do /opt/scripts/kube-prep.sh; sleep 1800; done
+          volumeMounts:
+            - name: scripts
+              mountPath: /opt/scripts
+              readOnly: true
+          env:
+            - name: INGRESS_NS
+              value: nok-bng
+            - name: INGRESS_SVC
+              value: nok-apps-ingress
+          resources:
+            requests:
+              cpu: 50m
+              memory: 50Mi
+            limits:
+              cpu: 50m
+              memory: 50Mi
+      volumes:
+        - name: scripts
+          configMap:
+            name: coredns-updater-scripts
+            defaultMode: 0555

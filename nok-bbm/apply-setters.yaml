@@ -6,5 +6,5 @@ metadata:
 data:
   prometheus-version: v2.47.0
   blackbox-version: v0.28.0
-  grafana-version: v12.3.1
+  grafana-version: 12.3.2
   ksm-version: v2.18.0
