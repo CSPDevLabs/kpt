@@ -1,0 +1,64 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # The name must be in the format <plural>.<group>
+  name: additionaltargets.nok.dev
+spec:
+  # Group name to use for API objects, e.g., 'additionaltargets.nok.dev'
+  group: nok.dev
+  versions:
+    - name: v1alpha1
+      # Each version can be enabled/disabled by 'served'
+      served: true
+      # One and only one version must be marked as the storage version
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              required:
+                - id
+                - name
+                - address
+                - port
+              properties:
+                id:
+                  type: string
+                  description: Unique identifier for the additional target.
+                name:
+                  type: string
+                  description: Human-readable name for the additional target.
+                address:
+                  type: string
+                  description: Hostname or IP address of the additional target.
+                port:
+                  type: integer
+                  format: int32
+                  description: The port number for connecting to the additional target.
+                  minimum: 1
+                  maximum: 65535
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: List of tags associated with the additional target.
+  names:
+    # Plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: additionaltargets
+    # Singular name to be used as an alias on the CLI and for display
+    singular: additionaltarget
+    # The kind is normally CamelCase and the singular form of the resource.
+    kind: AdditionalTarget
+    # Short names can be used as an alias on the CLI
+    shortNames:
+      - at
+  # Scope indicates whether this CRD is cluster-scoped or namespaced
+  scope: Namespaced

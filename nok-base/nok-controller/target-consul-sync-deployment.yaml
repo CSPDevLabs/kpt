@@ -12,6 +12,9 @@ rules:
 - apiGroups: ["inv.sdcio.dev"] # API group of your Target CRD
   resources: ["targets"]       # Plural name of your Target CRD
   verbs: ["get", "list", "watch"] # Permissions to watch Target resources
+- apiGroups: ["nok.dev"] # NEW: API group of your AdditionalTarget CRD
+  resources: ["additionaltargets"] # NEW: Plural name of your AdditionalTarget CRD
+  verbs: ["get", "list", "watch"] # NEW: Permissions to watch AdditionalTarget resources
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -46,7 +49,7 @@ spec:
       serviceAccountName: target-consul-sync-controller
       containers:
       - name: controller
-        image: ghcr.io/cspdevlabs/nok-controller:latest # Replace with your built image
+        image: ghcr.io/cspdevlabs/nok-controller:v1.06a # Replace with your built image
         command: ["python", "/app/controller.py"]
         env:
         - name: CONSUL_HTTP_ADDR

@@ -1,0 +1,13 @@
+apiVersion: nok.dev/v1alpha1
+kind: AdditionalTarget
+metadata:
+  name: clab-sros-bngt-bngblaster # Using the ID from the JSON as the resource name
+  namespace: nok-bng # Example namespace, adjust if needed
+spec:
+  id: clab-sros-bngt-bngblaster
+  name: clab-sros-bngt-bngblaster
+  address: 172.21.20.2
+  port: 22
+  tags:
+    - sros
+    - bngblaster
