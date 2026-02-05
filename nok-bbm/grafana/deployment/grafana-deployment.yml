@@ -19,22 +19,24 @@ spec:
         supplementalGroups:
           - 0
       # Add an initContainer to download dashboards - TOBE IMPLEMENTED
-      # initContainers:
-      #   - name: download-dashboards
-      #     image: alpine/git:latest # A lightweight image with git
-      #     command: ["/bin/sh", "-c"]
-      #     args:
-      #       - |
-      #         git clone --branch vrsim --single-branch https://github.com/CSPDevLabs/sros_bng_observability.git /tmp/repo;
-      #         mkdir -p /dashboards-volume;
-      #         cp /tmp/repo/configs/grafana/dashboards/*.json /dashboards-volume/;
-      #         rm -rf /tmp/repo; # Clean up the cloned repository
-      #     volumeMounts:
-      #       - name: grafana-dashboards-download # Mount the emptyDir volume
-      #         mountPath: /dashboards-volume
+      initContainers:
+        - name: download-dashboards
+          image: alpine/git:latest # A lightweight image with git
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /dashboards-volume;
+              git clone --filter=blob:none --sparse --branch bbm-azyablov https://github.com/CSPDevLabs/kpt.git;
+              cd kpt;
+              git sparse-checkout set nok-bbm/grafana/dashboards;
+              cp nok-bbm/grafana/dashboards/*.json /dashboards-volume/;
+              rm -rf kpt; # Clean up the cloned repository
+          volumeMounts:
+            - name: grafana-dashboards-download # Mount the emptyDir volume
+              mountPath: /dashboards-volume
       containers:
         - name: bbm-grafana
-          image: grafana/grafana:${grafana-version} # kpt-set: ${grafana-version}
+          image: grafana/grafana:${grafana-version} # kpt-set: grafana/grafana:${grafana-version}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -82,8 +84,8 @@ spec:
               readOnly: true
             - mountPath: /var/lib/grafana/dashboards # Mount the downloaded dashboards here
               name: grafana-dashboards-download
-              # - mountPath: /etc/grafana/provisioning/dashboards
-              #   name: grafana-dashboard-provisioning-volume
+            - mountPath: /etc/grafana/provisioning/dashboards
+              name: grafana-dashboard-provisioning-volume
       volumes:
         - name: grafana-pv
           persistentVolumeClaim:

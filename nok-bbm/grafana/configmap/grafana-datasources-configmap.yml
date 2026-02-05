@@ -9,7 +9,7 @@ data:
     datasources:
       - name: Prometheus
         type: prometheus
-        uid: DS_PROMETHEUS
+        uid: DATASOURCE
         access: proxy
         url: http://bbm-prometheus-svc:9090
         jsonData:

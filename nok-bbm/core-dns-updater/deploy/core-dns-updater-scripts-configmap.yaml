@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: coredns-updater-scripts
-  namespace: nok-bng
+  namespace: nok-bbm
 data:
   coredns_editor.py: |-
     #!/usr/bin/env python3
