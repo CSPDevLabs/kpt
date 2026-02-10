@@ -1,0 +1,11 @@
+apiVersion: operator.gnmic.dev/v1alpha1
+kind: TargetProfile
+metadata:
+  name: default-profile
+spec:
+  # Reference to a Secret containing username/password
+  credentialsRef: device-credentials
+  # TLS without server certificate verification
+  tls: {}
+  # Connection timeout
+  timeout: 10s

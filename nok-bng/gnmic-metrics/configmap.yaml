@@ -54,24 +54,40 @@ data:
       - sros-system-performance
       - sros-router-interfaces
 
-    # Targets
-    targets:
-      clab-sros-bngt-bng1.service.consul:
-        <<: *auth_cred
-        subscriptions:
-          *sub_bng
-      clab-sros-bngt-bng2.service.consul:
-        <<: *auth_cred
-        subscriptions:
-          *sub_bng
-      clab-sros-bngt-core.service.consul:
-        <<: *auth_cred
-        subscriptions:
-          *sub_core_agg
-      clab-sros-bngt-agg.service.consul:
-        <<: *auth_cred
-        subscriptions:
-          *sub_core_agg
+    loader:
+      type: consul
+      address: consul-svc.nok-base.svc.cluster.local:8500
+      services:
+        - name: "clab-sros-bngt-core"
+          tags: ["network-element"]
+          config:
+            username: admin
+            password: NokiaSros1!
+            port: 57400
+            timeout: 10s
+            skip-verify: true
+            insecure: true
+            subscriptions:
+              *sub_core_agg
+
+    # # Targets
+    # targets:
+    #   clab-sros-bngt-bng1.service.consul:
+    #     <<: *auth_cred
+    #     subscriptions:
+    #       *sub_bng
+    #   clab-sros-bngt-bng2.service.consul:
+    #     <<: *auth_cred
+    #     subscriptions:
+    #       *sub_bng
+    #   clab-sros-bngt-core.service.consul:
+    #     <<: *auth_cred
+    #     subscriptions:
+    #       *sub_core_agg
+    #   clab-sros-bngt-agg.service.consul:
+    #     <<: *auth_cred
+    #     subscriptions:
+    #       *sub_core_agg
 
     # Definitions of subscriptions
     subscriptions:
