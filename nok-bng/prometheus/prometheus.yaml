@@ -81,15 +81,15 @@ data:
             target_label: host
             replacement: '$1'             
 
-      - job_name: sros_bngt_gnmic
-        static_configs:
-          - targets: ['gnmic-metrics-svc:9804']
-        metrics_path: /metrics
-        metric_relabel_configs:
-          - source_labels: [source]
-            regex: '(.*)\.service\.consul'
-            target_label: source
-            replacement: '$1'    
+      # - job_name: sros_bngt_gnmic
+      #   static_configs:
+      #     - targets: ['gnmic-bng-metrics-prom-bng-ext-tel-prom-output:9804','gnmic-bng-metrics-prom-bng-tel-prom-output:9804']
+      #   metrics_path: /metrics
+      #   metric_relabel_configs:
+      #     - source_labels: [source]
+      #       regex: '(.*)\.service\.consul'
+      #       target_label: source
+      #       replacement: '$1'    
         
 ---
 apiVersion: apps/v1

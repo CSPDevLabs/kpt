@@ -1,8 +1,9 @@
 apiVersion: v1
 kind: Secret
 metadata:
+  namespace: nok-bng
   name: device-credentials
-  namespace: default
+  namespace: nok-bng
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
@@ -11,7 +12,9 @@ stringData:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: TargetProfile
 metadata:
+  namespace: nok-bng
   name: default-profile
+  namespace: nok-bng  
 spec:
   # Reference to a Secret containing username/password
   credentialsRef: device-credentials
@@ -23,6 +26,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Target
 metadata:
+  namespace: nok-bng
   name: clab-sros-bngt-agg
   labels:
     vendor: Nokia
@@ -34,6 +38,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Target
 metadata:
+  namespace: nok-bng
   name: clab-sros-bngt-core
   labels:
     vendor: Nokia
@@ -45,6 +50,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Target
 metadata:
+  namespace: nok-bng
   name: clab-sros-bngt-bng1
   labels:
     vendor: Nokia
@@ -56,6 +62,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Target
 metadata:
+  namespace: nok-bng
   name: clab-sros-bngt-bng2
   labels:
     vendor: Nokia
@@ -67,6 +74,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-router-interfaces
   labels:
     type: bng
@@ -90,6 +98,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-system-performance
   labels:
     type: bng
@@ -106,6 +115,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-sub-mgmt-statistics
   labels:
     type: bng
@@ -121,6 +131,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-fp-sub-mgmt-resources
   labels:
     type: bng
@@ -138,6 +149,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-sub-mgmt-subscribers
   labels:
     type: bng
@@ -156,6 +168,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-system-resources
   labels:
     type: bng
@@ -169,6 +182,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
+  namespace: nok-bng
   name: sros-sub-mgmt-redundancy
   labels:
     type: bng
@@ -186,6 +200,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Processor
 metadata:
+  namespace: nok-bng
   name: oper-state-to-int
 spec:
   type: event-strings
@@ -205,6 +220,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Output
 metadata:
+  namespace: nok-bng
   name: file-event-output
   labels:
     type: bng-ext-output
@@ -217,18 +233,20 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Output
 metadata:
+  namespace: nok-bng
   name: prom-output
   labels:
     type: bng-ext-output
 spec:
   type: prometheus
-  config:
-    listen: ":9804"
+  # config:
+  #   listen: ":9804"
   
 ---
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Pipeline
 metadata:
+  namespace: nok-bng
   name: bng-ext-tel
 spec:
   clusterRef: bng-metrics
@@ -253,6 +271,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Pipeline
 metadata:
+  namespace: nok-bng
   name: bng-tel
 spec:
   clusterRef: bng-metrics
@@ -275,6 +294,7 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Cluster
 metadata:
+  namespace: nok-bng
   name: bng-metrics
 spec:
   replicas: 1
