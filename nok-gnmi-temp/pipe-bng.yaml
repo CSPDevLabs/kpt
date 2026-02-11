@@ -23,52 +23,115 @@ spec:
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Target
 metadata:
+  name: clab-sros-bngt-agg
+  labels:
+    vendor: Nokia
+    role: bng-ext
+spec:
+  address: clab-sros-bngt-agg.service.consul:57400
+  profile: default-profile
+---
+apiVersion: operator.gnmic.dev/v1alpha1
+kind: Target
+metadata:
+  name: clab-sros-bngt-core
+  labels:
+    vendor: Nokia
+    role: bng-ext
+spec:
+  address: clab-sros-bngt-core.service.consul:57400
+  profile: default-profile  
+---
+apiVersion: operator.gnmic.dev/v1alpha1
+kind: Target
+metadata:
   name: clab-sros-bngt-bng1
   labels:
-    vendor: vendorA
-    role: core
+    vendor: Nokia
+    role: bng
 spec:
-  address: 172.21.20.11:57400
-  profile: default-profile
+  address: clab-sros-bngt-bng1.service.consul:57400
+  profile: default-profile   
+---
+apiVersion: operator.gnmic.dev/v1alpha1
+kind: Target
+metadata:
+  name: clab-sros-bngt-bng2
+  labels:
+    vendor: Nokia
+    role: bng
+spec:
+  address: clab-sros-bngt-bng2.service.consul:57400
+  profile: default-profile    
 ---  
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
 metadata:
-  name: interface-counters
+  name: port-state
   labels:
     type: interfaces
 spec:
   paths:
-    - /state/system/cpu[sample-period=60]/summary/usage
+    - /state/port[port-id=*]/oper-state
   mode: STREAM/SAMPLE
   encoding: JSON
   sampleInterval: 10s
 ---
 apiVersion: operator.gnmic.dev/v1alpha1
+kind: Processor
+metadata:
+  name: oper-state-to-int
+spec:
+  type: event-strings
+  config:
+    value-names:
+      - ".*"
+    transforms:
+      - replace:
+          apply-on: "value"
+          old: "up"
+          new: "1" 
+      - replace:
+          apply-on: "value"
+          old: "down"
+          new: "0"           
+---
+apiVersion: operator.gnmic.dev/v1alpha1
 kind: Output
 metadata:
-  name: prometheus-output
+  name: file-event-output
   labels:
-    type: metrics
+    type: bng-ext-output
 spec:
-  # type: prometheus
   type: file
   config:
     file-type: stdout  # or file path
     format: event  
 ---
 apiVersion: operator.gnmic.dev/v1alpha1
+kind: Output
+metadata:
+  name: prom-output
+  labels:
+    type: bng-ext-output
+spec:
+  type: prometheus
+  config:
+    listen: ":9804"
+  
+---
+apiVersion: operator.gnmic.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: core-telemetry
+  name: bng-ext-tel
 spec:
-  clusterRef: core-cluster
+  clusterRef: bng-metrics
   enabled: true
   # Select targets by label
   targetSelectors:
     - matchLabels:
-        vendor: vendorA
-        role: core
+        vendor: Nokia
+        role: bng-ext
   # Select subscriptions by label
   subscriptionSelectors:
     - matchLabels:
@@ -77,4 +140,14 @@ spec:
   outputs:
     outputSelectors:
       - matchLabels:
-          type: metrics  
+          type: bng-ext-output  
+    processorRefs:
+      - oper-state-to-int          
+---
+apiVersion: operator.gnmic.dev/v1alpha1
+kind: Cluster
+metadata:
+  name: bng-metrics
+spec:
+  replicas: 1
+  image: ghcr.io/openconfig/gnmic:latest          
