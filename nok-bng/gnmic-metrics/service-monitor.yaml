@@ -17,4 +17,9 @@ spec:
       path: /metrics
       interval: 15s
       scrapeTimeout: 10s
+      relabelings:
+        - sourceLabels: [source]
+          regex: 'nok-bng/(.*)'
+          targetLabel: source
+          action: replace      
 
