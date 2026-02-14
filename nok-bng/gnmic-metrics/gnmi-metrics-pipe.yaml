@@ -3,7 +3,6 @@ kind: Secret
 metadata:
   namespace: nok-bng
   name: device-credentials
-  namespace: nok-bng
 type: kubernetes.io/basic-auth
 stringData:
   username: admin
@@ -14,7 +13,6 @@ kind: TargetProfile
 metadata:
   namespace: nok-bng
   name: default-profile
-  namespace: nok-bng  
 spec:
   # Reference to a Secret containing username/password
   credentialsRef: device-credentials
