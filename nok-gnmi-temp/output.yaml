@@ -1,8 +1,0 @@
-apiVersion: operator.gnmic.dev/v1alpha1
-kind: Output
-metadata:
-  name: prometheus-output
-  labels:
-    type: metrics
-spec:
-  type: prometheus
