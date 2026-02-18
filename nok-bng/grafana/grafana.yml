@@ -22,7 +22,7 @@ spec:
 #     datasources:
 #       - name: Prometheus
 #         type: prometheus
-#         url: http://prometheus-svc:9090 # Assuming prometheus-svc is in the same namespace
+#         url: http://prometheus-operated:9090 # Assuming prometheus-operated is in the same namespace
 #         access: proxy
 #         isDefault: true
 #         editable: true
@@ -54,7 +54,7 @@ data:
         type: prometheus
         uid: DS_PROMETHEUS
         access: proxy
-        url: http://prometheus-svc:9090
+        url: http://prometheus-operated:9090
         jsonData:
           httpMethod: POST
           timeout: 60
@@ -116,9 +116,9 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              git clone --branch vrsim --single-branch https://github.com/CSPDevLabs/sros_bng_observability.git /tmp/repo;
+              git clone --branch mau-nok-controller --single-branch https://github.com/CSPDevLabs/NetOpsKube.git /tmp/repo;
               mkdir -p /dashboards-volume;
-              cp /tmp/repo/configs/grafana/dashboards/*.json /dashboards-volume/;
+              cp /tmp/repo/resources/grafana/bng-dashboards/*.json /dashboards-volume/;
               rm -rf /tmp/repo; # Clean up the cloned repository
           volumeMounts:
             - name: grafana-dashboards-download # Mount the emptyDir volume

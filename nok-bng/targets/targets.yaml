@@ -1,51 +1,71 @@
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: consul-service-registrations
-  namespace: nok-bng 
-data:
-  services.json: |
-    [
-      {
-        "ID": "clab-sros_bngt-bng1",
-        "Name": "clab-sros_bngt-bng1",
-        "Address": "172.21.20.11",
-        "Port": 57400,
-        "Tags": ["sros", "bng"]
-      },
-      {
-        "ID": "clab-sros_bngt-bng2",
-        "Name": "clab-sros_bngt-bng2",
-        "Address": "172.21.20.12",
-        "Port": 57400,
-        "Tags": ["sros", "bng"]
-      },
-      {
-        "ID": "clab-sros_bngt-agg",
-        "Name": "clab-sros_bngt-agg",
-        "Address": "172.21.20.21",
-        "Port": 57400,
-        "Tags": ["sros", "agg"]
-      },
-      {
-        "ID": "clab-sros_bngt-core",
-        "Name": "clab-sros_bngt-core",
-        "Address": "172.21.20.22",
-        "Port": 57400,
-        "Tags": ["sros", "core"]
-      },
-      {
-        "ID": "clab-sros_bngt-bngblaster",
-        "Name": "clab-sros_bngt-bngblaster",
-        "Address": "172.21.20.2",
-        "Port": 57400,
-        "Tags": ["sros", "bngblaster"]
-      },
-      {
-        "ID": "clab-sros_bngt-radius",
-        "Name": "clab-sros_bngt-radius",
-        "Address": "172.21.20.111",
-        "Port": 57400,
-        "Tags": ["radius"]
-      }
-    ]
+  name: sros.nokia.sdcio.dev 
+  namespace: nok-bng
+type: kubernetes.io/basic-auth
+stringData:
+  username: admin
+  password: NokiaSros1!
+---
+apiVersion: inv.sdcio.dev/v1alpha1
+kind: TargetConnectionProfile
+metadata:
+  name: gnmi-skipverify
+  namespace: nok-bng
+spec:
+  port: 57400
+  protocol: gnmi
+  encoding: JSON
+  skipVerify: false
+  insecure: true  
+---
+apiVersion: inv.sdcio.dev/v1alpha1
+kind: TargetSyncProfile
+metadata:
+  name: gnmi-get
+  namespace: nok-bng
+spec:
+  buffer: 0
+  workers: 10
+  validate: true
+  sync:
+  - name: config
+    protocol: gnmi
+    port: 57400
+    paths:
+    - /configure/service
+    - /configure/router
+    - /configure/port[port-id=*]
+    mode: get
+    encoding: JSON_IETF
+    interval: 10s  
+---
+apiVersion: inv.sdcio.dev/v1alpha1
+kind: DiscoveryRule
+metadata:
+  name: dr-static
+  namespace: nok-bng
+spec:
+  period: 1m
+  concurrentScans: 1
+  defaultSchema:
+    provider: sros.nokia.sdcio.dev  
+    version: B-25.10.R1
+  addresses:
+  - address: 172.21.20.21
+    hostName: clab-sros-bngt-agg
+  - address: 172.21.20.11
+    hostName: clab-sros-bngt-bng1
+  - address: 172.21.20.12
+    hostName: clab-sros-bngt-bng2
+  - address: 172.21.20.22
+    hostName: clab-sros-bngt-core             
+  targetConnectionProfiles:
+  - credentials: sros.nokia.sdcio.dev 
+    connectionProfile: gnmi-skipverify
+    syncProfile: gnmi-get
+  targetTemplate:
+    labels:
+      sdcio.dev/region: us-central
+      sdcio.dev/role: bng 

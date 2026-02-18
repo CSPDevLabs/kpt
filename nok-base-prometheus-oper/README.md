@@ -1,0 +1,1 @@
+Install using `kubectl create` due to the long CRD names

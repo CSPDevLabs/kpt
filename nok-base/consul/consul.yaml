@@ -1,9 +1,15 @@
+# 1. Update the ServiceAccount for the Server
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consul-k8s-controller-consul-server
+  namespace: nok-base
+---
+# 2. Updated Consul Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: consul-deploy
-  labels:
-    app: consul
   namespace: nok-base
 spec:
   replicas: 1
@@ -14,35 +20,41 @@ spec:
     metadata:
       labels:
         app: consul
+        release: "consul-k8s-controller" # Matches the DNS Service selector
+        hasDNS: "true" # Matches the DNS Service selector
     spec:
+      serviceAccountName: consul-k8s-controller-consul-server
       containers:
-      - args:
+      - name: consul
+        image: hashicorp/consul:1.22.2
+        args:
         - agent
         - -server
         - -ui
         - -node=server-1
         - -bootstrap-expect=1
         - -client=0.0.0.0
-        image: hashicorp/consul
-        imagePullPolicy: IfNotPresent
-        name: consul
+        - -grpc-port=8502
+        readinessProbe:
+          tcpSocket:
+            port: 8500
+          initialDelaySeconds: 5
+          periodSeconds: 10
         ports:
         - containerPort: 8500
-          name: consul-http
-          protocol: TCP
-        - containerPort: 8600 # Added for Consul DNS (UDP)
-          name: consul-dns-udp
+          name: http
+        - containerPort: 8502
+          name: grpc
+        - containerPort: 8600
+          name: dns-udp
           protocol: UDP
-        - containerPort: 8600 # Added for Consul DNS (TCP)
-          name: consul-dns-tcp
+        - containerPort: 8600
+          name: dns-tcp
           protocol: TCP
         resources:
           limits:
             cpu: 100m
             memory: 256Mi
-          requests:
-            cpu: 50m
-            memory: 128Mi
 ---
 apiVersion: v1
 kind: Service
@@ -53,15 +65,17 @@ spec:
   ports:
   - name: http
     port: 8500
-    protocol: TCP
-    targetPort: 8500 # Explicitly map to Consul's HTTP port
-  - name: consul-dns-udp # Expose DNS on standard UDP port 53
+    targetPort: http # References the name in the Pod spec
+  - name: grpc
+    port: 8502
+    targetPort: grpc
+  - name: consul-dns-udp # This was already correct
     port: 8600
     protocol: UDP
-    targetPort: 8600 # Map to Consul's internal DNS port 8600
-  - name: consul-dns-tcp # Expose DNS on standard TCP port 53
+    targetPort: 8600
+  - name: consul-dns-tcp # This was already correct
     port: 8600
     protocol: TCP
-    targetPort: 8600 # Map to Consul's internal DNS port 8600
+    targetPort: 8600
   selector:
     app: consul
