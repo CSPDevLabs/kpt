@@ -34,9 +34,7 @@ spec:
     protocol: gnmi
     port: 57400
     paths:
-    - /configure/service
-    - /configure/router
-    - /configure/port[port-id=*]
+    - /configure
     mode: get
     encoding: JSON_IETF
     interval: 10s  
