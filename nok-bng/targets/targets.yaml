@@ -39,31 +39,31 @@ spec:
     encoding: JSON_IETF
     interval: 10s  
 ---
-apiVersion: inv.sdcio.dev/v1alpha1
-kind: DiscoveryRule
-metadata:
-  name: dr-static
-  namespace: nok-bng
-spec:
-  period: 1m
-  concurrentScans: 1
-  defaultSchema:
-    provider: sros.nokia.sdcio.dev  
-    version: B-25.10.R1
-  addresses:
-  - address: 172.21.20.21
-    hostName: clab-sros-bngt-agg
-  - address: 172.21.20.11
-    hostName: clab-sros-bngt-bng1
-  - address: 172.21.20.12
-    hostName: clab-sros-bngt-bng2
-  - address: 172.21.20.22
-    hostName: clab-sros-bngt-core             
-  targetConnectionProfiles:
-  - credentials: sros.nokia.sdcio.dev 
-    connectionProfile: gnmi-skipverify
-    syncProfile: gnmi-get
-  targetTemplate:
-    labels:
-      sdcio.dev/region: us-central
-      sdcio.dev/role: bng 
+# apiVersion: inv.sdcio.dev/v1alpha1
+# kind: DiscoveryRule
+# metadata:
+#   name: dr-static
+#   namespace: nok-bng
+# spec:
+#   period: 1m
+#   concurrentScans: 1
+#   defaultSchema:
+#     provider: sros.nokia.sdcio.dev  
+#     version: B-25.10.R1
+#   addresses:
+#   - address: 172.21.20.21
+#     hostName: clab-sros-bngt-agg
+#   - address: 172.21.20.11
+#     hostName: clab-sros-bngt-bng1
+#   - address: 172.21.20.12
+#     hostName: clab-sros-bngt-bng2
+#   - address: 172.21.20.22
+#     hostName: clab-sros-bngt-core             
+#   targetConnectionProfiles:
+#   - credentials: sros.nokia.sdcio.dev 
+#     connectionProfile: gnmi-skipverify
+#     syncProfile: gnmi-get
+#   targetTemplate:
+#     labels:
+#       sdcio.dev/region: us-central
+#       sdcio.dev/role: bng 

@@ -20,54 +20,54 @@ spec:
   #tls: {}
   # Connection timeout
   timeout: 10s
----  
-apiVersion: operator.gnmic.dev/v1alpha1
-kind: Target
-metadata:
-  namespace: nok-bng
-  name: clab-sros-bngt-agg
-  labels:
-    vendor: Nokia
-    role: bng-ext
-spec:
-  address: clab-sros-bngt-agg.service.consul:57400
-  profile: default-profile
----
-apiVersion: operator.gnmic.dev/v1alpha1
-kind: Target
-metadata:
-  namespace: nok-bng
-  name: clab-sros-bngt-core
-  labels:
-    vendor: Nokia
-    role: bng-ext
-spec:
-  address: clab-sros-bngt-core.service.consul:57400
-  profile: default-profile  
----
-apiVersion: operator.gnmic.dev/v1alpha1
-kind: Target
-metadata:
-  namespace: nok-bng
-  name: clab-sros-bngt-bng1
-  labels:
-    vendor: Nokia
-    role: bng
-spec:
-  address: clab-sros-bngt-bng1.service.consul:57400
-  profile: default-profile   
----
-apiVersion: operator.gnmic.dev/v1alpha1
-kind: Target
-metadata:
-  namespace: nok-bng
-  name: clab-sros-bngt-bng2
-  labels:
-    vendor: Nokia
-    role: bng
-spec:
-  address: clab-sros-bngt-bng2.service.consul:57400
-  profile: default-profile    
+# ---  
+# apiVersion: operator.gnmic.dev/v1alpha1
+# kind: Target
+# metadata:
+#   namespace: nok-bng
+#   name: clab-sros-bngt-agg
+#   labels:
+#     vendor: Nokia
+#     role: bng-ext
+# spec:
+#   address: clab-sros-bngt-agg.service.consul:57400
+#   profile: default-profile
+# ---
+# apiVersion: operator.gnmic.dev/v1alpha1
+# kind: Target
+# metadata:
+#   namespace: nok-bng
+#   name: clab-sros-bngt-core
+#   labels:
+#     vendor: Nokia
+#     role: bng-ext
+# spec:
+#   address: clab-sros-bngt-core.service.consul:57400
+#   profile: default-profile  
+# ---
+# apiVersion: operator.gnmic.dev/v1alpha1
+# kind: Target
+# metadata:
+#   namespace: nok-bng
+#   name: clab-sros-bngt-bng1
+#   labels:
+#     vendor: Nokia
+#     role: bng
+# spec:
+#   address: clab-sros-bngt-bng1.service.consul:57400
+#   profile: default-profile   
+# ---
+# apiVersion: operator.gnmic.dev/v1alpha1
+# kind: Target
+# metadata:
+#   namespace: nok-bng
+#   name: clab-sros-bngt-bng2
+#   labels:
+#     vendor: Nokia
+#     role: bng
+# spec:
+#   address: clab-sros-bngt-bng2.service.consul:57400
+#   profile: default-profile    
 ---  
 apiVersion: operator.gnmic.dev/v1alpha1
 kind: Subscription
