@@ -119,11 +119,11 @@ spec:
           type: string
           jsonPath: .spec.address
           description: The IP address or hostname of the device.
-        - name: SDCIO-Enabled
+        - name: SDCIO
           type: boolean
           jsonPath: .spec.sdcio.enabled
           description: Whether SDCIO management is enabled for this device.
-        - name: GNMIC-Enabled
+        - name: GNMIC
           type: boolean
           jsonPath: .spec.gnmic.enabled
           description: Whether gnmic metrics collection is enabled for this device.
