@@ -86,6 +86,9 @@ metadata:
   namespace: nok-bng
   labels:
     app: alertmanager
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
 spec:
   selector:
     app: alertmanager

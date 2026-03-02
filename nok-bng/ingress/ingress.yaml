@@ -6,6 +6,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2 # Rewrites the URL path for the backend service
     nginx.ingress.kubernetes.io/use-regex: "true"
+    # Not needed since we have ingress for portal, this is where we will put the annotations for the ingress
+    # netopskube.io/bbm: "true"
+    # netopskube.io/prober: http
 spec:
   ingressClassName: nginx
   rules:

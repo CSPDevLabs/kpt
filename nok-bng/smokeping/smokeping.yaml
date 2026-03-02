@@ -69,6 +69,10 @@ metadata:
   namespace: nok-bng
   labels:
     app: tel-sping
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/path: /metrics
+    netopskube.io/prober: http
 spec:
   selector:
     app: tel-sping
