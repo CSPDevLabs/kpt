@@ -18,7 +18,7 @@ spec:
       serviceAccountName: bbm-prometheus
       containers:
       - name: prometheus
-        image: prom/prometheus:${prometheus-version} # kpt-set: ${prometheus-version}
+        image: prom/prometheus:${prometheus-version} # kpt-set: prom/prometheus:${prometheus-version} 
         args:
         - --config.file=/etc/prometheus/prometheus.yml
         - --storage.tsdb.path=/prometheus
