@@ -3,9 +3,6 @@ kind: Ingress
 metadata:
   name: nok-apps-portal-ingress # Give it a distinct name
   namespace: nok-bng
-  annotations:
-    netopskube.io/bbm: "true"
-    netopskube.io/prober: http
 spec:
   ingressClassName: nginx
   rules:
