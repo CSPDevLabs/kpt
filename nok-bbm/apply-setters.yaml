@@ -8,3 +8,4 @@ data:
   blackbox-version: v0.28.0
   grafana-version: 12.3.2
   ksm-version: v2.18.0
+  kubectl-version: v1.33.1
