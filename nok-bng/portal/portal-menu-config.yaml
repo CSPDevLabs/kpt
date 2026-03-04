@@ -8,7 +8,6 @@ data:
     [
       {"name": "Prometheus", "path": "/prometheus/graph", "openInNewTab": false},
       {"name": "Grafana", "path": "/grafana", "openInNewTab": true},
-      {"name": "GNMIC Metrics", "path": "/gnmic-metrics/metrics", "openInNewTab": false},     
       {"name": "Alertmanager", "path": "/alertmanager", "openInNewTab": false},
-      {"name": "Smokeping", "path": "/smokeping/metrics", "openInNewTab": false}
+      {"name": "Gitea", "path": "http://gitea.nok.local:3000", "openInNewTab": true}
     ]

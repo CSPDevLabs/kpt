@@ -33,167 +33,312 @@ metadata:
 data:
   index.html: |
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Nokia Apps Portal</title>
-        <style>
-            /* Basic styling for a Nokia-like look and feel */
-            :root {
-                --nokia-blue: #003366;
-                --nokia-light-grey: #f0f0f0;
-                --nokia-dark-grey: #333;
-                --nokia-accent-blue: #0078D4; /* A slightly brighter blue for accents */
-            }
-            body {
-                display: flex;
-                margin: 0;
-                font-family: 'Nokia Pure Text', 'Segoe UI', Arial, sans-serif; /* Prioritize Nokia font if available */
-                height: 100vh;
-                width: 100vw; /* Explicitly set body width to full viewport width */
-                overflow: hidden; /* Prevent main scrollbars */
-                background-color: #ffffff;
-                color: var(--nokia-dark-grey);
-            }
-            #left-pane {
-                width: 220px;
-                background-color: var(--nokia-light-grey);
-                padding: 20px 0;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-                display: flex;
-                flex-direction: column;
-                flex-shrink: 0; /* Prevent shrinking */
-            }
-            #left-pane h2 {
-                color: var(--nokia-blue);
-                text-align: center;
-                margin-bottom: 20px;
-                font-size: 1.4em;
-                padding: 0 15px;
-            }
-            #left-pane ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                flex-grow: 1; /* Allow menu to take available space */
-            }
-            #left-pane li a {
-                display: block;
-                padding: 12px 20px;
-                text-decoration: none;
-                color: var(--nokia-dark-grey);
-                font-size: 1.1em;
-                transition: background-color 0.3s ease, color 0.3s ease;
-                border-left: 4px solid transparent; /* For active indicator */
-            }
-            #left-pane li a:hover {
-                background-color: #e0e0e0;
-                color: var(--nokia-blue);
-            }
-            #left-pane li a.active {
-                background-color: #e0e0e0;
-                color: var(--nokia-blue);
-                font-weight: bold;
-                border-left-color: var(--nokia-accent-blue);
-            }
-            /* Changed from #right-pane to #app-frame to target the iframe directly */
-            #app-frame {
-                flex-grow: 1;
-                flex-shrink: 1; /* Ensures it can shrink if necessary */
-                flex-basis: 0;   /* Allows flex-grow to distribute space from a base of 0 */
-                border: none;
-                height: 100%; /* Take full height */
-            }
-        </style>
+    <meta charset="UTF-8">
+    <title>NetOpsKube Portal</title>
+
+    <style>
+    :root {
+      --primary: #0a192f;
+      --secondary: #112240;
+      --accent: #1e90ff;
+      --light: #4da3ff;
+      --glass: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      overflow: hidden;
+    }
+
+    /* ---------- TOP BAR ---------- */
+    .topbar {
+      height: 50px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hamburger {
+      font-size: 22px;
+      cursor: pointer;
+      margin-right: 15px;
+      user-select: none;
+    }
+
+    .portal-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      color: var(--light);
+    }
+
+    .version {
+      font-size: 14px;
+      color: var(--light);
+    }
+
+    /* ---------- MAIN LAYOUT ---------- */
+    .main-layout {
+      flex: 1;
+      display: flex;
+      height: calc(100vh - 50px);
+      overflow: hidden;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      width: 0;
+      background: rgba(10,25,47,0.98);
+      border-right: 1px solid var(--border);
+      transition: width 0.3s ease;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+
+    .sidebar.open {
+      width: 250px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .menu-icon {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    /* ---------- CONTENT ---------- */
+    .content {
+      flex: 1;
+      position: relative;
+      display: flex;
+      transition: all 0.3s ease;
+    }
+
+    iframe {
+      flex: 1;
+      border: none;
+      background: white;
+    }
+
+    /* ---------- LOADING OVERLAY ---------- */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 1;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 55px;
+      height: 55px;
+      border: 5px solid rgba(255,255,255,0.15);
+      border-top: 5px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---------- ACCOUNT PANEL ---------- */
+    .account-panel {
+      position: fixed;
+      top: 50px;
+      right: -240px;
+      width: 220px;
+      height: calc(100% - 50px);
+      background: rgba(10,25,47,0.98);
+      border-left: 1px solid var(--border);
+      transition: right 0.3s ease;
+      z-index: 3000;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    .account-panel.active {
+      right: 0;
+    }
+
+    .account-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .account-circle:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    </style>
     </head>
+
     <body>
-        <div id="left-pane">
-            <h2>NOK Apps Portal</h2>
-            <ul id="app-menu">
-                <!-- Menu items will be dynamically loaded here -->
-            </ul>
+
+    <div class="topbar">
+      <div class="hamburger" id="hamburger">&#9776;</div>
+      <div class="portal-title">NetOpsKube Portal</div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:15px;">
+        <span class="version">v1.0</span>
+        <div id="account-btn" class="account-circle">
+          <svg viewBox="0 0 24 24" fill="white" width="18" height="18">
+            <path d="M12 12c2.7 0 4.8-2.2 4.8-4.8S14.7 2.4 12 2.4 7.2 4.6 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8V22h19.2v-2.8c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
         </div>
-        <iframe id="app-frame" src="" frameborder="0" title="Application Content"></iframe>
+      </div>
+    </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const appMenu = document.getElementById('app-menu');
-                const appFrame = document.getElementById('app-frame');
-                let currentActiveLink = null;
+    <div class="main-layout">
+      <div class="sidebar" id="sidebar"></div>
 
-                // Function to set active link styling
-                function setActiveLink(linkElement) {
-                    if (currentActiveLink) {
-                        currentActiveLink.classList.remove('active');
-                    }
-                    linkElement.classList.add('active');
-                    currentActiveLink = linkElement;
-                }
+      <div class="content">
+        <div id="loading-overlay">
+          <div class="loader"></div>
+        </div>
+        <iframe id="app-frame"></iframe>
+      </div>
+    </div>
 
-                // Fetch menu configuration
-                fetch('/menu-config.json')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(menuItems => {
-                        menuItems.forEach((item, index) => {
-                            const listItem = document.createElement('li');
-                            const link = document.createElement('a');
-                            link.href = '#'; // Prevent default navigation
-                            link.textContent = item.name;
-                            link.dataset.path = item.path; // Store path for navigation
-                            link.dataset.openInNewTab = item.openInNewTab || false; // Default to false
+    <div id="account-panel" class="account-panel">
+      Admin Account
+    </div>
 
-                            link.addEventListener('click', (event) => {
-                                event.preventDefault(); // Stop default link behavior
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
 
-                                if (link.dataset.openInNewTab === 'true') {
-                                    window.open(link.dataset.path, '_blank');
-                                    // Do not set active class for external links if you want to keep the current internal app active
-                                } else {
-                                    appFrame.src = link.dataset.path;
-                                    setActiveLink(link);
-                                }
-                            });
+      const sidebar = document.getElementById('sidebar');
+      const hamburger = document.getElementById('hamburger');
+      const appFrame = document.getElementById('app-frame');
+      const loadingOverlay = document.getElementById('loading-overlay');
 
-                            listItem.appendChild(link);
-                            appMenu.appendChild(listItem);
+      const accountBtn = document.getElementById('account-btn');
+      const accountPanel = document.getElementById('account-panel');
 
-                            // Load the first non-external app by default
-                            if (index === 0 && link.dataset.openInNewTab !== 'true') {
-                                appFrame.src = link.dataset.path;
-                                setActiveLink(link);
-                            } else if (index === 0 && link.dataset.openInNewTab === 'true' && menuItems.length > 1) {
-                                // If the first item is external, try to load the next internal one
-                                // This is a basic approach; more complex logic might be needed for robust default loading
-                                const firstInternalLink = menuItems.find(mi => !mi.openInNewTab);
-                                if (firstInternalLink) {
-                                    appFrame.src = firstInternalLink.path;
-                                    // Find the actual link element for this and set active
-                                    const correspondingLinkElement = appMenu.querySelector(`a[data-path="${firstInternalLink.path}"]`);
-                                    if (correspondingLinkElement) {
-                                        setActiveLink(correspondingLinkElement);
-                                    }
-                                }
-                            }
-                        });
+      if (accountBtn) {
+        accountBtn.addEventListener('click', () => {
+          accountPanel.classList.toggle('active');
+        });
+      }
 
-                        // If no internal apps are found or only external apps, you might want to show a default message
-                        if (!appFrame.src && menuItems.length > 0) {
-                            // Example: display a message in the iframe or load a blank page
-                            appFrame.src = 'about:blank';
-                            // Or, if you have a welcome page: appFrame.src = '/welcome.html';
-                        }
+      document.addEventListener('click', (e) => {
+        const isSidebarClick = sidebar.contains(e.target) || hamburger.contains(e.target);
+        const isAccountClick = accountPanel.contains(e.target) || accountBtn.contains(e.target);
 
-                    })
-                    .catch(error => {
-                        console.error('Error loading menu configuration:', error);
-                        // Display an error message in the iframe or console
-                        appFrame.srcdoc = `<p style="color: red; padding: 20px;">Error loading menu: ${error.message}</p>`;
-                    });
+        if (!isSidebarClick) {
+          sidebar.classList.remove('open');
+        }
+
+        if (!isAccountClick) {
+          accountPanel.classList.remove('active');
+        }
+      });
+
+      hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+      });
+
+      const iconMap = {
+        "Prometheus": "https://cdn.jsdelivr.net/gh/prometheus/prometheus@main/documentation/images/prometheus-logo.svg",
+        "Grafana": "https://cdn.jsdelivr.net/gh/grafana/grafana@main/public/img/grafana_icon.svg",
+        "Alertmanager": "https://pic-cdn.ewhisper.cn/img/2022/07/23/55d71dc6b2895a43ee6729359b49121f-alertmanager_260.svg",
+        "Gitea": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Gitea_Logo.svg/1280px-Gitea_Logo.svg.png"
+      };
+
+      fetch('/menu-config.json')
+        .then(resp => resp.ok ? resp.json() : Promise.reject(resp.status))
+        .then(menuItems => {
+
+          menuItems.forEach((item, index) => {
+
+            const menuItem = document.createElement('div');
+            menuItem.className = 'menu-item';
+            menuItem.dataset.path = item.path;
+            menuItem.dataset.openInNewTab = item.openInNewTab || false;
+
+            const icon = document.createElement('img');
+            icon.className = 'menu-icon';
+            icon.src = iconMap[item.name] || '';
+            icon.alt = item.name;
+
+            const text = document.createElement('span');
+            text.textContent = item.name;
+
+            menuItem.appendChild(icon);
+            menuItem.appendChild(text);
+
+            menuItem.addEventListener('click', () => {
+              if (menuItem.dataset.openInNewTab === 'true') {
+                window.open(menuItem.dataset.path, '_blank');
+              } else {
+                loadingOverlay.classList.remove('hidden');
+                appFrame.src = menuItem.dataset.path;
+              }
+
+              sidebar.classList.remove('open');
             });
-        </script>
+
+            sidebar.appendChild(menuItem);
+
+            if (index === 0 && menuItem.dataset.openInNewTab !== 'true') {
+              appFrame.src = item.path;
+            }
+
+          });
+
+          appFrame.addEventListener('load', () => {
+            loadingOverlay.classList.add('hidden');
+          });
+
+        })
+        .catch(err => {
+          sidebar.innerHTML = `<p style="color:red;padding:20px;">Failed to load apps: ${err}</p>`;
+        });
+
+    });
+    </script>
+
     </body>
     </html>
