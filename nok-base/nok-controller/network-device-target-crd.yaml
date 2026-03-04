@@ -1,0 +1,136 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: networkdevicetargets.nok.dev
+spec:
+  group: nok.dev
+  names:
+    plural: networkdevicetargets
+    singular: networkdevicetarget
+    kind: NetworkDeviceTarget
+    shortNames:
+    - ndt
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              description: Specification of the desired behavior of the NetworkDeviceTarget.
+              properties:
+                address:
+                  type: string
+                  description: The primary IP address or resolvable hostname for the device.
+                hostname:
+                  type: string
+                  description: A user-friendly hostname for the device.
+                commonLabels:
+                  type: object
+                  description: Labels to be applied to generated SDCIO/gnmic targets.
+                  additionalProperties:
+                    type: string
+                sdcio:
+                  type: object
+                  description: SDCIO specific configuration for the device.
+                  properties:
+                    enabled:
+                      type: boolean
+                      description: Set to false if this device should not be managed by SDCIO.
+                      default: true
+                    credentialsSecretRef:
+                      type: string
+                      description: Name of the Kubernetes Secret for SDCIO credentials.
+                    connectionProfileRef:
+                      type: string
+                      description: Name of the SDCIO TargetConnectionProfile.
+                    syncProfileRef:
+                      type: string
+                      description: Name of the SDCIO TargetSyncProfile.
+                    schema:
+                      type: object
+                      description: Schema details for the SDCIO target.
+                      properties:
+                        provider:
+                          type: string
+                          description: The schema provider name.
+                        version:
+                          type: string
+                          description: The schema version.
+                      required:
+                        - provider
+                        - version
+                    labels:
+                      type: object
+                      description: Labels specific to SDCIO targets generated for this device.
+                      additionalProperties:
+                        type: string
+                gnmic:
+                  type: object
+                  description: gnmic specific configuration for the device.
+                  properties:
+                    enabled:
+                      type: boolean
+                      description: Set to false if this device should not be managed by gnmic.
+                      default: true
+                    credentialsSecretRef:
+                      type: string
+                      description: Name of the Kubernetes Secret for gnmic credentials.
+                    targetProfileRef:
+                      type: string
+                      description: Name of the gnmic TargetProfile.
+                    port:
+                      type: string
+                      description: The specific port that gnmic should use to connect to this device.
+                    labels:
+                      type: object
+                      description: Labels specific to gnmic targets generated for this device.
+                      additionalProperties:
+                        type: string
+              required:
+                - address
+                - hostname
+            status:
+              type: object
+              description: Current observed state of the NetworkDeviceTarget.
+              properties:
+                reachability:
+                  type: string
+                  description: Aggregated reachability status for the device (Reachable, Unreachable, Unknown).
+                lastProbeTime:
+                  type: string
+                  format: date-time
+                  description: Timestamp of the last gnmic reachability check.                  
+
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Address
+          type: string
+          jsonPath: .spec.address
+          description: The IP address or hostname of the device.
+        - name: SDCIO
+          type: boolean
+          jsonPath: .spec.sdcio.enabled
+          description: Whether SDCIO management is enabled for this device.
+        - name: GNMIC
+          type: boolean
+          jsonPath: .spec.gnmic.enabled
+          description: Whether gnmic metrics collection is enabled for this device.
+        - name: Reachability
+          type: string
+          jsonPath: .status.reachability
+          description: Overall reachability status of the device.
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp

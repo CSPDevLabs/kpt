@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nok-controller
+  namespace: nok-base # Ensure this namespace exists or change it
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nok-controller-cluster-role
+rules:
+- apiGroups: ["inv.sdcio.dev"]
+  resources: ["discoveryrules"]       
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+- apiGroups: ["nok.dev"] 
+  resources: ["networkdevicetargets"] 
+  verbs: ["get", "list", "watch"] # Existing permissions for the main resource
+- apiGroups: ["nok.dev"] 
+  resources: ["networkdevicetargets/status"] # New entry for status subresource
+  verbs: ["update", "patch"] # Required for updating status
+- apiGroups: ["operator.gnmic.dev"] 
+  resources: ["targets"]  
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nok-controller-binding
+subjects:
+- kind: ServiceAccount
+  name: nok-controller
+  namespace: nok-base 
+roleRef:
+  kind: ClusterRole
+  name: nok-controller-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nok-controller
+  namespace: nok-base 
+  labels:
+    app: nok-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nok-controller
+  template:
+    metadata:
+      labels:
+        app: nok-controller
+    spec:
+      serviceAccountName: nok-controller
+      containers:
+      - name: controller
+        image: ghcr.io/cspdevlabs/nok-controller:v1.123a 
+        command: ["python", "/app/controller.py"]
