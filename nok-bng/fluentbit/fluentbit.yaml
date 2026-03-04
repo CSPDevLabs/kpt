@@ -66,6 +66,9 @@ metadata:
   labels:
     app: fluent-bit
   namespace: nok-bng
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
 spec:
   selector:
     app: fluent-bit

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bbm-setters-config
+  namespace: nok-bbm
+data:
+  prometheus-version: v2.47.0
+  blackbox-version: v0.28.0
+  grafana-version: 12.3.2
+  ksm-version: v2.18.0
+  kubectl-version: v1.33.1

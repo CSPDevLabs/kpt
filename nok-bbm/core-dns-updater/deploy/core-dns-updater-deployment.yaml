@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coredns-updater
+  namespace: nok-bbm
+spec:
+  selector:
+    matchLabels:
+      app: coredns-updater
+  template:
+    metadata:
+      labels:
+        app: coredns-updater
+    spec:
+      serviceAccountName: coredns-updater
+      restartPolicy: Always
+      containers:
+        - name: updater
+          image: python:3.12.12-bookworm
+          command: ["/bin/sh", "-c"]
+          args:
+            - "echo \"Sleeping for 60 seconds\" && sleep 60 && /opt/scripts/clone-repo.sh && pip install --upgrade pip && pip install -r ${SCRIPT_DIR}/requirements.txt && while true; do ${SCRIPT_DIR}/update-coredns.sh; sleep 1800; done"
+          volumeMounts:
+            - name: scripts
+              mountPath: /opt/scripts
+              readOnly: false
+          env:
+            - name: INGRESS_NS
+              value: nok-bng
+            - name: INGRESS_SVC
+              value: nok-apps-ingress
+            - name: KUBECTL_VERSION
+              value: ${kubectl-version} # kpt-set: ${kubectl-version}
+            - name: SCRIPT_DIR
+              value: /core-dns-editor
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+      volumes:
+        - name: scripts
+          configMap:
+            name: coredns-updater-scripts
+            defaultMode: 0555

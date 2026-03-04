@@ -12,9 +12,47 @@ pipeline:
     - image: gcr.io/kpt-fn/set-namespace:v0.4.1
       configMap:
         namespace: nok-bng
-    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+    # - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+    #   configMap:
+    #     ingress-host: bng.nok.local
+    #     gnmic-version: 0.42.1
+    #     prometheus-version: v2.47.0
+    #     grafana-version: latest
+    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
       configMap:
-        ingress-host: bng.nok.local
-        gnmic-version: 0.42.1
-        prometheus-version: v2.47.0
-        grafana-version: latest
+        netopskube.io/bbm: "true"
+        netopskube.io/path: "/metrics"
+        netopskube.io/prober: "http"
+      selectors:
+        - kind: Service
+          name: tel-sping
+        - kind: Service
+          name: gnmic-metrics-svc
+    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
+      configMap:
+        netopskube.io/bbm: "true"
+        netopskube.io/prober: "tcp"
+      selectors:
+        - kind: Service
+          name: tel-fb
+        - kind: Service
+          name: tel-loki
+        - kind: Service
+          name: tel-pt
+    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
+      configMap:
+        netopskube.io/bbm: "true"
+        netopskube.io/prober: "http"
+      selectors:
+        - kind: Service
+          name: grafana-svc
+        - kind: Service
+          name: nok-apps-portal-service
+        - kind: Service
+          name: prometheus-svc
+        - kind: Service
+          name: tel-am
+        - kind: Ingress
+          name: nok-apps-ingress
+        - kind: Ingress
+          name: nok-apps-portal-ingress

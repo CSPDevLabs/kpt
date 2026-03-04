@@ -91,6 +91,9 @@ metadata:
   namespace: nok-bng
   labels:
     app: promtail
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
 spec:
   selector:
     app: promtail

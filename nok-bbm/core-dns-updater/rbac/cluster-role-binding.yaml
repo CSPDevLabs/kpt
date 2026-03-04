@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: coredns-updater
+subjects:
+  - kind: ServiceAccount
+    name: coredns-updater
+    namespace: nok-bbm
+roleRef:
+  kind: ClusterRole
+  name: coredns-updater
+  apiGroup: rbac.authorization.k8s.io

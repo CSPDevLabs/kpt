@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bbm-grafana-datasources-config
+  namespace: nok-bbm
+data:
+  datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        uid: DATASOURCE
+        access: proxy
+        url: http://bbm-prometheus-svc:9090
+        jsonData:
+          httpMethod: POST
+          timeout: 60
+          manageAlerts: false
+          prometheusType: Prometheus
+          cacheLevel: 'High'
+          disableRecordingRules: false
+          incrementalQueryOverlapWindow: 10m

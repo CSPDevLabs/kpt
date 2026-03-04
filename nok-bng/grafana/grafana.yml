@@ -32,6 +32,9 @@ kind: Service
 metadata:
   name: grafana-svc
   namespace: nok-bng
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
 spec:
   selector:
     app: grafana

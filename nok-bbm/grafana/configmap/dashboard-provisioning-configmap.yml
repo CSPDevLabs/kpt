@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bbm-grafana-dashboard-provisioning
+  namespace: nok-bbm
+data:
+  dashboards.yml: |
+    apiVersion: 1
+    providers:
+      - name: telemetry
+        type: file
+        updateIntervalSeconds: 10
+        allowUiUpdates: false
+        options:
+          path: /var/lib/grafana/dashboards # This path must match the volume mount in the deployment
+          foldersFromFilesStructure: true

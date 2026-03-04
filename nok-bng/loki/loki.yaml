@@ -98,6 +98,9 @@ metadata:
   namespace: nok-bng
   labels:
     app: loki
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
 spec:
   selector:
     app: loki

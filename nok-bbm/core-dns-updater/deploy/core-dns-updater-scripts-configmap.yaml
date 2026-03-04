@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-updater-scripts
+  namespace: nok-bbm
+data:
+  clone-repo.sh: |-
+    #!/bin/sh
+
+    set -e
+    git clone --branch main https://github.com/CSPDevLabs/core-dns-editor.git /core-dns-editor;
+    cd /core-dns-editor;

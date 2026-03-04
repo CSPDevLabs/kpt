@@ -1,0 +1,8 @@
+# create-setters-fn-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: create-setters-fn-config
+  namespace: nok-bbm
+data:
+  pkg-namespace: NAMESPACE
