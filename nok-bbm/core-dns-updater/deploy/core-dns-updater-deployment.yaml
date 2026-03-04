@@ -30,7 +30,7 @@ spec:
             - name: INGRESS_SVC
               value: nok-apps-ingress
             - name: KUBECTL_VERSION
-              value: ${kubectl-version} # kpt-set: ${kubectl-version}
+              value: v1.33.1 # kpt-set: ${kubectl-version}
             - name: SCRIPT_DIR
               value: /core-dns-editor
           resources:
