@@ -14,7 +14,6 @@ spec:
   - host: bng.nok.local # kpt-set: ${ingress-host}
     http:
       paths:     
-#      - path: /prometheus(/|$)(.*)
       - path: /prometheus(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
@@ -28,21 +27,7 @@ spec:
           service:
             name: grafana-svc
             port:
-              number: 3000
-      # - path: /gnmic-metrics(/|$)(.*)
-      #   pathType: ImplementationSpecific
-      #   backend:
-      #     service:
-      #       name: gnmic-metrics-svc
-      #       port:
-      #         number: 9804
-      - path: /gnmic-state(/|$)(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: gnmic-state-svc
-            port:
-              number: 9804              
+              number: 3000            
       - path: /alertmanager(/|$)(.*)
         pathType: ImplementationSpecific
         backend:

@@ -59,8 +59,14 @@ metadata:
 spec:
   replicas: 1
   serviceAccountName: prometheus
-  serviceMonitorSelector: {} # Selects all ServiceMonitors in the namespace
-  podMonitorSelector: {} # Selects all PodMonitors in the namespace
+  serviceMonitorSelector: {} 
+  podMonitorSelector: {} 
+  podMetadata:
+    annotations:
+      netopskube.io/bbm: "true"
+      netopskube.io/prober: "http"
+      netopskube.io/scheme: "http"
+      netopskube.io/path: "/-/ready"
   resources:
     requests:
       memory: 400Mi
