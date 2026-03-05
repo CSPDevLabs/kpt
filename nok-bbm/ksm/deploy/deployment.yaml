@@ -21,7 +21,7 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-        - image: registry.k8s.io/kube-state-metrics/kube-state-metrics:${ksm-version} # kpt-set: registry.k8s.io/kube-state-metrics/kube-state-metrics:${ksm-version}
+        - image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.18.0 # kpt-set: registry.k8s.io/kube-state-metrics/kube-state-metrics:${ksm-version}
           livenessProbe:
             httpGet:
               path: /livez

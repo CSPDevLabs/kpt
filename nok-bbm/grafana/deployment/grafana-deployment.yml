@@ -36,7 +36,7 @@ spec:
               mountPath: /dashboards-volume
       containers:
         - name: bbm-grafana
-          image: grafana/grafana:${grafana-version} # kpt-set: grafana/grafana:${grafana-version}
+          image: grafana/grafana:12.3.2 # kpt-set: grafana/grafana:${grafana-version}
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

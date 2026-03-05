@@ -7,7 +7,7 @@ data:
   menu-config.json: |
     [
       {"name": "Prometheus", "path": "/prometheus/graph", "openInNewTab": false},
-      {"name": "Grafana", "path": "/grafana", "openInNewTab": true},
+      {"name": "Grafana", "path": "/grafana/dashboards", "openInNewTab": true},
       {"name": "Alertmanager", "path": "/alertmanager", "openInNewTab": false},
-      {"name": "Gitea", "path": "http://gitea.nok.local:3000", "openInNewTab": true}
+      {"name": "Gitea", "path": "http://gitea.nok.local:8080/nok/nok-bng-resources", "openInNewTab": true}
     ]
