@@ -1501,11 +1501,28 @@ spec:
               heartbeatInterval:
                 description: The gNMI Subscription heartbeat interval
                 type: string
+              history:
+                description: The gNMI Subscription history configuration
+                properties:
+                  end:
+                    description: The gNMI Subscription history end time
+                    format: date-time
+                    type: string
+                  snapshot:
+                    description: The gNMI Subscription history snapshot time
+                    format: date-time
+                    type: string
+                  start:
+                    description: The gNMI Subscription history start time
+                    format: date-time
+                    type: string
+                type: object
               mode:
                 description: The gNMI SubscriptionList mode (ONCE, STREAM/SAMPLE,
                   STREAM/ON_CHANGE, STREAM/TARGET_DEFINED or POLL)
                 enum:
                 - ONCE
+                - STREAM
                 - STREAM/SAMPLE
                 - STREAM/ON_CHANGE
                 - STREAM/TARGET_DEFINED
@@ -1519,6 +1536,10 @@ spec:
               prefix:
                 description: The gNMI prefix to subscribe to
                 type: string
+              qos:
+                description: The gNMI Subscription QoS (0-9)
+                format: int32
+                type: integer
               sampleInterval:
                 description: The gNMI Subscription sample interval
                 type: string
@@ -1527,6 +1548,12 @@ spec:
                 items:
                   type: string
                 type: array
+              suppressRedundant:
+                description: Whether to suppress redundant updates
+                type: boolean
+              target:
+                description: The gNMI target to subscribe to
+                type: string
               updatesOnly:
                 description: Whether to only send updates or all data
                 type: boolean
@@ -1600,6 +1627,7 @@ spec:
                   username, password or token keys in the secret referenced by the field
                 type: string
               encoding:
+                default: JSON
                 description: The gNMI Subscription encoding (JSON, BYTES, PROTO, ASCII,
                   JSON_IETF)
                 enum:
@@ -1645,6 +1673,7 @@ spec:
                 description: The TCP keep-alive interval
                 type: string
               timeout:
+                default: 10s
                 description: Target connection timeout
                 type: string
               tls:
@@ -1707,6 +1736,12 @@ spec:
     - jsonPath: .spec.profile
       name: Profile
       type: string
+    - jsonPath: .status.clusters
+      name: Clusters
+      type: integer
+    - jsonPath: .status.connectionState
+      name: State
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -1743,24 +1778,59 @@ spec:
             - profile
             type: object
           status:
-            description: TargetStatus defines the observed state of Target
+            description: |-
+              TargetStatus defines the observed state of Target.
+              A single Target may be collected by multiple Clusters (via different Pipelines),
+              so the status is reported per-cluster.
             properties:
+              clusterStates:
+                additionalProperties:
+                  description: ClusterTargetState represents the state of a target
+                    on a specific gNMIc cluster pod.
+                  properties:
+                    connectionState:
+                      description: The gNMI connection state (CONNECTING, READY, TRANSIENT_FAILURE,
+                        etc.).
+                      type: string
+                    failedReason:
+                      description: The reason for failure when state is "failed".
+                      type: string
+                    lastUpdated:
+                      description: When this state was last updated by the gNMIc pod.
+                      format: date-time
+                      type: string
+                    pod:
+                      description: The pod within the cluster that currently owns
+                        this target.
+                      type: string
+                    state:
+                      description: The target's operational state (starting, running,
+                        stopping, stopped, failed).
+                      type: string
+                    subscriptions:
+                      additionalProperties:
+                        type: string
+                      description: Per-subscription state (subscription name -> running/stopped).
+                      type: object
+                  required:
+                  - pod
+                  type: object
+                description: |-
+                  Per-cluster target state, keyed by Cluster CR name.
+                  A target may be collected by multiple clusters (via different pipelines).
+                type: object
+              clusters:
+                description: Number of clusters currently collecting this target.
+                format: int32
+                type: integer
               connectionState:
-                description: The connection state of the target
-                type: string
-              lastConnected:
-                format: date-time
-                type: string
-              lastDisconnected:
-                format: date-time
-                type: string
-              lastError:
+                description: |-
+                  Aggregate state across all clusters.
+                  READY if all clusters report running and READY, DEGRADED if any do not.
+                  Empty when no clusters are collecting this target.
                 type: string
             required:
-            - connectionState
-            - lastConnected
-            - lastDisconnected
-            - lastError
+            - clusters
             type: object
         type: object
     served: true
@@ -2188,6 +2258,7 @@ rules:
   resources:
   - clusters/status
   - pipelines/status
+  - targets/status
   - targetsources/status
   - tunneltargetpolicies/status
   verbs:
@@ -2206,48 +2277,6 @@ rules:
   - get
   - list
   - watch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/component: kube-rbac-proxy
-    app.kubernetes.io/created-by: kb
-    app.kubernetes.io/instance: metrics-reader
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/part-of: kb
-  name: gnmic-metrics-reader
-rules:
-- nonResourceURLs:
-  - /metrics
-  verbs:
-  - get
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/component: kube-rbac-proxy
-    app.kubernetes.io/created-by: kb
-    app.kubernetes.io/instance: proxy-role
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/part-of: kb
-  name: gnmic-proxy-role
-rules:
-- apiGroups:
-  - authentication.k8s.io
-  resources:
-  - tokenreviews
-  verbs:
-  - create
-- apiGroups:
-  - authorization.k8s.io
-  resources:
-  - subjectaccessreviews
-  verbs:
-  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2361,31 +2390,33 @@ subjects:
   name: gnmic-controller-manager
   namespace: nok-base
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+apiVersion: v1
+kind: Service
 metadata:
   labels:
-    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/component: manager
     app.kubernetes.io/created-by: kb
-    app.kubernetes.io/instance: proxy-rolebinding
+    app.kubernetes.io/instance: controller-manager-api-service
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/name: service
     app.kubernetes.io/part-of: kb
-  name: gnmic-proxy-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: gnmic-proxy-role
-subjects:
-- kind: ServiceAccount
-  name: gnmic-controller-manager
+    control-plane: controller-manager
+  name: gnmic-controller-manager-api
   namespace: nok-base
+spec:
+  ports:
+  - name: api
+    port: 8082
+    protocol: TCP
+    targetPort: api
+  selector:
+    control-plane: controller-manager
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/component: manager
     app.kubernetes.io/created-by: kb
     app.kubernetes.io/instance: controller-manager-metrics-service
     app.kubernetes.io/managed-by: kustomize
@@ -2396,10 +2427,10 @@ metadata:
   namespace: nok-base
 spec:
   ports:
-  - name: https
-    port: 8443
+  - name: metrics
+    port: 8080
     protocol: TCP
-    targetPort: https
+    targetPort: metrics
   selector:
     control-plane: controller-manager
 ---
@@ -2449,7 +2480,8 @@ spec:
       containers:
       - args:
         - --health-probe-bind-address=:8081
-        - --metrics-bind-address=127.0.0.1:8080
+        - --metrics-bind-address=:8080
+        - --api-bind-address=:8082
         - --leader-elect
         command:
         - /manager
@@ -2460,7 +2492,7 @@ spec:
           value: /etc/gnmic-operator/certs/tls.key
         - name: GNMIC_TLS_CA
           value: /etc/gnmic-operator/ca/ca.crt
-        image: ghcr.io/gnmic/operator:0.1.0
+        image: ghcr.io/gnmic/operator:0.2.0
         livenessProbe:
           httpGet:
             path: /healthz
@@ -2471,6 +2503,15 @@ spec:
         ports:
         - containerPort: 9443
           name: webhook-server
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        - containerPort: 8081
+          name: health
+          protocol: TCP
+        - containerPort: 8082
+          name: api
           protocol: TCP
         readinessProbe:
           httpGet:
@@ -2500,29 +2541,6 @@ spec:
         - mountPath: /tmp/k8s-webhook-server/serving-certs
           name: webhook-certs
           readOnly: true
-      - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=0
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.15.0
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: https
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 500m
-            memory: 128Mi
-          requests:
-            cpu: 5m
-            memory: 64Mi
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
       securityContext:
         runAsNonRoot: true
       serviceAccountName: gnmic-controller-manager
