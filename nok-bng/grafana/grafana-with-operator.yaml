@@ -42,3 +42,79 @@ spec:
                 claimName: grafana-pvc
       strategy:
         type: Recreate
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: prometheus-datasource
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana" # Matches the label on your Grafana object
+  datasource:
+    name: Prometheus
+    type: prometheus
+    uid: DS_PROMETHEUS
+    access: proxy
+    url: http://prometheus-operated:9090
+    jsonData:
+      httpMethod: POST
+      timeout: 60
+      manageAlerts: false
+      prometheusType: Prometheus
+      cacheLevel: 'High'
+      disableRecordingRules: false
+      incrementalQueryOverlapWindow: 10m
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: loki-datasource
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  datasource:
+    name: Loki
+    type: loki
+    uid: DS_LOKI
+    access: proxy
+    url: http://tel-loki:3100
+    jsonData:
+      timeout: 60
+      maxLines: 1000
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: bng-core-aggregation
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: "https://raw.githubusercontent.com/CSPDevLabs/nok-clabs/refs/heads/main/nok-bng/grafana-dashboards/bng-core-aggregation.json"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: subscriber-insight
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: "https://raw.githubusercontent.com/CSPDevLabs/nok-clabs/refs/heads/main/nok-bng/grafana-dashboards/subscriber-insight.json"
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: bng-state-and-availability
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  url: "https://raw.githubusercontent.com/CSPDevLabs/nok-clabs/refs/heads/main/nok-bng/grafana-dashboards/bng-state-and-availability.json"
