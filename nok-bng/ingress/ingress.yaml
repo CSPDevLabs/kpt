@@ -25,7 +25,7 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: grafana-svc
+            name: grafana-service
             port:
               number: 3000            
       - path: /alertmanager(/|$)(.*)
