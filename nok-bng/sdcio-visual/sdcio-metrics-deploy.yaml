@@ -11,8 +11,11 @@ metadata:
   namespace: nok-bng
 rules:
 - apiGroups: ["config.sdcio.dev"]
-  resources: ["deviations"]
+  resources: ["deviations", "configs"]
   verbs: ["get", "list", "watch"]
+- apiGroups: ["inv.sdcio.dev"] 
+  resources: ["targets"]       
+  verbs: ["get", "list"]  
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
