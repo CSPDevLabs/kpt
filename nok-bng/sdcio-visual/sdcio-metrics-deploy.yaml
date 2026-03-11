@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sdcio-metrics-sa
+  namespace: nok-bng
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deviation-reader
+  namespace: nok-bng
+rules:
+- apiGroups: ["config.sdcio.dev"]
+  resources: ["deviations"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sdcio-metrics-rb
+  namespace: nok-bng
+subjects:
+- kind: ServiceAccount
+  name: sdcio-metrics-sa
+roleRef:
+  kind: Role
+  name: deviation-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdcio-metrics-exporter
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sdcio-metrics
+  template:
+    metadata:
+      labels:
+        app: sdcio-metrics
+    spec:
+      serviceAccountName: sdcio-metrics-sa
+      containers:
+      - name: exporter
+        image: ghcr.io/cspdevlabs/nok-sdcio-metrics:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdcio-metrics-service
+  namespace: nok-bng
+  labels:
+    app: sdcio-metrics
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: sdcio-metrics

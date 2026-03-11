@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: sdcio-metrics
+  namespace: nok-bng
+spec:
+  selector:
+    matchLabels:
+      app: sdcio-metrics
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
