@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: sdcio-metrics-sa
+  name: ndt-metrics-sa
   namespace: nok-bng
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -10,11 +10,8 @@ metadata:
   name: deviation-reader
   namespace: nok-bng
 rules:
-- apiGroups: ["config.sdcio.dev"]
-  resources: ["deviations", "configs"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["inv.sdcio.dev"] 
-  resources: ["targets"]       
+- apiGroups: ["nok.dev"] 
+  resources: ["networkdevicetargets"]       
   verbs: ["get", "list", "watch"]  
 - apiGroups: ["metrics.dynamic.io"] 
   resources: ["metricdefinitions"]       
@@ -23,32 +20,33 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: sdcio-metrics-rb
+  name: ndt-metrics-rb
   namespace: nok-bng
 subjects:
 - kind: ServiceAccount
-  name: sdcio-metrics-sa
+  name: ndt-metrics-sa
 roleRef:
   kind: Role
   name: deviation-reader
   apiGroup: rbac.authorization.k8s.io
+ 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sdcio-metrics-exporter
+  name: ndt-metrics-exporter
   namespace: nok-bng
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sdcio-metrics
+      app: ndt-metrics
   template:
     metadata:
       labels:
-        app: sdcio-metrics
+        app: ndt-metrics
     spec:
-      serviceAccountName: sdcio-metrics-sa
+      serviceAccountName: ndt-metrics-sa
       containers:
       - name: exporter
         image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
@@ -56,78 +54,81 @@ spec:
         - containerPort: 8080
         env:
         - name: METRIC_APP_LABEL
-          value: "sdcio-exporter"        
+          value: "ndt-exporter"
+
 ---
 apiVersion: metrics.dynamic.io/v1alpha1
 kind: MetricDefinition
 metadata:
-  name: sdcio-deviations
+  name: device-sdcio-enabled
   namespace: nok-bng
   labels:
-    metrics-app: sdcio-exporter    
+    metrics-app: ndt-exporter  
 spec:
-  metricName: "sdcio_deviation_count"
-  help: "Count of deviations in sdcio objects"
+  metricName: "network_device_sdcio_enabled"
+  help: "Status of SDCIO enablement (1 for True, 0 for False)"
   resource:
-    group: "config.sdcio.dev"
+    group: "nok.dev"
     version: "v1alpha1"
-    plural: "deviations"
+    plural: "networkdevicetargets"
   labelMappings:
-    - label: "type"
-      path: "spec.deviationType"
-  valuePath: "spec.deviations.length"        
+    - label: "hostname"
+      path: "spec.hostname"
+    - label: "vendor"
+      path: "spec.commonLabels.vendor"
+  valuePath: "spec.sdcio.enabled"
 ---
 apiVersion: metrics.dynamic.io/v1alpha1
 kind: MetricDefinition
 metadata:
-  name: config-status
+  name: device-gnmic-enabled
   namespace: nok-bng
   labels:
-    metrics-app: sdcio-exporter    
+    metrics-app: ndt-exporter  
 spec:
-  metricName: "sdcio_config_ready"
-  help: "Config Ready status (1 for True, 0 for False)"
+  metricName: "network_device_gnmic_enabled"
+  help: "Status of gNMIC enablement (1 for True, 0 for False)"
   resource:
-    group: "config.sdcio.dev"
+    group: "nok.dev"
     version: "v1alpha1"
-    plural: "configs"
+    plural: "networkdevicetargets"
   labelMappings:
-    - label: "target_name"
-      path: "metadata.labels['config.sdcio.dev/targetName']"
-  valuePath: "status.conditions[?(@.type=='Ready')].status" 
+    - label: "hostname"
+      path: "spec.hostname"
+  valuePath: "spec.gnmic.enabled"
+
 ---
 apiVersion: metrics.dynamic.io/v1alpha1
 kind: MetricDefinition
 metadata:
-  name: target-status
+  name: device-reachability
   namespace: nok-bng
   labels:
-    metrics-app: sdcio-exporter   
+    metrics-app: ndt-exporter  
 spec:
-  metricName: "sdcio_target_config_ready"
-  help: "Target ConfigReady status (1 for True, 0 for False)"
+  metricName: "network_device_reachability"
+  help: "Device reachability status (1 for Reachable, 0 otherwise)"
   resource:
-    group: "inv.sdcio.dev"
+    group: "nok.dev"
     version: "v1alpha1"
-    plural: "targets"
+    plural: "networkdevicetargets"
   labelMappings:
     - label: "address"
       path: "spec.address"
-    - label: "vendor"
-      path: "metadata.labels.vendor"
-  valuePath: "status.conditions[?(@.type=='ConfigReady')].status"
+  valuePath: "status.reachability" 
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sdcio-metrics-service
+  name: ndt-metrics-service
   namespace: nok-bng
   labels:
-    app: sdcio-metrics
+    app: ndt-metrics
 spec:
   ports:
   - name: metrics
     port: 8080
     targetPort: 8080
   selector:
-    app: sdcio-metrics
+    app: ndt-metrics

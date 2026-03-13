@@ -1,0 +1,46 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # This must be: plural.group
+  name: metricdefinitions.metrics.dynamic.io
+spec:
+  group: metrics.dynamic.io
+  scope: Namespaced  # Limits the app to its own namespace as requested
+  names:
+    plural: metricdefinitions
+    singular: metricdefinition
+    kind: MetricDefinition
+    listKind: MetricDefinitionList
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required: ["metricName", "resource", "labelMappings", "valuePath"]
+              properties:
+                metricName: 
+                  type: string
+                help: 
+                  type: string
+                resource:
+                  type: object
+                  required: ["group", "version", "plural"]
+                  properties:
+                    group: {type: string}
+                    version: {type: string}
+                    plural: {type: string}
+                labelMappings:
+                  type: array
+                  items:
+                    type: object
+                    required: ["label", "path"]
+                    properties:
+                      label: {type: string}
+                      path: {type: string}
+                valuePath: 
+                  type: string
