@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-auth
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portal-auth
+  template:
+    metadata:
+      labels:
+        app: portal-auth
+    spec:
+      containers:
+      - name: auth
+        image: flask-auth-service
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PORTAL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: portal-auth-secret
+              key: username
+        - name: PORTAL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: portal-auth-secret
+              key: password
