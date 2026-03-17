@@ -1,0 +1,121 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: networkhosttargets.nok.dev
+spec:
+  group: nok.dev
+  names:
+    plural: networkhosttargets
+    singular: networkhosttarget
+    kind: NetworkHostTarget
+    shortNames:
+    - nht
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              description: Specification of the desired behavior of the NetworkHostTarget.
+              properties:
+                address:
+                  type: string
+                  description: The primary IP address or resolvable hostname for the host.
+                hostname:
+                  type: string
+                  description: A user-friendly hostname for the host.
+                commonLabels:
+                  type: object
+                  description: Labels to be applied to generated resources for this host.
+                  additionalProperties:
+                    type: string
+                ssh:
+                  type: object
+                  description: SSH connection configuration for the host.
+                  properties:
+                    port:
+                      type: integer
+                      description: SSH port number.
+                      default: 22
+                      minimum: 1
+                      maximum: 65535
+                    credentialsSecretRef:
+                      type: string
+                      description: Name of the Kubernetes Secret containing SSH username and password.
+                    keySecretRef:
+                      type: string
+                      description: Name of the Kubernetes Secret containing the SSH private key.
+                    hostKeyValidation:
+                      type: boolean
+                      description: Whether to verify the remote host key against known hosts.
+                      default: false
+                    connectionTimeout:
+                      type: integer
+                      description: SSH connection timeout in seconds.
+                      default: 30
+                      minimum: 1
+                    jumpHost:
+                      type: object
+                      description: Optional SSH jump/bastion host configuration for proxied connections.
+                      properties:
+                        address:
+                          type: string
+                          description: IP address or hostname of the jump host.
+                        port:
+                          type: integer
+                          description: SSH port of the jump host.
+                          default: 22
+                          minimum: 1
+                          maximum: 65535
+                        credentialsSecretRef:
+                          type: string
+                          description: Name of the Kubernetes Secret containing jump host SSH credentials.
+                      required:
+                        - address
+                  x-kubernetes-validations:
+                    - rule: "has(self.credentialsSecretRef) || has(self.keySecretRef)"
+                      message: "At least one of credentialsSecretRef or keySecretRef must be specified."
+              required:
+                - address
+                - hostname
+            status:
+              type: object
+              description: Current observed state of the NetworkHostTarget.
+              properties:
+                reachability:
+                  type: string
+                  description: Aggregated reachability status for the host (Reachable, Unreachable, Unknown).
+                lastProbeTime:
+                  type: string
+                  format: date-time
+                  description: Timestamp of the last SSH reachability check.
+
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Address
+          type: string
+          jsonPath: .spec.address
+          description: The IP address or hostname of the host.
+        - name: SSH Port
+          type: integer
+          jsonPath: .spec.ssh.port
+          description: SSH port number for the host.
+        - name: Reachability
+          type: string
+          jsonPath: .status.reachability
+          description: Overall reachability status of the host.
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
