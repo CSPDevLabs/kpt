@@ -19,7 +19,7 @@ spec:
           image: python:3.12.12-bookworm
           command: ["/bin/sh", "-c"]
           args:
-            - "echo \"Sleeping for 60 seconds\" && sleep 60 && /opt/scripts/clone-repo.sh && pip install --upgrade pip && pip install -r ${SCRIPT_DIR}/requirements.txt && while true; do ${SCRIPT_DIR}/update-coredns.sh; sleep 1800; done"
+            - "echo \"Sleeping for 60 seconds\" && sleep 60 && /opt/scripts/clone-repo.sh && pip install --upgrade pip && pip install -r ${SCRIPT_DIR}/requirements.txt && while true; do ${SCRIPT_DIR}/update-coredns.sh; sleep 600; done"
           volumeMounts:
             - name: scripts
               mountPath: /opt/scripts

@@ -2032,8 +2032,17 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: monitoring
-    ports:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: nok-bbm
+    ports:  
     - port: 8443
+      protocol: TCP
+    - port: 9443
+      protocol: TCP
+    - port: 64443
+      protocol: TCP
+    - port: 56000
       protocol: TCP
   - from:
     - podSelector: {}
@@ -2442,6 +2451,10 @@ metadata:
     app.kubernetes.io/name: config-server
   name: config-server-metrics
   namespace: nok-base
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
+    netopskube.io/port: "8443"
 spec:
   ports:
   - name: metrics
@@ -2458,6 +2471,10 @@ metadata:
     app.kubernetes.io/name: config-server
   name: config-server-target-metrics
   namespace: nok-base
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
+    netopskube.io/port: "9443"
 spec:
   ports:
   - name: targetmetrics
@@ -2474,6 +2491,12 @@ metadata:
     app.kubernetes.io/name: config-server
   name: config-server
   namespace: nok-base
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
+    netopskube.io/scheme: https
+    netopskube.io/path: "/healthz"
+    netopskube.io/port: "6443"
 spec:
   ports:
   - name: api-service
@@ -2489,6 +2512,10 @@ metadata:
     app.kubernetes.io/name: config-server
   name: data-server
   namespace: nok-base
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
+    netopskube.io/port: "56000"
 spec:
   ports:
   - name: data-service

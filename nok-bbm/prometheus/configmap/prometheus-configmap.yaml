@@ -49,15 +49,20 @@ data:
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ndt_namespace]
+        separator: ;
+        regex: (.*)
+        target_label: namespace
+        replacement: $1
+        action: replace
       - separator: ;
         regex: (.*)
         target_label: __address__
         replacement: blackbox-svc:9115
         action: replace
-      file_sd_configs:
-      - files:
-        - /opt/targets/nokia_srsim*.json
-        refresh_interval: 10s
+      http_sd_configs:
+      - url: http://nok-controller.nok-base.svc.cluster.local:8080/targets/blackbox?kind=device
+        refresh_interval: 30s
     - job_name: ds_file_nokia_srsim_gnmi_check
       honor_timestamps: true
       params:
@@ -70,11 +75,11 @@ data:
       follow_redirects: true
       enable_http2: true
       relabel_configs:
-      - source_labels: [__address__]
+      - source_labels: [__address__, __meta_ndt_gnmic_port]
         separator: ;
-        regex: (.+)
+        regex: (.+);(.+)
         target_label: __param_target
-        replacement: $1:57400
+        replacement: $1:$2
         action: replace
       - source_labels: [hostname]
         separator: ;
@@ -82,15 +87,20 @@ data:
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_ndt_namespace]
+        separator: ;
+        regex: (.*)
+        target_label: namespace
+        replacement: $1
+        action: replace
       - separator: ;
         regex: (.*)
         target_label: __address__
         replacement: blackbox-svc:9115
         action: replace
-      file_sd_configs:
-      - files:
-        - /opt/targets/nokia_srsim*.json
-        refresh_interval: 10s
+      http_sd_configs:
+      - url: http://nok-controller.nok-base.svc.cluster.local:8080/targets/blackbox?kind=device
+        refresh_interval: 30s
     - job_name: kube_state_metrics
       honor_timestamps: true
       scrape_interval: 30s
@@ -127,15 +137,53 @@ data:
         target_label: instance
         replacement: $1
         action: replace
+      - source_labels: [__meta_nht_namespace]
+        separator: ;
+        regex: (.*)
+        target_label: namespace
+        replacement: $1
+        action: replace
       - separator: ;
         regex: (.*)
         target_label: __address__
         replacement: blackbox-svc:9115
         action: replace
-      file_sd_configs:
-      - files:
-        - /opt/targets/linux*.json
-        refresh_interval: 10s
+      http_sd_configs:
+      - url: http://nok-controller.nok-base.svc.cluster.local:8080/targets/blackbox?kind=host
+        refresh_interval: 30s
+    # - job_name: ds_file_linux_icmp_ping
+    #   honor_timestamps: true
+    #   params:
+    #     module:
+    #     - icmp_ping
+    #   scrape_interval: 30s
+    #   scrape_timeout: 7s
+    #   metrics_path: /probe
+    #   scheme: http
+    #   follow_redirects: true
+    #   enable_http2: true
+    #   relabel_configs:
+    #   - source_labels: [__address__]
+    #     separator: ;
+    #     regex: (.*)
+    #     target_label: __param_target
+    #     replacement: $1
+    #     action: replace
+    #   - source_labels: [hostname]
+    #     separator: ;
+    #     regex: (.*)
+    #     target_label: instance
+    #     replacement: $1
+    #     action: replace
+    #   - separator: ;
+    #     regex: (.*)
+    #     target_label: __address__
+    #     replacement: blackbox-svc:9115
+    #     action: replace
+    #   file_sd_configs:
+    #   - files:
+    #     - /opt/targets/linux*.json
+    #     refresh_interval: 10s
     - job_name: nok_services_http
       honor_timestamps: true
       params:
@@ -163,6 +211,18 @@ data:
         regex: TCP
         replacement: $1
         action: keep
+      - source_labels: [__meta_kubernetes_service_port_number]
+        separator: ;
+        regex: (.+)
+        target_label: __tmp_port
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_port]
+        separator: ;
+        regex: (.+)
+        target_label: __tmp_port
+        replacement: $1
+        action: replace
       - source_labels: [__meta_kubernetes_namespace]
         separator: ;
         regex: (.*)
@@ -197,7 +257,7 @@ data:
         target_label: __tmp_path
         replacement: $1
         action: replace
-      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_service_port_number,
+      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __tmp_port,
           __tmp_path, __tmp_scheme]
         separator: ;
         regex: (.+);(.+);(.+);(.+);(.+)
@@ -247,6 +307,18 @@ data:
         regex: TCP
         replacement: $1
         action: keep
+      - source_labels: [__meta_kubernetes_service_port_number]
+        separator: ;
+        regex: (.+)
+        target_label: __tmp_port
+        replacement: $1
+        action: replace
+      - source_labels: [__meta_kubernetes_service_annotation_netopskube_io_port]
+        separator: ;
+        regex: (.+)
+        target_label: __tmp_port
+        replacement: $1
+        action: replace
       - source_labels: [__meta_kubernetes_namespace]
         separator: ;
         regex: (.*)
@@ -259,7 +331,7 @@ data:
         target_label: service
         replacement: $1
         action: replace
-      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_service_port_number]
+      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __tmp_port]
         separator: ;
         regex: (.+);(.+);(.+)
         target_label: __param_target
