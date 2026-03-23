@@ -1,53 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.3.2"
-    },
-    {
-      "type": "panel",
-      "id": "heatmap",
-      "name": "Heatmap",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "status-history",
-      "name": "Status history",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -67,12 +18,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 1,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -167,7 +119,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -265,7 +217,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -353,7 +305,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -441,7 +393,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -529,7 +481,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -602,13 +554,13 @@
           "refId": "A"
         }
       ],
-      "title": "SROS SSH Protocol Check",
+      "title": "SROS SSH Protocol Check $NAMESPACE",
       "type": "heatmap"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -681,13 +633,13 @@
           "refId": "A"
         }
       ],
-      "title": "SROS gNMI Protocol Check",
+      "title": "SROS gNMI Protocol Check $NAMESPACE",
       "type": "heatmap"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -780,13 +732,13 @@
           "refId": "A"
         }
       ],
-      "title": "HTTP Connect for Services",
+      "title": "HTTP Connect for Services $NAMESPACE",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -879,13 +831,13 @@
           "refId": "A"
         }
       ],
-      "title": "HTTP Connect for Ingress",
+      "title": "HTTP Connect for Ingress $NAMESPACE",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -978,13 +930,13 @@
           "refId": "A"
         }
       ],
-      "title": "HTTP Transfer",
+      "title": "HTTP Transfer $NAMESPACE",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -1071,19 +1023,19 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_icmp_duration_seconds{kind=\"host\",phase=\"rtt\",namespace=\"$NAMESPACE\"}",
+          "expr": "probe_icmp_duration_seconds{phase=\"rtt\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Linux ICMP RTT Probing",
+      "title": "Linux ICMP RTT Probing $NAMESPACE",
       "type": "timeseries"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "DATASOURCE"
       },
       "fieldConfig": {
         "defaults": {
@@ -1156,7 +1108,7 @@
           "refId": "A"
         }
       ],
-      "title": "Linux ICMP Probing",
+      "title": "Linux ICMP Probing $NAMESPACE",
       "type": "heatmap"
     }
   ],
@@ -1167,9 +1119,8 @@
     "list": [
       {
         "current": {
-          "text": "",
-          "value": "${DS_PROMETHEUS}",
-          "selected": true
+          "text": "Prometheus",
+          "value": "DATASOURCE"
         },
         "name": "DATASOURCE",
         "options": [],
@@ -1179,7 +1130,10 @@
         "type": "datasource"
       },
       {
-        "current": {},
+        "current": {
+          "text": "nok-bng",
+          "value": "nok-bng"
+        },
         "definition": "label_values(kube_namespace_created,namespace)",
         "label": "Namespace",
         "name": "NAMESPACE",
@@ -1202,8 +1156,6 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Blackbox Monitoring Dashboard",
-  "uid": "ggwg69",
-  "version": 1,
-  "weekStart": "",
-  "id": null
+  "uid": "ggwg68",
+  "version": 1
 }
