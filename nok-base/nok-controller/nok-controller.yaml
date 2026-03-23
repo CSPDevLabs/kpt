@@ -61,11 +61,6 @@ spec:
       serviceAccountName: nok-controller
       containers:
       - name: controller
-<<<<<<< HEAD
-        image: ghcr.io/cspdevlabs/nok-controller:v1.123a # registry.srlinux.dev/nok-controller:latest <- monkey patch for now, to be replaced with new version of image > ghcr.io/cspdevlabs/nok-controller:v1.14
+        image: ghcr.io/cspdevlabs/nok-controller:v1.132a # registry.srlinux.dev/nok-controller:latest <- monkey patch for now, to be replaced with new version of image > ghcr.io/cspdevlabs/nok-controller:v1.14
         command: ["python", "/app/controller.py"]
         imagePullPolicy: IfNotPresent
-=======
-        image: ghcr.io/cspdevlabs/nok-controller:v1.132a # added /targets/blackbox endpoint + other improvements
-        command: ["python", "/app/controller.py"]
->>>>>>> 7f7c249 (feat: nok-controller version update)
