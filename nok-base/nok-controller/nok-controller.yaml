@@ -61,6 +61,5 @@ spec:
       serviceAccountName: nok-controller
       containers:
       - name: controller
-        image: ghcr.io/cspdevlabs/nok-controller:v1.132a # registry.srlinux.dev/nok-controller:latest <- monkey patch for now, to be replaced with new version of image > ghcr.io/cspdevlabs/nok-controller:v1.14
-        command: ["python", "/app/controller.py"]
+        image: ghcr.io/cspdevlabs/nok-controller:v1.132a
         imagePullPolicy: IfNotPresent
