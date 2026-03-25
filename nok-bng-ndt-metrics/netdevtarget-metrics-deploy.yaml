@@ -51,7 +51,8 @@ spec:
       - name: exporter
         image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
         ports:
-        - containerPort: 8080
+        - name: metrics
+          containerPort: 8080
         env:
         - name: METRIC_APP_LABEL
           value: "ndt-exporter"
