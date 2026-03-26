@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nok-controller
+  namespace: nok-base
+  labels:
+    app: nok-controller
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
+    netopskube.io/path: "/targets/blackbox"
+    netopskube.io/port: "8080"
+spec:
+  selector:
+    app: nok-controller
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http

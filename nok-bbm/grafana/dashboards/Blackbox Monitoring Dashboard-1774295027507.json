@@ -548,13 +548,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_success{job=\"ds_file_nokia_srsim_ssh_check\"}",
+          "expr": "probe_success{job=\"ds_file_nokia_srsim_ssh_check\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SROS SSH Protocol Check",
+      "title": "SROS SSH Protocol Check $NAMESPACE",
       "type": "heatmap"
     },
     {
@@ -627,13 +627,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_success{job=\"ds_file_nokia_srsim_gnmi_check\"}",
+          "expr": "probe_success{job=\"ds_file_nokia_srsim_gnmi_check\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "SROS gNMI Protocol Check",
+      "title": "SROS gNMI Protocol Check $NAMESPACE",
       "type": "heatmap"
     },
     {
@@ -726,13 +726,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_http_duration_seconds{service=~\".+\", phase=\"connect\", job=\"nok_services_http\"}",
+          "expr": "probe_http_duration_seconds{service=~\".+\", phase=\"connect\", job=\"nok_services_http\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "HTTP Connect for Services",
+      "title": "HTTP Connect for Services $NAMESPACE",
       "type": "timeseries"
     },
     {
@@ -825,13 +825,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_http_duration_seconds{phase=\"connect\", job=\"nok_ingress\"}",
+          "expr": "probe_http_duration_seconds{phase=\"connect\", job=\"nok_ingress\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{ingress}} / {{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "HTTP Connect for Ingress",
+      "title": "HTTP Connect for Ingress $NAMESPACE",
       "type": "timeseries"
     },
     {
@@ -924,13 +924,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_http_duration_seconds{service=~\".+\", phase=\"transfer\", job=\"nok_services_http\"}",
+          "expr": "probe_http_duration_seconds{service=~\".+\", phase=\"transfer\", job=\"nok_services_http\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "HTTP Transfer",
+      "title": "HTTP Transfer $NAMESPACE",
       "type": "timeseries"
     },
     {
@@ -1023,13 +1023,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_icmp_duration_seconds{kind=\"linux\",phase=\"rtt\"}",
+          "expr": "probe_icmp_duration_seconds{phase=\"rtt\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Linux ICMP RTT Probing",
+      "title": "Linux ICMP RTT Probing $NAMESPACE",
       "type": "timeseries"
     },
     {
@@ -1102,13 +1102,13 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_success{job=\"ds_file_linux_icmp_ping\"}",
+          "expr": "probe_success{job=\"ds_file_linux_icmp_ping\",namespace=\"$NAMESPACE\"}",
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Linux ICMP Probing",
+      "title": "Linux ICMP Probing $NAMESPACE",
       "type": "heatmap"
     }
   ],

@@ -18,6 +18,12 @@ rules:
 - apiGroups: ["nok.dev"] 
   resources: ["networkdevicetargets/status"] # New entry for status subresource
   verbs: ["update", "patch"] # Required for updating status
+- apiGroups: ["nok.dev"] 
+  resources: ["networkhosttargets"] 
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["nok.dev"] 
+  resources: ["networkhosttargets/status"]
+  verbs: ["update", "patch"]
 - apiGroups: ["operator.gnmic.dev"] 
   resources: ["targets"]  
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
@@ -55,5 +61,5 @@ spec:
       serviceAccountName: nok-controller
       containers:
       - name: controller
-        image: ghcr.io/cspdevlabs/nok-controller:v1.123a 
-        command: ["python", "/app/controller.py"]
+        image: ghcr.io/cspdevlabs/nok-controller:v1.132a
+        imagePullPolicy: IfNotPresent
