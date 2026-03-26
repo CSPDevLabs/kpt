@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ndt-metrics-sa
+  namespace: nok-bng
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ndt-deviation-reader
+  namespace: nok-bng
+rules:
+- apiGroups: ["nok.dev"] 
+  resources: ["networkdevicetargets"]       
+  verbs: ["get", "list", "watch"]  
+- apiGroups: ["metrics.dynamic.io"] 
+  resources: ["metricdefinitions"]       
+  verbs: ["get", "list" , "watch"]   
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ndt-metrics-rb
+  namespace: nok-bng
+subjects:
+- kind: ServiceAccount
+  name: ndt-metrics-sa
+roleRef:
+  kind: Role
+  name: ndt-deviation-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: device-sdcio-enabled
+  namespace: nok-bng
+  labels:
+    metrics-app: ndt-exporter  
+spec:
+  metricName: "network_device_sdcio_enabled"
+  help: "Status of SDCIO enablement (1 for True, 0 for False)"
+  resource:
+    group: "nok.dev"
+    version: "v1alpha1"
+    plural: "networkdevicetargets"
+  labelMappings:
+    - label: "hostname"
+      path: "spec.hostname"
+    - label: "vendor"
+      path: "spec.commonLabels.vendor"
+  valuePath: "spec.sdcio.enabled"
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: device-gnmic-enabled
+  namespace: nok-bng
+  labels:
+    metrics-app: ndt-exporter  
+spec:
+  metricName: "network_device_gnmic_enabled"
+  help: "Status of gNMIC enablement (1 for True, 0 for False)"
+  resource:
+    group: "nok.dev"
+    version: "v1alpha1"
+    plural: "networkdevicetargets"
+  labelMappings:
+    - label: "hostname"
+      path: "spec.hostname"
+  valuePath: "spec.gnmic.enabled"
+
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: device-reachability
+  namespace: nok-bng
+  labels:
+    metrics-app: ndt-exporter  
+spec:
+  metricName: "network_device_reachability"
+  help: "Device reachability status (1 for Reachable, 0 otherwise)"
+  resource:
+    group: "nok.dev"
+    version: "v1alpha1"
+    plural: "networkdevicetargets"
+  labelMappings:
+    - label: "address"
+      path: "spec.address"
+  valuePath: "status.reachability" 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ndt-metrics-service
+  namespace: nok-bng
+  labels:
+    app: ndt-metrics
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: ndt-metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ndt-metrics-exporter
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ndt-metrics
+  template:
+    metadata:
+      labels:
+        app: ndt-metrics
+    spec:
+      serviceAccountName: ndt-metrics-sa
+      containers:
+      - name: exporter
+        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
+        ports:
+        - name: metrics
+          containerPort: 8080
+        - name: health
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: health
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3         
+        env:
+        - name: METRIC_APP_LABEL
+          value: "ndt-exporter"

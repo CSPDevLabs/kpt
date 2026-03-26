@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: ndt-metrics
+  namespace: nok-bng
+spec:
+  selector:
+    matchLabels:
+      app: ndt-metrics
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+    metricRelabelings:
+        - action: labeldrop
+          regex: (pod|container|endpoint|instance|job|service|exported_namespace)
