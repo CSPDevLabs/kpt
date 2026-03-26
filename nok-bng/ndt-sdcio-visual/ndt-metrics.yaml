@@ -7,7 +7,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: deviation-reader
+  name: ndt-deviation-reader
   namespace: nok-bng
 rules:
 - apiGroups: ["nok.dev"] 
@@ -27,35 +27,8 @@ subjects:
   name: ndt-metrics-sa
 roleRef:
   kind: Role
-  name: deviation-reader
+  name: ndt-deviation-reader
   apiGroup: rbac.authorization.k8s.io
- 
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ndt-metrics-exporter
-  namespace: nok-bng
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ndt-metrics
-  template:
-    metadata:
-      labels:
-        app: ndt-metrics
-    spec:
-      serviceAccountName: ndt-metrics-sa
-      containers:
-      - name: exporter
-        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
-        ports:
-        - name: metrics
-          containerPort: 8080
-        env:
-        - name: METRIC_APP_LABEL
-          value: "ndt-exporter"
 
 ---
 apiVersion: metrics.dynamic.io/v1alpha1
@@ -133,3 +106,38 @@ spec:
     targetPort: 8080
   selector:
     app: ndt-metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ndt-metrics-exporter
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ndt-metrics
+  template:
+    metadata:
+      labels:
+        app: ndt-metrics
+    spec:
+      serviceAccountName: ndt-metrics-sa
+      containers:
+      - name: exporter
+        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
+        ports:
+        - name: metrics
+          containerPort: 8080
+        - name: health
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: health
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3         
+        env:
+        - name: METRIC_APP_LABEL
+          value: "ndt-exporter"

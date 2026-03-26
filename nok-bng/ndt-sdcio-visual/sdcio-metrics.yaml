@@ -7,7 +7,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: deviation-reader
+  name: sdcio-deviation-reader
   namespace: nok-bng
 rules:
 - apiGroups: ["config.sdcio.dev"]
@@ -30,33 +30,9 @@ subjects:
   name: sdcio-metrics-sa
 roleRef:
   kind: Role
-  name: deviation-reader
+  name: sdcio-deviation-reader
   apiGroup: rbac.authorization.k8s.io
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: sdcio-metrics-exporter
-  namespace: nok-bng
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: sdcio-metrics
-  template:
-    metadata:
-      labels:
-        app: sdcio-metrics
-    spec:
-      serviceAccountName: sdcio-metrics-sa
-      containers:
-      - name: exporter
-        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: METRIC_APP_LABEL
-          value: "sdcio-exporter"        
+      
 ---
 apiVersion: metrics.dynamic.io/v1alpha1
 kind: MetricDefinition
@@ -131,3 +107,39 @@ spec:
     targetPort: 8080
   selector:
     app: sdcio-metrics
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdcio-metrics-exporter
+  namespace: nok-bng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sdcio-metrics
+  template:
+    metadata:
+      labels:
+        app: sdcio-metrics
+    spec:
+      serviceAccountName: sdcio-metrics-sa
+      containers:
+      - name: exporter
+        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
+        ports:
+        - name: metrics
+          containerPort: 8080
+        - name: health
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: health
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3       
+        env:
+        - name: METRIC_APP_LABEL
+          value: "sdcio-exporter" 
