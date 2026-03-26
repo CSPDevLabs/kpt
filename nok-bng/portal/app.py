@@ -20,7 +20,7 @@ def login():
 
             #resp = make_response(redirect("/"))
             resp = make_response(redirect(redirect_url))
-            resp.set_cookie("auth", "ok", httponly=True, max_age=60)
+            resp.set_cookie("auth", "ok", httponly=True, max_age=3600)
 
             return resp
         
