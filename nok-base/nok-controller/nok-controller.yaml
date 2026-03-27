@@ -61,5 +61,5 @@ spec:
       serviceAccountName: nok-controller
       containers:
       - name: controller
-        image: ghcr.io/cspdevlabs/nok-controller:v1.132a
+        image: ghcr.io/cspdevlabs/nok-controller:latest
         imagePullPolicy: IfNotPresent
