@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: bng.nok.local
+  - host: nanog.nok.local
     http:
       paths:
       - path: /login

@@ -20,4 +20,4 @@ spec:
   ipFamilies:
     - IPv4
   ipFamilyPolicy: SingleStack
-  loadBalancerIP: 172.18.0.114
+  loadBalancerIP: 172.19.0.114
