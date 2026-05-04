@@ -58,6 +58,14 @@ metadata:
   namespace: nok-bng
 spec:
   replicas: 1
+  alerting:
+    alertmanagers:
+    - namespace: nok-bng
+      name: alertmanager-operated
+      port: web
+  ruleSelector:
+    matchLabels:
+      role: alert-rules      
   serviceAccountName: prometheus
   serviceMonitorSelector: {} 
   podMonitorSelector: {} 
