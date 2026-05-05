@@ -10,19 +10,19 @@ spec:
   - name: system-usage
     rules:
     - alert: HighCpuUsage
-      expr: state_system_cpu_summary_usage_cpu_usage > 50
-      for: 5m
+      expr: state_system_cpu_summary_usage_cpu_usage > 12
+      for: 1m
       labels:
         severity: warning
       annotations:
         summary: "High CPU usage on {{ $labels.instance }}"
-        description: "CPU usage is at {{ $value }}% (threshold 50%)"
+        description: "CPU usage is at {{ $value }}% (threshold 12%)"
 
     - alert: HighMemoryUsage
-      expr: (state_system_memory_pools_summary_total_in_use / state_system_memory_pools_summary_available_memory) * 100 > 50
-      for: 5m
+      expr: (state_system_memory_pools_summary_total_in_use / state_system_memory_pools_summary_available_memory) * 100 > 2
+      for: 1m
       labels:
         severity: warning
       annotations:
         summary: "High Memory usage on {{ $labels.instance }}"
-        description: "Memory utilization is at {{ $value }}% (threshold 50%)"
+        description: "Memory utilization is at {{ $value }}% (threshold 2%)"

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-webhook-test
+  namespace: nok-bng
+  labels:
+    app: alert-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-webhook
+  template:
+    metadata:
+      labels:
+        app: alert-webhook
+    spec:
+      containers:
+      - name: webhook
+        image: quay.io/prometheus-operator/prometheus-alertmanager-test-webhook:latest
+        ports:
+        - containerPort: 5001
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-webhook-service
+  namespace: nok-bng
+spec:
+  selector:
+    app: alert-webhook
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5001 
+  type: ClusterIP

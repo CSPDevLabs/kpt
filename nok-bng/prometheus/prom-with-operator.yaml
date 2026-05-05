@@ -50,33 +50,4 @@ roleRef:
   kind: ClusterRole
   name: prometheus
   apiGroup: rbac.authorization.k8s.io
----
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: nok-bng
-  namespace: nok-bng
-spec:
-  replicas: 1
-  alerting:
-    alertmanagers:
-    - namespace: nok-bng
-      name: alertmanager-operated
-      port: web
-  ruleSelector:
-    matchLabels:
-      role: alert-rules      
-  serviceAccountName: prometheus
-  serviceMonitorSelector: {} 
-  podMonitorSelector: {} 
-  podMetadata:
-    annotations:
-      netopskube.io/bbm: "true"
-      netopskube.io/prober: "http"
-      netopskube.io/scheme: "http"
-      netopskube.io/path: "/-/ready"
-  resources:
-    requests:
-      memory: 400Mi
-  externalUrl: /prometheus
-  routePrefix: /
+
