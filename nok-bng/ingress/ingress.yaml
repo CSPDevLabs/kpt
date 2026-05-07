@@ -32,6 +32,6 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: tel-am
+            name: alertmanager-operated
             port:
               number: 9093             
