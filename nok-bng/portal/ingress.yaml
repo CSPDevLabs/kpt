@@ -1,8 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nok-apps-portal-ingress # Give it a distinct name
+  name: nok-apps-portal-ingress
   namespace: nok-bng
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: http://portal-auth.nok-bng.svc.cluster.local/auth
+    nginx.ingress.kubernetes.io/auth-signin: http://bng.nok.local:8080/login?rd=$request_uri
+
 spec:
   ingressClassName: nginx
   rules:
@@ -10,7 +14,7 @@ spec:
     http:
       paths:
       - path: /
-        pathType: Prefix # Use Prefix for exact match or prefix matching without regex
+        pathType: Prefix
         backend:
           service:
             name: nok-apps-portal-service
