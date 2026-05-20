@@ -48,7 +48,7 @@ spec:
             - name: GF_AUTH_ANONYMOUS_ORG_ROLE
               value: "Admin"
             - name: GF_SERVER_ROOT_URL
-              value: http://bbm.nok.local:3000/ # kpt___set: http://${ingress-host}:8080/grafana
+              value: http://bng.nok.local/bbm
             - name: GF_INSTALL_PLUGINS
               value: 'andrewbmchugh-flow-panel'
           readinessProbe:

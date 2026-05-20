@@ -4,8 +4,10 @@ metadata:
   name: nok-apps-ingress
   namespace: nok-bng
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2 # Rewrites the URL path for the backend service
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/auth-url: http://portal-auth.nok-bng.svc.cluster.local/auth
+    nginx.ingress.kubernetes.io/auth-signin: http://bng.nok.local:8080/login?rd=$request_uri
     netopskube.io/bbm: "true"
     netopskube.io/prober: http
 spec:
@@ -34,4 +36,11 @@ spec:
           service:
             name: alertmanager-operated
             port:
-              number: 9093             
+              number: 9093
+      - path: /bbm(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: bbm-grafana-proxy
+            port:
+              number: 80            
