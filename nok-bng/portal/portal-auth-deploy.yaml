@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
       - name: auth
-        image: flask-auth-service
-        imagePullPolicy: Never
+        image: ghcr.io/cspdevlabs/portal-auth:v1.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         env:
