@@ -12,6 +12,10 @@ metadata:
     app.kubernetes.io/version: "1.25.4"
     version: "1.25.4"
     app.kubernetes.io/managed-by: Helm
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: tcp
+    netopskube.io/port: "22"
 spec:
   type: LoadBalancer
   loadBalancerIP: 172.18.0.102
