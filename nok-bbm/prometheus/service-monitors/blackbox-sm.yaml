@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: bbm-blackbox
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: blackbox-exporter
+  # The blackbox-exporter Service (defined alongside the Deployment) exposes
+  # port named "http" on 9115. blackbox-svc has the same selector but no
+  # named port; targeting by port name ensures only the named Service is matched.
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 7s
+      honorTimestamps: true
+      scheme: http

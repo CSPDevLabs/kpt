@@ -1,0 +1,44 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: bbm-nok-gnmi-check
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  jobName: ds_file_nokia_srsim_gnmi_check
+  honorTimestamps: true
+  scrapeInterval: 30s
+  scrapeTimeout: 7s
+  metricsPath: /probe
+  scheme: HTTP
+  params:
+    module:
+      - tcp_connect
+  httpSDConfigs:
+    - url: http://nok-controller.nok-base.svc.cluster.local:8080/targets/blackbox?kind=device
+      refreshInterval: 30s
+  relabelings:
+    - sourceLabels: [__address__, __meta_ndt_gnmic_port]
+      separator: ;
+      regex: (.+);(.+)
+      targetLabel: __param_target
+      replacement: $1:$2
+      action: replace
+    - sourceLabels: [hostname]
+      separator: ;
+      regex: (.*)
+      targetLabel: instance
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_ndt_namespace]
+      separator: ;
+      regex: (.*)
+      targetLabel: namespace
+      replacement: $1
+      action: replace
+    - separator: ;
+      regex: (.*)
+      targetLabel: __address__
+      replacement: blackbox-svc:9115
+      action: replace
