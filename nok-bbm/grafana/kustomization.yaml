@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: nok-bbm
+resources:
+  - instance/grafana.yml
+  - datasources/prometheus.yml
+  - dashboards/netopskube-status.yml
+  - dashboards/blackbox-monitoring.yml

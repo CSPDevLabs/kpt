@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -1770,6 +1770,10 @@
           "text": "nok-bng",
           "value": "nok-bng"
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "DATASOURCE"
+        },
         "definition": "label_values(kube_namespace_created,namespace)",
         "label": "Namespace",
         "name": "NAMESPACE",
@@ -1792,6 +1796,6 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "NetOpsKube Status Dashboards",
-  "uid": "ggzrg9",
+  "uid": "gt726n",
   "version": 1
 }

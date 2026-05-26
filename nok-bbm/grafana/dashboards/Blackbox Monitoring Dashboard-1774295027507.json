@@ -1134,6 +1134,10 @@
           "text": "nok-bng",
           "value": "nok-bng"
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE}"
+        },
         "definition": "label_values(kube_namespace_created,namespace)",
         "label": "Namespace",
         "name": "NAMESPACE",
