@@ -1,0 +1,24 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: bbm-prometheus
+  namespace: nok-bbm
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: bbm
+  datasource:
+    name: Prometheus
+    type: prometheus
+    uid: DATASOURCE
+    access: proxy
+    url: http://bbm-prometheus-svc:9090
+    isDefault: true
+    jsonData:
+      httpMethod: POST
+      timeout: 60
+      manageAlerts: false
+      prometheusType: Prometheus
+      cacheLevel: High
+      disableRecordingRules: false
+      incrementalQueryOverlapWindow: 10m

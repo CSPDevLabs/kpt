@@ -1,0 +1,11 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: bbm-blackbox-monitoring
+  namespace: nok-bbm
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: bbm
+  resyncPeriod: 5m
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/main/nok-bbm/grafana/dashboards/Blackbox%20Monitoring%20Dashboard-1774295027507.json
