@@ -9,7 +9,7 @@ spec:
   version: "12.3.2" # kpt-set: ${grafana-version}
   config:
     log:
-      mode: "console"  
+      mode: "console"
     auth.anonymous:
       enabled: "true"
       org_role: Admin
