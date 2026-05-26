@@ -17,20 +17,20 @@ spec:
     matchLabels:
       app: bbm-prometheus
   serviceMonitorNamespaceSelector:
-    matchNames:
-      - nok-bbm
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
   scrapeConfigSelector:
     matchLabels:
       app: bbm-prometheus
   scrapeConfigNamespaceSelector:
-    matchNames:
-      - nok-bbm
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
   probeSelector:
     matchLabels:
       app: bbm-prometheus
   probeNamespaceSelector:
-    matchNames:
-      - nok-bbm
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
   storage:
     volumeClaimTemplate:
       spec:
@@ -46,3 +46,22 @@ spec:
   resources:
     requests:
       memory: 400Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbm-prometheus-svc
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+    operator.prometheus.io/name: bbm-prometheus
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: bbm-prometheus
+  ports:
+    - name: web
+      port: 9090
+      targetPort: web
+      protocol: TCP

@@ -79,8 +79,7 @@ spec:
       targetLabel: __tmp_path
       replacement: $1
       action: replace
-    - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __tmp_port,
-        __tmp_path, __tmp_scheme]
+    - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __tmp_port, __tmp_path, __tmp_scheme]
       separator: ;
       regex: (.+);(.+);(.+);(.+);(.+)
       targetLabel: __param_target
