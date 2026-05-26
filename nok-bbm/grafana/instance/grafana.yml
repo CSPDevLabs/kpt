@@ -8,11 +8,13 @@ metadata:
 spec:
   version: "12.3.2" # kpt-set: ${grafana-version}
   config:
+    log:
+      mode: "console"  
     auth.anonymous:
       enabled: "true"
       org_role: Admin
     server:
-      root_url: http://bng.nok.local/bbm
+      root_url: "http://bng.nok.local/bbm"
     plugins:
       plugins: andrewbmchugh-flow-panel
   persistentVolumeClaim:
@@ -25,24 +27,12 @@ spec:
     spec:
       template:
         spec:
-          securityContext:
-            fsGroup: 472
-            supplementalGroups: [0]
           containers:
             - name: grafana
               readinessProbe:
-                httpGet:
-                  path: /robots.txt
-                  port: 3000
                 initialDelaySeconds: 10
                 periodSeconds: 30
                 timeoutSeconds: 2
-                failureThreshold: 3
-              livenessProbe:
-                tcpSocket:
-                  port: 3000
-                initialDelaySeconds: 30
-                periodSeconds: 10
                 failureThreshold: 3
               resources:
                 requests:
@@ -52,13 +42,10 @@ spec:
                   cpu: 250m
                   memory: 750Mi
   service:
-    metadata:
-      annotations:
-        netopskube.io/bbm: "true"
     spec:
       type: ClusterIP
       ports:
-        - name: grafana
+        - name: http
           port: 80
           targetPort: 3000
           protocol: TCP
