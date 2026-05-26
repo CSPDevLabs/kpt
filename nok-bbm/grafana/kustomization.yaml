@@ -8,5 +8,5 @@ namespace: nok-bbm
 resources:
   - instance/grafana.yml
   - datasources/prometheus.yml
-  - dashboards/netopskube-status.yml
-  - dashboards/blackbox-monitoring.yml
+  - grafanadashboard/netopskube-status.yml
+  - grafanadashboard/blackbox-monitoring.yml
