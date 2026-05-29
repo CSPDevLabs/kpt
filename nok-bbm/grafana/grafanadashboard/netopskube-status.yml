@@ -1,0 +1,11 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: bbm-netopskube-status
+  namespace: nok-bbm
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: bbm
+  resyncPeriod: 5m
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/main/nok-bbm/grafana/dashboards/NetOpsKube%20Status%20Dashboards-1770288790346.json

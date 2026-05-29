@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: bbm-nok-ingress
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  jobName: nok_ingress
+  interval: 30s
+  scrapeTimeout: 7s
+  module: http_2xx
+  prober:
+    url: blackbox-svc:9115
+    scheme: http
+    path: /probe
+  targets:
+    ingress:
+      namespaceSelector:
+        any: true
+      selector: {}
+      # The operator auto-generates __param_target from ingress scheme/host/path,
+      # sets __address__ to the prober URL, and attaches instance/namespace/ingress
+      # labels — so those relabel rules from the original job are dropped.
+      # Only the annotation-based filter is kept here because
+      # spec.targets.ingress.selector is a LabelSelector (labels only, not annotations).
+      relabelingConfigs:
+        - sourceLabels: [__meta_kubernetes_ingress_annotation_netopskube_io_bbm]
+          regex: "true"
+          action: keep

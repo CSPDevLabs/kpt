@@ -1,0 +1,67 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: bbm-prometheus
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  image: prom/prometheus:v2.47.0 # kpt-set: prom/prometheus:${prometheus-version}
+  replicas: 1
+  serviceAccountName: bbm-prometheus
+  # Override the operator-managed headless Service name (operator >= v0.78).
+  # Preserves the existing DNS name bbm-prometheus-svc.nok-bbm.svc.cluster.local
+  # so Grafana / ingress references require no changes.
+  serviceName: bbm-prometheus-svc
+  serviceMonitorSelector:
+    matchLabels:
+      app: bbm-prometheus
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
+  scrapeConfigSelector:
+    matchLabels:
+      app: bbm-prometheus
+  scrapeConfigNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
+  probeSelector:
+    matchLabels:
+      app: bbm-prometheus
+  probeNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: nok-bbm
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+  # For local testing with emptyDir (matches original Deployment behaviour), replace
+  # the storage block above with:
+  #   storage: {}
+  portName: web
+  resources:
+    requests:
+      memory: 400Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bbm-prometheus-svc
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+    operator.prometheus.io/name: bbm-prometheus
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: bbm-prometheus
+  ports:
+    - name: web
+      port: 9090
+      targetPort: web
+      protocol: TCP

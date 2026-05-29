@@ -1,0 +1,98 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ScrapeConfig
+metadata:
+  name: bbm-nok-services-http
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  jobName: nok_services_http
+  honorTimestamps: true
+  scrapeInterval: 1m
+  scrapeTimeout: 5s
+  metricsPath: /probe
+  scheme: HTTP
+  params:
+    module:
+      - http_2xx
+  kubernetesSDConfigs:
+    - role: Service
+  relabelings:
+    - sourceLabels: [__meta_kubernetes_service_annotation_netopskube_io_bbm]
+      separator: ;
+      regex: "true"
+      replacement: $1
+      action: keep
+    - sourceLabels: [__meta_kubernetes_service_annotation_netopskube_io_prober]
+      separator: ;
+      regex: http
+      replacement: $1
+      action: keep
+    - sourceLabels: [__meta_kubernetes_service_port_protocol]
+      separator: ;
+      regex: TCP
+      replacement: $1
+      action: keep
+    - sourceLabels: [__meta_kubernetes_service_port_number]
+      separator: ;
+      regex: (.+)
+      targetLabel: __tmp_port
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_service_annotation_netopskube_io_port]
+      separator: ;
+      regex: (.+)
+      targetLabel: __tmp_port
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_namespace]
+      separator: ;
+      regex: (.*)
+      targetLabel: namespace
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_service_name]
+      separator: ;
+      regex: (.*)
+      targetLabel: service
+      replacement: $1
+      action: replace
+    - separator: ;
+      regex: (.*)
+      targetLabel: __tmp_scheme
+      replacement: http
+      action: replace
+    - sourceLabels: [__meta_kubernetes_service_annotation_netopskube_io_scheme]
+      separator: ;
+      regex: (https?)
+      targetLabel: __tmp_scheme
+      replacement: $1
+      action: replace
+    - separator: ;
+      regex: (.*)
+      targetLabel: __tmp_path
+      replacement: /
+      action: replace
+    - sourceLabels: [__meta_kubernetes_service_annotation_netopskube_io_path]
+      separator: ;
+      regex: (.+)
+      targetLabel: __tmp_path
+      replacement: $1
+      action: replace
+    - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __tmp_port, __tmp_path, __tmp_scheme]
+      separator: ;
+      regex: (.+);(.+);(.+);(.+);(.+)
+      targetLabel: __param_target
+      replacement: $5://$1.$2.svc.cluster.local:$3$4
+      action: replace
+    - sourceLabels: [__param_target]
+      separator: ;
+      regex: (.*)
+      targetLabel: instance
+      replacement: $1
+      action: replace
+    - separator: ;
+      regex: (.*)
+      targetLabel: __address__
+      replacement: blackbox-svc:9115
+      action: replace

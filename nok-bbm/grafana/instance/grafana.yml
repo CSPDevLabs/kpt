@@ -1,0 +1,51 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: bbm-grafana
+  namespace: nok-bbm
+  labels:
+    dashboards: bbm
+spec:
+  version: "12.3.2" # kpt-set: ${grafana-version}
+  config:
+    log:
+      mode: "console"
+    auth.anonymous:
+      enabled: "true"
+      org_role: Admin
+    server:
+      root_url: "http://bng.nok.local/bbm"
+    plugins:
+      plugins: andrewbmchugh-flow-panel
+  persistentVolumeClaim:
+    spec:
+      accessModes: [ReadWriteOnce]
+      resources:
+        requests:
+          storage: 1Gi
+  deployment:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: grafana
+              readinessProbe:
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                timeoutSeconds: 2
+                failureThreshold: 3
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 750Mi
+                limits:
+                  cpu: 250m
+                  memory: 750Mi
+  service:
+    spec:
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 80
+          targetPort: 3000
+          protocol: TCP

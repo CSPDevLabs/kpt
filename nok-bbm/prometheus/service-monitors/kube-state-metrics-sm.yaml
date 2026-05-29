@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: bbm-kube-state-metrics
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+  endpoints:
+    - port: http-metrics
+      path: /metrics
+      honorLabels: true
+      interval: 30s
+      scrapeTimeout: 7s
+      honorTimestamps: true
+      scheme: http
+    - port: telemetry
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 7s
+      honorTimestamps: true
+      scheme: http
