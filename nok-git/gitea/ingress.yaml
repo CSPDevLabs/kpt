@@ -6,6 +6,11 @@ metadata:
   # annotations:
   #   nginx.ingress.kubernetes.io/rewrite-target: /$1 # Rewrites the URL path for the backend service
   #   nginx.ingress.kubernetes.io/use-regex: "true"
+  # TODO: activate later on, after core-dns-updater capabilities get extended to handle multiple host entries.
+  # annotations:
+  #   netopskube.io/bbm: "true"
+  #   netopskube.io/prober: http
+  #   netopskube.io/scheme: http
 spec:
   ingressClassName: nginx
   rules:

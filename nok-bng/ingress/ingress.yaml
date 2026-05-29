@@ -8,8 +8,6 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/auth-url: http://portal-auth.nok-bng.svc.cluster.local/auth
     nginx.ingress.kubernetes.io/auth-signin: http://bng.nok.local:8080/login?rd=$request_uri
-    netopskube.io/bbm: "true"
-    netopskube.io/prober: http
 spec:
   ingressClassName: nginx
   rules:

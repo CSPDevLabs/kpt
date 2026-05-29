@@ -3,6 +3,11 @@ kind: Ingress
 metadata:
   name: portal-health-ingress
   namespace: nok-bng
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
+    netopskube.io/scheme: http
+    netopskube.io/path: /healthz
 
 spec:
   ingressClassName: nginx
