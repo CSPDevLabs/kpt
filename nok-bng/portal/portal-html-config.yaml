@@ -12,11 +12,17 @@ data:
         root /usr/share/nginx/html;
 
         location / {
+            add_header Cache-Control "no-store, no-cache, must-revalidate";
+            add_header Pragma "no-cache";
+            add_header Expires "0";
             try_files $uri $uri/ /index.html;
         }
 
         location = /menu-config.json {
             default_type application/json;
+            add_header Cache-Control "no-store";
+            add_header Pragma "no-cache";
+            add_header Expires "0";
         }
 
         location = /healthz {
@@ -182,6 +188,102 @@ data:
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    #welcome-screen {
+        position: absolute;
+        inset: 0;
+    
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+        overflow: hidden;
+    
+        background:
+            radial-gradient(circle at 20% 20%, rgba(30,144,255,0.25), transparent 35%),
+            radial-gradient(circle at 80% 70%, rgba(77,163,255,0.20), transparent 40%),
+            linear-gradient(135deg, #081120, #0a192f, #112240);
+    
+        z-index: 10;
+    }
+
+    .welcome-content {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .welcome-content h1 {
+        margin: 0;
+    
+        font-size: 72px;
+        font-weight: 500;
+        letter-spacing: 8px;
+    
+        color: white;
+    
+        text-shadow:
+            0 0 20px rgba(30,144,255,0.5),
+            0 0 40px rgba(30,144,255,0.3);
+    
+        animation: glow 3s ease-in-out infinite;
+    }
+    
+    .welcome-content p {
+        margin-top: 20px;
+    
+        font-size: 20px;
+        color: rgba(255,255,255,0.8);
+    
+        letter-spacing: 1px;
+    }
+    
+    .pulse-ring {
+        position: absolute;
+    
+        top: 50%;
+        left: 50%;
+    
+        width: 250px;
+        height: 250px;
+    
+        transform: translate(-50%, -50%);
+    
+        border: 1px solid rgba(30,144,255,0.3);
+        border-radius: 50%;
+    
+        animation: pulse 4s linear infinite;
+    }
+    
+    .ring2 {
+        animation-delay: 2s;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: translate(-50%, -50%) scale(0.7);
+            opacity: 0.8;
+        }
+    
+        100% {
+            transform: translate(-50%, -50%) scale(1.8);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes glow {
+        0%,100% {
+            text-shadow:
+                0 0 15px rgba(30,144,255,0.4),
+                0 0 35px rgba(30,144,255,0.2);
+        }
+    
+        50% {
+            text-shadow:
+                0 0 25px rgba(77,163,255,0.9),
+                0 0 60px rgba(77,163,255,0.5);
+        }
+    }
     
     </style>
     </head>
@@ -200,10 +302,20 @@ data:
       <div class="sidebar" id="sidebar"></div>
 
       <div class="content">
-        <div id="loading-overlay">
+        <div id="loading-overlay" class="hidden">
           <div class="loader"></div>
         </div>
-        <iframe id="app-frame"></iframe>
+        <div id="welcome-screen">
+            <div class="welcome-content">
+                <h1>WELCOME</h1>
+                <p>Select any option from the menu to begin</p>
+        
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring ring2"></div>
+            </div>
+        </div>
+        
+        <iframe id="app-frame" style="display:none;"></iframe>
       </div>
     </div>
 
@@ -257,10 +369,13 @@ data:
             menuItem.appendChild(icon);
             menuItem.appendChild(text);
 
+            const welcomeScreen = document.getElementById('welcome-screen');
             menuItem.addEventListener('click', () => {
               if (menuItem.dataset.openInNewTab === 'true') {
                 window.open(menuItem.dataset.path, '_blank');
               } else {
+                welcomeScreen.style.display = 'none';
+                appFrame.style.display = 'block';
                 loadingOverlay.classList.remove('hidden');
                 appFrame.src = menuItem.dataset.path;
               }
