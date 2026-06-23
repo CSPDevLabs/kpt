@@ -1958,7 +1958,7 @@ spec:
           value: "true"
         - name: ENABLE_ROLLOUT
           value: "true"
-        image: ghcr.io/sdcio/config-server:v0.0.54
+        image: ghcr.io/sdcio/config-server:latest
         imagePullPolicy: Always
         name: config-server
         ports:
