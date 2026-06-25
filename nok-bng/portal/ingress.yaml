@@ -3,9 +3,6 @@ kind: Ingress
 metadata:
   name: nok-apps-portal-ingress
   namespace: nok-bng
-  annotations:
-    nginx.ingress.kubernetes.io/auth-url: http://portal-auth.nok-bng.svc.cluster.local/auth
-    nginx.ingress.kubernetes.io/auth-signin: http://bng.nok.local:8080/login?rd=$request_uri
 
 spec:
   ingressClassName: nginx
