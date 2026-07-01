@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: syslog-ng-config
+  namespace: nok-dia
+  labels:
+    app: syslog-ng
+data:
+  syslog-ng.conf: "@version: 4.2\n@include \"scl.conf\"\n\noptions {\n    chain-hostnames(no);\n    flush-lines(0);\n    use-dns(no);\n    use-fqdn(no);\n    perm(0644);\n    stats(freq(0));\n    mark_freq(0); \n    log_msg_size(8192);\n    keep-hostname(yes);\n};\n\n# Receive RFC3164 messages from SROS on UDP port 1514\nsource s_rfc3164_udp_sros {\n    udp(\n        ip(0.0.0.0)\n        port(1514)\n    );\n};\n\n# Promtail RFC5424\ndestination d_rfc5424 {\n  network(\n  \"tel-pt\"\n  port(1514)\n  transport(\"tcp\")\n  flags(syslog-protocol)\n  ); # Added closing parenthesis for network block\n};\n\ndestination d_file {\n  file(\"/var/log/validate.log\"\n    perm(0644)\n    dir_perm(0755)\n    create_dirs(yes)\n  ); # Added closing parenthesis for file block\n};\n\nlog {\n  source(s_rfc3164_udp_sros);\n  destination(d_rfc5424);\n};\n\n# For debug / test purposes\nlog {\n    source(s_rfc3164_udp_sros);\n    destination(d_file);\n};\n"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syslog-ng
+  namespace: nok-dia
+  labels:
+    app: syslog-ng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: syslog-ng
+  template:
+    metadata:
+      labels:
+        app: syslog-ng
+    spec:
+      initContainers:
+      - name: copy-syslog-ng-config
+        image: busybox:1.36.1
+        command:
+        - sh
+        - -c
+        - |
+          cp /tmp/config-source/syslog-ng.conf /config/syslog-ng.conf
+          echo "--- syslog-ng.conf content ---"
+          cat /config/syslog-ng.conf
+          echo "-----------------------------"
+        volumeMounts:
+        - name: syslog-ng-config-source
+          mountPath: /tmp/config-source
+        - name: syslog-ng-writable-config
+          mountPath: /config
+      containers:
+      - name: syslog-ng
+        image: linuxserver/syslog-ng:4.8.1-r1-ls153
+        # ADD THESE TWO LINES:
+        command: ["syslog-ng", "-F", "-f", "/config/syslog-ng.conf"]
+        args: [] # Add an empty args array if you don't have other arguments
+        ports:
+        - containerPort: 1514
+          name: syslog-udp
+          protocol: UDP
+        volumeMounts:
+        - name: syslog-ng-writable-config
+          mountPath: /config
+        - name: localtime-volume
+          mountPath: /etc/localtime
+          readOnly: true
+        - name: syslog-log-volume
+          mountPath: /var/log
+      volumes:
+      - name: syslog-ng-config-source
+        configMap:
+          name: syslog-ng-config
+      - name: syslog-ng-writable-config
+        emptyDir: {}
+      - name: localtime-volume
+        hostPath:
+          path: /etc/localtime
+          type: FileOrCreate
+      - name: syslog-log-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tel-syslog
+  namespace: nok-dia
+  labels:
+    app: syslog-ng
+spec:
+  selector:
+    app: syslog-ng
+  ports:
+  - protocol: UDP # Specify UDP protocol for the service
+    port: 1514
+    targetPort: syslog-udp
+    name: syslog-udp
+  type: LoadBalancer
+  loadBalancerIP: 172.18.0.101

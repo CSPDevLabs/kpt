@@ -1,0 +1,7 @@
+apiVersion: kpt.dev/v1alpha1
+kind: ResourceGroup
+metadata:
+  name: inventory-60014344
+  namespace: nok-dia
+  labels:
+    cli-utils.sigs.k8s.io/inventory-id: 1752b8d42150b7732cc9d6c821374fca3f7f44a5-1782922569406828652
