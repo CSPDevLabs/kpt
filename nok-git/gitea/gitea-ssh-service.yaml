@@ -18,7 +18,7 @@ metadata:
     netopskube.io/port: "22"
 spec:
   type: LoadBalancer
-  loadBalancerIP: 172.18.0.102
+  loadBalancerIP: 172.19.0.102
   ports:
   - name: ssh
     port: 22
