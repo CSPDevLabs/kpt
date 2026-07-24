@@ -1,0 +1,143 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sdcio-metrics-sa
+  namespace: nok-dia
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sdcio-deviation-reader
+  namespace: nok-dia
+rules:
+- apiGroups: ["config.sdcio.dev"]
+  resources: ["deviations", "configs"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["inv.sdcio.dev"]
+  resources: ["targets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["metrics.dynamic.io"]
+  resources: ["metricdefinitions"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sdcio-metrics-rb
+  namespace: nok-dia
+subjects:
+- kind: ServiceAccount
+  name: sdcio-metrics-sa
+roleRef:
+  kind: Role
+  name: sdcio-deviation-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: sdcio-deviations
+  namespace: nok-dia
+  labels:
+    metrics-app: sdcio-exporter
+spec:
+  metricName: "sdcio_deviation_count"
+  help: "Count of deviations in sdcio objects"
+  resource:
+    group: "config.sdcio.dev"
+    version: "v1alpha1"
+    plural: "deviations"
+  labelMappings:
+    - label: "type"
+      path: "spec.deviationType"
+  valuePath: "spec.deviations.length"
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: config-status
+  namespace: nok-dia
+  labels:
+    metrics-app: sdcio-exporter
+spec:
+  metricName: "sdcio_config_ready"
+  help: "Config Ready status (1 for True, 0 for False)"
+  resource:
+    group: "config.sdcio.dev"
+    version: "v1alpha1"
+    plural: "configs"
+  labelMappings:
+    - label: "target_name"
+      path: "metadata.labels['config.sdcio.dev/targetName']"
+  valuePath: "status.conditions[?(@.type=='Ready')].status"
+---
+apiVersion: metrics.dynamic.io/v1alpha1
+kind: MetricDefinition
+metadata:
+  name: target-status
+  namespace: nok-dia
+  labels:
+    metrics-app: sdcio-exporter
+spec:
+  metricName: "sdcio_target_config_ready"
+  help: "Target ConfigReady status (1 for True, 0 for False)"
+  resource:
+    group: "inv.sdcio.dev"
+    version: "v1alpha1"
+    plural: "targets"
+  labelMappings:
+    - label: "address"
+      path: "spec.address"
+    - label: "vendor"
+      path: "metadata.labels.vendor"
+  valuePath: "status.conditions[?(@.type=='ConfigReady')].status"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdcio-metrics-service
+  namespace: nok-dia
+  labels:
+    app: sdcio-metrics
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: sdcio-metrics
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdcio-metrics-exporter
+  namespace: nok-dia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sdcio-metrics
+  template:
+    metadata:
+      labels:
+        app: sdcio-metrics
+    spec:
+      serviceAccountName: sdcio-metrics-sa
+      containers:
+      - name: exporter
+        image: ghcr.io/cspdevlabs/nok-crd-metrics:latest
+        ports:
+        - name: metrics
+          containerPort: 8080
+        - name: health
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthy
+            port: health
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 3
+        env:
+        - name: METRIC_APP_LABEL
+          value: "sdcio-exporter"
