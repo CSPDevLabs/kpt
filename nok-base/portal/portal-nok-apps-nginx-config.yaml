@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nok-apps-portal-nginx-config
+  namespace: nok-base
+data:
+  nok-portal.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        root /usr/share/nginx/html;
+
+        location / {
+            add_header Cache-Control "no-store, no-cache, must-revalidate";
+            add_header Pragma "no-cache";
+            add_header Expires "0";
+            try_files $uri $uri/ /index.html;
+        }
+
+        location = /menu-config.json {
+            default_type application/json;
+            add_header Cache-Control "no-store";
+            add_header Pragma "no-cache";
+            add_header Expires "0";
+        }
+
+        location = /healthz {
+            add_header Content-Type text/plain;
+            return 200 "OK\n";
+        }
+
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+            expires 1y;
+            log_not_found off;
+        }
+    }

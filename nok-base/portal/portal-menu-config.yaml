@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nok-apps-menu-config
+  namespace: nok-base
+data:
+  menu-config.json: |
+    {
+      "featured": [
+        {
+          "name": "Gitea",
+          "icon": "gitea",
+          "description": "Git repositories and source control",
+          "path": "http://gitea.nok.local:8080/nok/nok-bng-resources",
+          "openInNewTab": true
+        },
+        {
+          "name": "BBM (Self Monitoring)",
+          "icon": "bbm",
+          "description": "Platform health and monitoring",
+          "path": "/bbm/dashboards",
+          "openInNewTab": true
+        }
+      ],
+
+      "solutions": [
+        {
+          "id": "nok-bng",
+          "displayName": "NOK BNG",
+          "deployed": "no",
+          "services": [
+            {
+              "name": "Prometheus",
+              "icon": "prometheus",
+              "description": "Metrics collection and querying",
+              "path": "/nok-bng/prometheus/graph",
+              "openInNewTab": false
+            },
+            {
+              "name": "Grafana",
+              "icon": "grafana",
+              "description": "Dashboards and visualization",
+              "path": "/nok-bng/grafana/dashboards",
+              "openInNewTab": true
+            },
+            {
+              "name": "Alertmanager",
+              "icon": "alertmanager",
+              "description": "Alert routing and notifications",
+              "path": "/nok-bng/alertmanager",
+              "openInNewTab": false
+            }
+          ]
+        },
+
+        {
+          "id": "nok-dia",
+          "displayName": "NOK DIA",
+          "deployed": "no",
+          "services": [
+            {
+              "name": "Prometheus",
+              "icon": "prometheus",
+              "description": "Metrics collection and querying",
+              "path": "/nok-dia/prometheus/graph",
+              "openInNewTab": false
+            },
+            {
+              "name": "Grafana",
+              "icon": "grafana",
+              "description": "Dashboards and visualization",
+              "path": "/nok-dia/grafana/dashboards",
+              "openInNewTab": true
+            },
+            {
+              "name": "Alertmanager",
+              "icon": "alertmanager",
+              "description": "Alert routing and notifications",
+              "path": "/nok-dia/alertmanager",
+              "openInNewTab": false
+            }
+          ]
+        }
+      ]
+    }
