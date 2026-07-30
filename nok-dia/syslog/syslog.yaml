@@ -88,4 +88,4 @@ spec:
     targetPort: syslog-udp
     name: syslog-udp
   type: LoadBalancer
-  loadBalancerIP: 172.18.0.101
+  loadBalancerIP: 172.18.0.103 # kpt-set: ${syslog-lb-ip}
