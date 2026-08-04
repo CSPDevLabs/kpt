@@ -10,15 +10,25 @@ data:
         {
           "name": "Gitea",
           "icon": "gitea",
+          "deployed": "yes",
           "description": "Git repositories and source control",
           "path": "http://gitea.nok.local:8080/nok/nok-bng-resources",
           "openInNewTab": true
         },
         {
-          "name": "BBM (Self Monitoring)",
+          "name": "BBM",
           "icon": "bbm",
+          "deployed": "yes",
           "description": "Platform health and monitoring",
           "path": "/bbm/dashboards",
+          "openInNewTab": true
+        },
+        {
+          "name": "Keycloak",
+          "icon": "keycloak",
+          "deployed": "no",
+          "description": "Identity and access management",
+          "path": "http://keycloak.nok.local:8080/admin/master/console",
           "openInNewTab": true
         }
       ],
