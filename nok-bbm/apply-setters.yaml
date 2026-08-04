@@ -9,3 +9,4 @@ data:
   grafana-version: 12.3.2
   ksm-version: v2.18.0
   kubectl-version: v1.33.1
+  blackbox-lb-ip: 172.18.0.111
