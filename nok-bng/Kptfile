@@ -12,12 +12,8 @@ pipeline:
     - image: gcr.io/kpt-fn/set-namespace:v0.4.1
       configMap:
         namespace: nok-bng
-    # - image: gcr.io/kpt-fn/apply-setters:v0.2.0
-    #   configMap:
-    #     ingress-host: bng.nok.local
-    #     gnmic-version: 0.42.1
-    #     prometheus-version: v2.47.0
-    #     grafana-version: latest
+    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+      configPath: apply-setters.yaml
     - image: gcr.io/kpt-fn/set-annotations:v0.1.4
       configMap:
         netopskube.io/bbm: "true"

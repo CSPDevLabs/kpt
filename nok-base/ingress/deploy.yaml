@@ -364,7 +364,7 @@ spec:
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/name: ingress-nginx
   type: LoadBalancer
-  loadBalancerIP: 172.18.0.100
+  loadBalancerIP: 172.18.0.100 # kpt-set: ${ingress-lb-ip}
 ---
 apiVersion: v1
 kind: Service
