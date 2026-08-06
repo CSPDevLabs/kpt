@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-controller-env
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+  namespace: nok-base
+data:
+  MCP_PORT: "8088"
+  MCP_HOST: "0.0.0.0"
+  MCP_MOCK_DATA_DIR: /app/tests/mocks/data
+  MCP_LOG_LEVEL: INFO
+  MCP_PROMETHEUS_URL: http://prometheus-operated.nok-bng.svc.cluster.local:9090 # kpt-set: ${prometheus-url}
+  MCP_LOKI_URL: http://tel-loki.nok-bng.svc.cluster.local:3100 # kpt-set: ${loki-url}
+  MCP_K8S_NAMESPACE: nok-bng # kpt-set: ${k8s-namespace}
+  MCP_TLS_SKIP_VERIFY: "false"
+  MCP_ENVIRONMENT: production # kpt-set: ${mcp-environment}
