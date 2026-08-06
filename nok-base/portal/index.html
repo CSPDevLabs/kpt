@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const solutionSelect=document.getElementById("solution-select");
       const solutionApps=document.getElementById("solution-apps");
       const solutions = {};
+      let currentSolution = null;
       menuItems.solutions.forEach(solution => {
           if ((solution.deployed || "").toLowerCase() !== "yes") {
               return;
@@ -162,7 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
       function buildSidebar(solution){
           dynamicNav.innerHTML="";
           const allApps=[];
-          menuItems.featured.forEach(app=>{
+          menuItems.featured
+          .filter(isDeployed)
+          .forEach(app => {
               allApps.push(app);
           });
           if(solution){
@@ -202,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       
       document.getElementById("home-nav").onclick = () => {
+          currentSolution = null;
           updateDomainBadge(null);
           document.getElementById("topbar").classList.remove("hidden");
           dynamicNav.innerHTML = "";
@@ -218,7 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       solutionSelect.onchange=()=>{
           solutionApps.innerHTML="";
-          const solution=solutions[solutionSelect.value];
+          currentSolution = solutionSelect.value ? solutions[solutionSelect.value] : null;
+          const solution = currentSolution;
           updateDomainBadge(solution);
           if(!solutionSelect.value){
             solutionApps.innerHTML="";
@@ -256,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (app.openInNewTab) {
               window.open(app.path, "_blank");
           } else {
-              buildSidebar(null);
+              buildSidebar(currentSolution);
               document.getElementById("topbar").classList.add("hidden");
               document.getElementById("welcome-screen").style.display = "none";
               loadingOverlay.style.display = "flex";

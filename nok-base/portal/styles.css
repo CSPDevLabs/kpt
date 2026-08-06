@@ -34,12 +34,12 @@ body {
   user-select: none;
 }
 .portal-title {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: 600;
   color: var(--light);
 }
 .version {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--light);
 }
 /* ---------- MAIN LAYOUT ---------- */
@@ -90,7 +90,7 @@ body {
 }
 
 .sidebar.collapsed{
-    width:62px;
+    width:55px;
 }
 
 .nav-item{
@@ -208,12 +208,12 @@ body {
 
 .home-dashboard{
     width:100%;
-    max-width:1200px;
+    max-width:1120px;
     display:flex;
     flex-direction:column;
     align-items:center;
-    margin-top:40px;
-    padding:0 40px 40px;
+    margin-top:30px;
+    padding:0 30px 30px;
 }
 
 .dashboard-title{
@@ -232,25 +232,25 @@ body {
 }
 
 .global-services{
-    width:100%;
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-    gap:35px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:24px;
+    max-width:1050px;
+    margin:0 auto;
 }
 
 .service-card{
-    width:100%;
-    max-width:320px;
-    height:170px;
+    width:290px;
+    height:155px;
     background:rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.12);
-    border-radius:20px;
+    border-radius:18px;
     backdrop-filter:blur(18px);
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    justify-self:center;
     cursor:pointer;
     transition:.35s;
 }
@@ -263,9 +263,9 @@ body {
 }
 
 .service-icon{
-    width:60px;
-    height:60px;
-    margin-bottom:18px;
+    width:52px;
+    height:52px;
+    margin-bottom:14px;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -279,16 +279,16 @@ body {
 }
 
 .service-title{
-    font-size:26px;
+    font-size:24px;
     font-weight:600;
 }
 
 .service-desc{
-    margin-top:10px;
+    margin-top:8px;
     color:#b8d7ff;
-    font-size:15px;
+    font-size:14px;
     text-align:center;
-    padding:0 25px;
+    padding:0 20px;
     line-height:1.5;
 }
 /* ---------- Loading Overlay ---------- */
@@ -337,24 +337,24 @@ body {
     }
 }
 .solution-panel{
-    margin-top:55px;
-    width:900px;
+    margin-top:42px;
+    width:800px;
     max-width:95%;
     display:flex;
     flex-direction:column;
     align-items:center;
 }
 .solution-title{
-    margin-bottom:20px;
+    margin-bottom:16px;
     color:white;
-    font-size:26px;
+    font-size:22px;
     font-weight:600;
 }
 
 .solution-dropdown{
-    width:420px;
-    padding:14px 20px;
-    font-size:16px;
+    width:360px;
+    padding:12px 18px;
+    font-size:15px;
     color:white;
     background:rgba(255,255,255,.08);
     border:1px solid rgba(255,255,255,.2);
@@ -370,19 +370,19 @@ body {
 }
 
 .solution-apps{
-    margin-top:45px;
+    margin-top:35px;
     width:100%;
     display:flex;
     justify-content:center;
-    gap:30px;
+    gap:24px;
     flex-wrap:wrap;
 }
 
 .app-card{
-    width:220px;
-    height:150px;
+    width:200px;
+    height:135px;
     background:rgba(255,255,255,.08);
-    border-radius:18px;
+    border-radius:16px;
     border:1px solid rgba(255,255,255,.12);
     backdrop-filter:blur(20px);
     display:flex;
@@ -417,13 +417,13 @@ body {
 }
 
 .app-icon-img{
-    width:52px;
-    height:52px;
+    width:46px;
+    height:46px;
     object-fit:contain;
 }
 
 .app-name{
-    font-size:20px;
+    font-size:18px;
     font-weight:600;
 }
 
@@ -499,4 +499,67 @@ body.keycloak-enabled #account-btn {
   width: 50px;
   height: 50px;
   object-fit: contain;
+}
+
+@media (max-width:1600px){
+
+    .global-services{
+        max-width:980px;
+        gap:22px;
+    }
+
+    .service-card{
+        width:270px;
+        height:145px;
+    }
+
+    .service-title{
+        font-size:21px;
+    }
+
+    .service-desc{
+        font-size:13px;
+    }
+
+    .solution-dropdown{
+        width:340px;
+    }
+
+    .app-card{
+        width:190px;
+        height:130px;
+    }
+}
+
+@media (max-width:1366px){
+
+    .home-dashboard{
+        margin-top:20px;
+    }
+
+    .global-services{
+        gap:20px;
+    }
+
+    .service-card{
+        width:255px;
+        height:138px;
+    }
+
+    .service-icon{
+        width:46px;
+        height:46px;
+    }
+
+    .service-title{
+        font-size:19px;
+    }
+
+    .solution-title{
+        font-size:20px;
+    }
+
+    .solution-dropdown{
+        width:320px;
+    }
 }

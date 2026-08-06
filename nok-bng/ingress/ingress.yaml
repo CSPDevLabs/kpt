@@ -32,11 +32,4 @@ spec:
           service:
             name: alertmanager-operated
             port:
-              number: 9093
-      - path: /bbm(/|$)(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: bbm-grafana-proxy
-            port:
-              number: 80            
+              number: 9093           
