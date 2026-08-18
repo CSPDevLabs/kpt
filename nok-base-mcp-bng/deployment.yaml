@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-controller
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+  namespace: nok-base
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-controller
+  template:
+    metadata:
+      labels:
+        app: mcp-controller
+    spec:
+      serviceAccountName: mcp-controller-sa
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mcp-controller
+          image: ghcr.io/cspdevlabs/mcp-controller:1.0.2 # kpt-set: ${image}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8088
+          # readinessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: http
+          #   initialDelaySeconds: 2
+          #   periodSeconds: 10
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: http
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+          envFrom:
+            - configMapRef:
+                name: mcp-controller-env
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
