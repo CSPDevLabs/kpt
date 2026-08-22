@@ -76,7 +76,11 @@ body {
     transition:width .25s;
     overflow:visible;
     border-right:1px solid rgba(255,255,255,.12);
+    display:flex;
+    flex-direction:column;
+    flex-shrink:0;
 }
+
 .sidebar-header{
     height:50px;
     display:flex;
@@ -124,9 +128,64 @@ body {
     object-fit:contain;
 }
 
-.sidebar.collapsed .nav-text{
-    display:none;
+/* ---------- SIDEBAR SERVICE SECTIONS ---------- */
+
+.nav-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 15px 8px;
+    color: rgba(255,255,255,.55);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
+
+.nav-section-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,.15);
+}
+
+.nav-section-title {
+    flex-shrink: 0;
+}
+
+/* ---------- COLLAPSED SIDEBAR ---------- */
+
+.sidebar.collapsed .nav-section-header {
+    position: relative;
+    height: 1px;
+    margin: 14px 15px;
+    padding: 0;
+    display: block;
+    background: transparent;
+}
+
+.sidebar.collapsed .nav-section-title {
+    display: none;
+}
+
+.sidebar.collapsed .nav-section-line {
+    display: none;
+}
+
+.sidebar.collapsed .nav-section-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.20);
+}
+
+.sidebar.collapsed .nav-text {
+    display: none;
+}
+
 /* Sidebar */
 .domain-badge{
     margin-left:12px;
@@ -427,78 +486,54 @@ body {
     font-weight:600;
 }
 
-/* ---------- ACCOUNT PANEL ---------- */
-#account-btn {
-  display: none;
+/* ---------- SIDEBAR LOGOUT ---------- */
+
+#logout-nav {
+    margin-top: auto;
 }
-body.keycloak-enabled #account-btn {
-  display: flex;
+
+body:not(.keycloak-enabled) #logout-nav {
+    display: none;
 }
-.account-panel {
-  position: fixed;
-  top: 50px;
-  right: -240px;
-  width: 220px;
-  height: calc(100% - 50px);
-  background: rgba(10,25,47,0.98);
-  border-left: 1px solid var(--border);
-  transition: right 0.3s ease;
-  z-index: 3000;
-  padding: 20px;
-  font-size: 14px;
+
+body.keycloak-enabled #logout-nav {
+    display: flex;
 }
-.account-panel.active {
-  right: 0;
+
+#logout-nav:hover {
+    background: rgba(255,255,255,.08);
 }
-.account-circle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+.sidebar.collapsed #logout-nav .nav-text {
+    display: none;
 }
-.account-circle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 8px var(--accent);
+
+.sidebar.collapsed #logout-nav {
+    position: relative;
 }
-.logout-btn {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: calc(100% - 40px);
-  padding: 10px;
-  background: #e74c3c;
-  border: none;
-  color: white;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+
+.sidebar.collapsed #logout-nav::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(10,25,47,0.98);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-size: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease;
+    pointer-events: none;
+    z-index: 9999;
 }
-.logout-btn:hover {
-  background: #c0392b;
-}
-.user-avatar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 25px;
-  width: 180px;
-  height: 150px;
-  margin-left: auto;
-  margin-right: auto;
-  border: 2px solid rgba(255,255,255,0.2);
-  border-radius: 14px;
-}
-.user-avatar img,
-.user-avatar-img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+
+.sidebar.collapsed #logout-nav:hover::after {
+    opacity: 1;
+    visibility: visible;
 }
 
 @media (max-width:1600px){
