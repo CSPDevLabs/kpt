@@ -8,5 +8,5 @@ info:
   description: sample description
 pipeline:
   mutators:
-    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.2.4
       configPath: apply-setters.yaml
