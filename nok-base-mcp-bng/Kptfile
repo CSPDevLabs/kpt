@@ -8,8 +8,8 @@ info:
   description: MCP controller for BNG observability (Prometheus, Loki, nok.dev targets)
 pipeline:
   mutators:
-    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-namespace:v0.4
       configMap:
         namespace: nok-base
-    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.1
       configPath: apply-setters.yaml
