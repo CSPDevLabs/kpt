@@ -334,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       ${renderIcon(app.name, "app-icon-img")}
                   </div>
                   <div class="app-name">${app.name}</div>
+                  <div class="app-desc">${app.description || ""}</div>
               `;
 
               card.onclick = () => {

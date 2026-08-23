@@ -439,7 +439,7 @@ body {
 
 .app-card{
     width:200px;
-    height:135px;
+    height:155px;
     background:rgba(255,255,255,.08);
     border-radius:16px;
     border:1px solid rgba(255,255,255,.12);
@@ -453,6 +453,15 @@ body {
     opacity:0;
     transition:.45s;
     box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.app-desc{
+    margin-top:8px;
+    color:#b8d7ff;
+    font-size:13px;
+    text-align:center;
+    padding:0 12px;
+    line-height:1.4;
 }
 
 .app-card.show{
@@ -561,8 +570,8 @@ body.keycloak-enabled #logout-nav {
     }
 
     .app-card{
-        width:190px;
-        height:130px;
+        width:230px;
+        height:150px;
     }
 }
 
