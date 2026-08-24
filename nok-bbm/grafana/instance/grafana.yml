@@ -13,6 +13,8 @@ spec:
     auth.anonymous:
       enabled: "true"
       org_role: Admin
+    security:
+      allow_embedding: "true"
     server:
       root_url: "http://bng.nok.local/bbm"
     plugins:
@@ -34,6 +36,9 @@ spec:
                 periodSeconds: 30
                 timeoutSeconds: 2
                 failureThreshold: 3
+              env:
+                - name: GF_SECURITY_ALLOW_EMBEDDING
+                  value: "true"
               resources:
                 requests:
                   cpu: 250m
