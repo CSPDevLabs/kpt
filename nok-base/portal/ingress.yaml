@@ -3,7 +3,9 @@ kind: Ingress
 metadata:
   name: nok-apps-portal-ingress
   namespace: nok-base
-
+  annotations:
+    netopskube.io/bbm: "true"
+    netopskube.io/prober: http
 spec:
   ingressClassName: nginx
   rules:

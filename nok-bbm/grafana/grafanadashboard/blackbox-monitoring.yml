@@ -8,4 +8,4 @@ spec:
     matchLabels:
       dashboards: bbm
   resyncPeriod: 5m
-  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/main/nok-bbm/grafana/dashboards/Blackbox%20Monitoring%20Dashboard-1774295027507.json
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/nok-restructure/nok-bbm/grafana/dashboards/Blackbox%20Monitoring%20Dashboard-1774295027507.json

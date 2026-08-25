@@ -12,6 +12,7 @@ data:
         prober: http
         timeout: 5s
         http:
+          proxy_from_environment: true
           valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
           valid_status_codes: []  # Defaults to 2xx
           method: GET
@@ -40,6 +41,21 @@ data:
             insecure_skip_verify: true
           preferred_ip_protocol: "ip4" # defaults to "ip6"
           ip_protocol_fallback: false  # no fallback to "ip6"
+      http_3xx_keycloak:
+        prober: http
+        timeout: 5s
+        http:
+          proxy_from_environment: true
+          valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+          valid_status_codes: [302]
+          method: GET
+          follow_redirects: false
+          fail_if_ssl: false
+          fail_if_not_ssl: false
+          tls_config:
+            insecure_skip_verify: true
+          preferred_ip_protocol: "ip4"
+          ip_protocol_fallback: false
       tcp_connect:
         prober: tcp
         timeout: 5s

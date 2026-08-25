@@ -8,4 +8,4 @@ spec:
     matchLabels:
       dashboards: bbm
   resyncPeriod: 5m
-  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/main/nok-bbm/grafana/dashboards/NetOpsKube%20Status%20Dashboards-1770288790346.json
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/nok-restructure/nok-bbm/grafana/dashboards/NetOpsKube%20Status%20Dashboards-1770288790346.json

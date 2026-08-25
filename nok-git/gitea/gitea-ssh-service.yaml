@@ -14,7 +14,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     netopskube.io/bbm: "true"
-    netopskube.io/prober: tcp
+    netopskube.io/prober: "tcp"
     netopskube.io/port: "22"
 spec:
   type: LoadBalancer
