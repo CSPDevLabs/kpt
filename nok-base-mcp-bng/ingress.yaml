@@ -1,0 +1,27 @@
+# Optional — not applied by default (`local-config`). Remove the annotation
+# and adjust host / ingressClassName / TLS before including it in live apply.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mcp-controller
+  annotations:
+    config.kubernetes.io/local-config: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: mcp-bng.nok.local # kpt-set: ${ingress-host}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mcp-controller
+                port:
+                  number: 8088

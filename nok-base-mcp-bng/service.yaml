@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-controller
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+  namespace: nok-base
+spec:
+  type: LoadBalancer
+  selector:
+    app: mcp-controller
+  ports:
+    - name: http
+      port: 8088
+      targetPort: 8088

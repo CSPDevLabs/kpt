@@ -1,0 +1,25 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: bbm-nok-ingress-oauth
+  namespace: nok-bbm
+  labels:
+    app: bbm-prometheus
+spec:
+  jobName: nok_ingress_oauth
+  interval: 30s
+  scrapeTimeout: 7s
+  module: http_3xx_keycloak
+  prober:
+    url: blackbox-svc:9115
+    scheme: http
+    path: /probe
+  targets:
+    ingress:
+      namespaceSelector:
+        any: true
+      selector: {}
+      relabelingConfigs:
+        - sourceLabels: [__meta_kubernetes_ingress_annotation_netopskube_io_bbm_oauth]
+          regex: "true"
+          action: keep

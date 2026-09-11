@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nok-apps-portal-app
-  namespace: nok-dia
+  namespace: nok-base
   labels:
     app: nok-apps-portal
 spec:
@@ -29,18 +29,17 @@ spec:
             memory: 64Mi
         volumeMounts:
         - name: portal-html-volume
-          mountPath: /usr/share/nginx/html/index.html # Mount index.html
-          subPath: index.html # Specify the key from the ConfigMap
+          mountPath: /usr/share/nginx/html # Mount index.html
         - name: menu-config-volume
           mountPath: /usr/share/nginx/html/menu-config.json # Mount menu-config.json
           subPath: menu-config.json # Specify the key from the ConfigMap
         - name: nginx-config-volume # New volume mount for custom Nginx config
           mountPath: /etc/nginx/conf.d/default.conf
-          subPath: nok-portal.conf
+          subPath: nok-portal.conf          
       volumes:
       - name: portal-html-volume
-        configMap:
-          name: nok-apps-portal-html-config # Reference the ConfigMap for index.html
+        persistentVolumeClaim:
+          claimName: nok-apps-portal-pvc # Reference the ConfigMap for index.html
       - name: menu-config-volume
         configMap:
           name: nok-apps-menu-config # Reference the ConfigMap for menu-config.json
@@ -52,7 +51,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nok-apps-portal-service
-  namespace: nok-dia
+  namespace: nok-base
   labels:
     app: nok-apps-portal
   annotations:

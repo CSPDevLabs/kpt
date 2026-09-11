@@ -469,7 +469,7 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_success{job=\"nok_ingress\",namespace=\"$NAMESPACE\"}",
+          "expr": "max by (namespace, ingress) (probe_success{namespace=\"$NAMESPACE\", job=~\"nok_ingress|nok_ingress_oauth\"})",
           "legendFormat": "{{ingress}} / {{instance}}",
           "range": true,
           "refId": "A"
@@ -825,7 +825,7 @@
             "uid": "${DATASOURCE}"
           },
           "editorMode": "code",
-          "expr": "probe_http_duration_seconds{phase=\"connect\", job=\"nok_ingress\",namespace=\"$NAMESPACE\"}",
+          "expr": "max by (namespace, ingress) (probe_http_duration_seconds{phase=\"connect\", namespace=\"$NAMESPACE\", job=~\"nok_ingress|nok_ingress_oauth\"})",
           "legendFormat": "{{ingress}} / {{instance}}",
           "range": true,
           "refId": "A"

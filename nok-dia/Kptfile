@@ -9,12 +9,12 @@ info:
   description: observability automation apps for BNG use case
 pipeline:
   mutators:
-    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-namespace:v0.4
       configMap:
         namespace: nok-dia
-    - image: gcr.io/kpt-fn/apply-setters:v0.2.0
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.1
       configPath: apply-setters.yaml
-    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
       configMap:
         netopskube.io/bbm: "true"
         netopskube.io/path: "/metrics"
@@ -24,7 +24,7 @@ pipeline:
           name: tel-sping
         - kind: Service
           name: gnmic-metrics-svc
-    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
       configMap:
         netopskube.io/bbm: "true"
         netopskube.io/prober: "tcp"
@@ -35,7 +35,7 @@ pipeline:
           name: tel-loki
         - kind: Service
           name: tel-pt
-    - image: gcr.io/kpt-fn/set-annotations:v0.1.4
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
       configMap:
         netopskube.io/bbm: "true"
         netopskube.io/prober: "http"

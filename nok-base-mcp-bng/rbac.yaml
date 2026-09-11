@@ -1,0 +1,46 @@
+# RBAC for BNG Kubernetes data-source access.
+#
+# Derived from bng/resources.py, bng/tools.py, and kubernetes_client:
+# - list_namespaces / completions → list namespaces (cluster-scoped)
+# - check_namespace_exists on every namespaced CR list → get namespaces
+# - list NetworkDeviceTarget / NetworkHostTarget (default ns, by-ns templates,
+#   label selectors) → list nok.dev CRs; label-selector validation uses
+#   list_cluster_custom_object so cluster-scoped list is required
+# - templates accept arbitrary {namespace}, so a namespaced Role is insufficient
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mcp-controller
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+  - apiGroups: ["nok.dev"]
+    resources:
+      - networkdevicetargets
+      - networkhosttargets
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mcp-controller
+  labels:
+    app: mcp-controller
+    app.kubernetes.io/app: mcp-controller
+    app.kubernetes.io/component: mcp-controller
+    app.kubernetes.io/name: mcp-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mcp-controller
+subjects:
+  - kind: ServiceAccount
+    name: mcp-controller-sa
+    # Must match the package namespace (set-namespace does not rewrite subject.namespace).
+    namespace: nok-base # kpt-set: ${namespace}
