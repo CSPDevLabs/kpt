@@ -21,15 +21,15 @@ data:
           "deployed": "yes",
           "description": "Platform health and monitoring",
           "path": "/bbm/dashboards",
-          "openInNewTab": true
+          "openInNewTab": false
         },
         {
           "name": "Keycloak",
           "icon": "keycloak",
           "deployed": "no",
           "description": "Identity and access management",
-          "path": "http://bng.nok.local:8080/auth/admin/master/console",
-          "openInNewTab": true
+          "path": "/auth/admin/master/console/",
+          "openInNewTab": false
         }
       ],
 
@@ -51,7 +51,7 @@ data:
               "icon": "grafana",
               "description": "Dashboards and visualization",
               "path": "/nok-bng/grafana/dashboards",
-              "openInNewTab": true
+              "openInNewTab": false
             },
             {
               "name": "Alertmanager",
@@ -80,7 +80,7 @@ data:
               "icon": "grafana",
               "description": "Dashboards and visualization",
               "path": "/nok-dia/grafana/dashboards",
-              "openInNewTab": true
+              "openInNewTab": false
             },
             {
               "name": "Alertmanager",
