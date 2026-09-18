@@ -15,5 +15,5 @@ jobs:
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
-      - name: Validate BNG and DIA packages
+      - name: Validate BNG, DIA, and CG-NAT packages
         run: make test

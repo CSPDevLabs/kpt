@@ -10,10 +10,11 @@ if ! command -v "$YQ" >/dev/null 2>&1; then
   exit 1
 fi
 
-RECIPE_PACKAGES=(nok-bng nok-dia)
+RECIPE_PACKAGES=(nok-bng nok-dia nok-cgnat)
 REQUIRED_SETTERS=(
   "nok-bng:syslog-lb-ip"
   "nok-dia:syslog-lb-ip"
+  "nok-cgnat:syslog-lb-ip"
   "nok-base:ingress-lb-ip"
   "nok-lb:metallb-pool-range"
   "nok-git:gitea-ssh-lb-ip"
@@ -29,6 +30,11 @@ RECIPE_REQUIRED_FILES=(
   "nok-dia:portal/portal-gitea-proxy-svc.yaml"
   "nok-dia:portal/portal-bbm-grafana-proxy-svc.yaml"
   "nok-dia:ingress/ingress.yaml"
+  "nok-cgnat:Kptfile"
+  "nok-cgnat:apply-setters.yaml"
+  "nok-cgnat:portal/portal-gitea-proxy-svc.yaml"
+  "nok-cgnat:portal/portal-bbm-grafana-proxy-svc.yaml"
+  "nok-cgnat:ingress/ingress.yaml"
   "nok-base:portal/portal-menu-config.yaml"
   "nok-base:portal/portal-health-ingress.yaml"
 )
@@ -88,7 +94,7 @@ else
   ok "nok-base portal menu uses in-portal navigation"
 fi
 
-for recipe in nok-bng nok-dia; do
+for recipe in nok-bng nok-dia nok-cgnat; do
   ingress="$ROOT/$recipe/ingress/ingress.yaml"
   if grep -q 'proxy-hide-headers: "X-Frame-Options"' "$ingress" 2>/dev/null; then
     ok "$recipe ingress strips X-Frame-Options for iframe embedding"
@@ -146,7 +152,7 @@ while IFS= read -r -d '' yaml; do
   else
     bad "invalid YAML: $rel"
   fi
-done < <(find "$ROOT/nok-bng" "$ROOT/nok-dia" -type f \( -name '*.yaml' -o -name '*.yml' \) -print0)
+done < <(find "$ROOT/nok-bng" "$ROOT/nok-dia" "$ROOT/nok-cgnat" -type f \( -name '*.yaml' -o -name '*.yml' \) -print0)
 
 echo ""
 if [[ $fail -eq 0 ]]; then

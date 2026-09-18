@@ -90,6 +90,35 @@ data:
               "openInNewTab": false
             }
           ]
+        },
+
+        {
+          "id": "nok-cgnat",
+          "displayName": "NOK CG-NAT",
+          "deployed": "no",
+          "services": [
+            {
+              "name": "Prometheus",
+              "icon": "prometheus",
+              "description": "Metrics collection and querying",
+              "path": "/nok-cgnat/prometheus/graph",
+              "openInNewTab": false
+            },
+            {
+              "name": "Grafana",
+              "icon": "grafana",
+              "description": "Dashboards and visualization",
+              "path": "/nok-cgnat/grafana/dashboards",
+              "openInNewTab": false
+            },
+            {
+              "name": "Alertmanager",
+              "icon": "alertmanager",
+              "description": "Alert routing and notifications",
+              "path": "/nok-cgnat/alertmanager",
+              "openInNewTab": false
+            }
+          ]
         }
       ]
     }

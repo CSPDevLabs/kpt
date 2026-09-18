@@ -7,6 +7,6 @@ help: ## List targets
 
 test: test-recipes ## Run all package validation (alias)
 
-test-recipes: ## Validate BNG and DIA recipe packages (no cluster)
+test-recipes: ## Validate BNG, DIA, and CG-NAT recipe packages (no cluster)
 	@chmod +x test/validate-recipes.sh
 	@YQ="$(YQ)" ./test/validate-recipes.sh

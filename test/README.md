@@ -1,6 +1,6 @@
 # kpt recipe validation (Epic 9)
 
-Validates **BNG** and **DIA** recipe packages before merge or publish. No KinD cluster or Docker required.
+Validates **BNG**, **DIA**, and **CG-NAT** recipe packages before merge or publish. No KinD cluster or Docker required.
 
 ## Run
 
@@ -16,11 +16,11 @@ make test
 - Required setter keys in `apply-setters.yaml` (syslog LB IPs, ingress, MetalLB pool, Gitea SSH)
 - Recipe files present (`ingress`, gitea-proxy, bbm-grafana-proxy, etc.)
 - Unified portal menu in `nok-base/portal/portal-menu-config.yaml` (`openInNewTab: false`)
-- Portal in-iframe behaviour (ingress `proxy-hide-headers`, `/gitea` route on BNG/DIA)
+- Portal in-iframe behaviour (ingress `proxy-hide-headers`, `/gitea` route on BNG/DIA/CG-NAT)
 - Gitea sub-path config in `nok-git` (no standalone Gitea ingress)
 - BBM Grafana `allow_embedding` and `root_url` with KinD portal port (`:8080`)
 - Kptfile pipeline images use `ghcr.io/kptdev/krm-functions-catalog/*` (not deprecated `gcr.io/kpt-fn/*`)
-- All YAML under `nok-bng/` and `nok-dia/` parses
+- All YAML under `nok-bng/`, `nok-dia/`, and `nok-cgnat/` parses
 
 ## kpt fn render and gcr.io
 
