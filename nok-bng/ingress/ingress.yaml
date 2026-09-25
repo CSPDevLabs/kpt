@@ -43,10 +43,3 @@ spec:
             name: bbm-grafana-proxy
             port:
               number: 80
-      - path: /gitea(/|$)(.*)
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: gitea-proxy
-            port:
-              number: 3000

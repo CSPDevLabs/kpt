@@ -21,16 +21,16 @@ REQUIRED_SETTERS=(
 RECIPE_REQUIRED_FILES=(
   "nok-bng:Kptfile"
   "nok-bng:apply-setters.yaml"
-  "nok-bng:portal/portal-gitea-proxy-svc.yaml"
   "nok-bng:portal/portal-bbm-grafana-proxy-svc.yaml"
   "nok-bng:ingress/ingress.yaml"
   "nok-dia:Kptfile"
   "nok-dia:apply-setters.yaml"
-  "nok-dia:portal/portal-gitea-proxy-svc.yaml"
   "nok-dia:portal/portal-bbm-grafana-proxy-svc.yaml"
   "nok-dia:ingress/ingress.yaml"
   "nok-base:portal/portal-menu-config.yaml"
   "nok-base:portal/portal-health-ingress.yaml"
+  "nok-base:portal/portal-gitea-proxy-svc.yaml"
+  "nok-base:portal/portal-gitea-ingress.yaml"
 )
 
 pass=0
@@ -95,12 +95,14 @@ for recipe in nok-bng nok-dia; do
   else
     bad "$recipe ingress missing proxy-hide-headers for X-Frame-Options"
   fi
-  if grep -q '/gitea' "$ingress" 2>/dev/null; then
-    ok "$recipe ingress routes /gitea through gitea-proxy"
-  else
-    bad "$recipe ingress missing /gitea path"
-  fi
 done
+
+base_gitea_ingress="$ROOT/nok-base/portal/portal-gitea-ingress.yaml"
+if grep -q '/gitea' "$base_gitea_ingress" 2>/dev/null && grep -q 'gitea-proxy' "$base_gitea_ingress" 2>/dev/null; then
+  ok "nok-base portal-gitea-ingress routes /gitea (base deploy, no recipe required)"
+else
+  bad "nok-base missing portal-gitea-ingress /gitea → gitea-proxy"
+fi
 
 gitea_manifest="$ROOT/nok-git/gitea/gitea-manifest-standalone.yaml"
 if [[ -f "$gitea_manifest" ]]; then
@@ -112,7 +114,7 @@ if [[ -f "$gitea_manifest" ]]; then
   if [[ -f "$ROOT/nok-git/gitea/ingress.yaml" ]]; then
     bad "nok-git still has standalone gitea/ingress.yaml (should use recipe ingress)"
   else
-    ok "nok-git has no standalone Gitea ingress (recipe ingress owns /gitea)"
+    ok "nok-git has no standalone Gitea ingress (nok-base portal-gitea-ingress owns /gitea)"
   fi
 fi
 
