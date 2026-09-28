@@ -31,6 +31,8 @@ spec:
   probeNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name: nok-bbm
+  retention: 24h # kpt-set: ${prometheus-retention}
+  retentionSize: "0" # kpt-set: ${prometheus-retention-size}
   storage:
     volumeClaimTemplate:
       spec:
