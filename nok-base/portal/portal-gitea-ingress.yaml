@@ -1,23 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nok-gitea-ingress
-  namespace: nok-git
+  name: portal-gitea-ingress
+  namespace: nok-base
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-hide-headers: "X-Frame-Options"
     netopskube.io/bbm: "true"
     netopskube.io/prober: http
 spec:
   ingressClassName: nginx
   rules:
-  - host: bng.nok.local # kpt-set: ${ingress-host}
+  - host: bng.nok.local
     http:
       paths:
       - path: /gitea(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
           service:
-            name: gitea-http
+            name: gitea-proxy
             port:
               number: 3000
