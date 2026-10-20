@@ -104,6 +104,24 @@ else
   bad "nok-base missing portal-gitea-ingress /gitea → gitea-proxy"
 fi
 
+gitea_proxy_service="$ROOT/nok-base/portal/portal-gitea-proxy-svc.yaml"
+if [[ -f "$gitea_proxy_service" ]]; then
+  service_kind="$("$YQ" eval '.kind' "$gitea_proxy_service")"
+  service_name="$("$YQ" eval '.metadata.name' "$gitea_proxy_service")"
+  service_type="$("$YQ" eval '.spec.type' "$gitea_proxy_service")"
+  service_external_name="$("$YQ" eval '.spec.externalName' "$gitea_proxy_service")"
+  if [[ "$service_kind" == "Service" \
+    && "$service_name" == "gitea-proxy" \
+    && "$service_type" == "ExternalName" \
+    && "$service_external_name" == "gitea-http.nok-git.svc.cluster.local" ]]; then
+    ok "nok-base gitea-proxy is an ExternalName service for Gitea"
+  else
+    bad "nok-base gitea-proxy must be a Service ExternalName targeting gitea-http.nok-git.svc.cluster.local"
+  fi
+else
+  bad "nok-base/portal/portal-gitea-proxy-svc.yaml missing"
+fi
+
 gitea_manifest="$ROOT/nok-git/gitea/gitea-manifest-standalone.yaml"
 if [[ -f "$gitea_manifest" ]]; then
   if grep -q 'SERVE_FROM_SUB_PATH=true' "$gitea_manifest" && grep -q 'ROOT_URL=http://bng.nok.local:8080/gitea/' "$gitea_manifest"; then
