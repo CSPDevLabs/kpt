@@ -106,7 +106,7 @@ fi
 
 gitea_manifest="$ROOT/nok-git/gitea/gitea-manifest-standalone.yaml"
 if [[ -f "$gitea_manifest" ]]; then
-  if grep -q 'SERVE_FROM_SUB_PATH=true' "$gitea_manifest" && grep -q 'ROOT_URL=http://bng.nok.local:8080/gitea/' "$gitea_manifest"; then
+  if grep -q 'SERVE_FROM_SUB_PATH=true' "$gitea_manifest" && grep -q 'ROOT_URL=http://portal.nok.local:8080/gitea/' "$gitea_manifest"; then
     ok "nok-git Gitea configured for portal sub-path"
   else
     bad "nok-git Gitea missing SERVE_FROM_SUB_PATH or portal ROOT_URL"
@@ -124,7 +124,7 @@ if grep -q 'allow_embedding: "true"' "$bbm_grafana" 2>/dev/null; then
 else
   bad "nok-bbm Grafana missing allow_embedding"
 fi
-if grep -q 'root_url: "http://bng.nok.local:8080/bbm/' "$bbm_grafana" 2>/dev/null; then
+if grep -q 'root_url: "http://portal.nok.local:8080/bbm/' "$bbm_grafana" 2>/dev/null; then
   ok "nok-bbm Grafana root_url includes KinD portal port"
 else
   bad "nok-bbm Grafana root_url missing :8080 (portal port-forward)"

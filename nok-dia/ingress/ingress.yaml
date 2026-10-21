@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: bng.nok.local # kpt-set: ${ingress-host}
+  - host: portal.nok.local # kpt-set: ${ingress-host}
     http:
       paths:
       - path: /nok-dia/prometheus(/|$)(.*)

@@ -13,7 +13,7 @@ spec:
   ingressClassName: nginx
 
   rules:
-  - host: bng.nok.local
+  - host: portal.nok.local
     http:
       paths:
       - path: /healthz

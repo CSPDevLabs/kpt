@@ -196,13 +196,13 @@ stringData:
   security: INSTALL_LOCK=true
   server: |-
     APP_DATA_PATH=/data
-    DOMAIN=bng.nok.local
+    DOMAIN=portal.nok.local
     ENABLE_PPROF=false
     HTTP_PORT=3000
     PROTOCOL=http
-    ROOT_URL=http://bng.nok.local:8080/gitea/
+    ROOT_URL=http://portal.nok.local:8080/gitea/
     SERVE_FROM_SUB_PATH=true
-    SSH_DOMAIN=bng.nok.local
+    SSH_DOMAIN=portal.nok.local
     SSH_LISTEN_PORT=2222
     SSH_PORT=22
     START_SSH_SERVER=true
