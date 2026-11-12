@@ -1,0 +1,26 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: ipfix-postgres-datasource
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+
+  datasource:
+    name: IPFIX PostgreSQL
+    type: postgres
+    uid: DS_IPFIX_POSTGRES
+    access: proxy
+    url: ipfix-postgres.nok-ipfix.svc.cluster.local:5432
+    user: ipfix
+
+    jsonData:
+      database: ipfix
+      postgresVersion: 17
+      sslmode: disable
+      timescaledb: false
+
+    secureJsonData:
+      password: "ipfix-playground"

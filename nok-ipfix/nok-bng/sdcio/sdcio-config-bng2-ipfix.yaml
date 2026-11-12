@@ -1,0 +1,83 @@
+apiVersion: config.sdcio.dev/v1alpha1
+kind: Config
+metadata:
+  name: ipfix-cflowd-sros-bng2
+  namespace: nok-bng
+  labels:
+    config.sdcio.dev/targetName: clab-sros-bngt-bng2
+    config.sdcio.dev/targetNamespace: nok-bng
+
+spec:
+  priority: 10
+  revertive: false
+
+  config:
+
+    # Enable cflowd and configure the IPFIX collector.
+    - path: /configure/cflowd
+      value:
+        admin-state: enable
+        export-mode: automatic
+
+        sample-profile:
+          profile-id: 1
+          sample-rate: 1
+          slice-selection: standard
+
+        collector:
+          ip-address: 172.18.0.104
+          port: 4739
+          admin-state: enable
+          router-instance: management
+          template-set: basic
+          version: 10
+
+    # Configure IPFIX sampling for the BNG-INTERNET subscriber group.
+    - path: /configure/service
+      value:
+        vprn:
+          service-name: BNG-INTERNET
+
+          subscriber-interface:
+            interface-name: SUB
+
+            group-interface:
+              group-interface-name: GRP_1
+
+              cflowd-parameters:
+                sampling:
+                  sampling-type: unicast
+                  type: interface
+                  direction: both
+                  sample-profile: 1
+
+    # Configure IPFIX sampling on Base router AGG interface.
+    - path: /configure/router
+      value:
+        router-name: Base
+        interface:
+          - interface-name: AGG
+            cflowd-parameters:
+              sampling:
+                sampling-type: unicast
+                type: interface
+                direction: both
+                sample-profile: 1
+
+          # Configure IPFIX sampling on Base router CORE interface.
+          - interface-name: CORE
+            cflowd-parameters:
+              sampling:
+                sampling-type: unicast
+                type: interface
+                direction: both
+                sample-profile: 1
+
+          # Configure IPFIX sampling on Base router PEER_BNG interface.
+          - interface-name: PEER_BNG
+            cflowd-parameters:
+              sampling:
+                sampling-type: unicast
+                type: interface
+                direction: both
+                sample-profile: 1

@@ -1,0 +1,12 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ipfix-flow-analytics
+  namespace: nok-bng
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  configMapRef:
+    name: ipfix-dashboard-json
+    key: ipfix-flow-analytics.json
