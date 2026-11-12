@@ -1,0 +1,1035 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Total Flow Records",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS value FROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}';"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3B82F6"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 2,
+      "title": "Total Traffic",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)), 0) AS value\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}';"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#14B8A6"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 3,
+      "title": "Total Packets",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(SUM(COALESCE(NULLIF(raw_data->>'packets', '')::BIGINT, 0)), 0) AS value\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}';"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#A855F7"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 4,
+      "title": "Active Reporting Devices",
+      "type": "stat",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 5
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(DISTINCT device) AS value FROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}';"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#F59E0B"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      }
+    },
+    {
+      "id": 5,
+      "title": "Traffic Over Time",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 16,
+        "h": 9
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(created_at, '1m'),\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY 1;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3B82F6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 22,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "gradientMode": "opacity"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "last",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc",
+          "hideZeros": true
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Packets Reported Over Time",
+      "type": "timeseries",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 5,
+        "w": 8,
+        "h": 9
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT $__timeGroupAlias(created_at, '1m'),\n       SUM(COALESCE(NULLIF(raw_data->>'packets', '')::BIGINT, 0)) AS packets\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY 1;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#14B8A6"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 22,
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "gradientMode": "opacity"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": [
+            "last",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc",
+          "hideZeros": true
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Protocol Traffic Distribution",
+      "type": "piechart",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 8,
+        "h": 8
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(raw_data->>'proto', 'Unknown') AS protocol,\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY bytes DESC;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#3B82F6",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "values": true,
+          "calcs": [
+            "sum"
+          ],
+          "fields": "bytes"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        },
+        "displayLabels": [
+          "percent"
+        ],
+        "pieHole": 65,
+        "valueSize": 14
+      },
+      "description": "Distribution of IPFIX traffic volume by protocol. Each slice represents the total reported bytes for that protocol."
+    },
+    {
+      "id": 8,
+      "title": "Top Source IPs",
+      "type": "barchart",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 14,
+        "w": 8,
+        "h": 8
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(raw_data->>'src_addr', 'Unknown') AS source_ip,\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY bytes DESC\nLIMIT 10;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 1,
+            "gradientMode": "opacity",
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100,
+        "showValue": "always",
+        "barRadius": 4
+      }
+    },
+    {
+      "id": 9,
+      "title": "Top Destination IPs",
+      "type": "barchart",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 14,
+        "w": 8,
+        "h": 8
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(raw_data->>'dst_addr', 'Unknown') AS destination_ip,\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY bytes DESC\nLIMIT 10;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "fillOpacity": 85,
+            "lineWidth": 1,
+            "gradientMode": "opacity",
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisWidth": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 100,
+        "showValue": "always",
+        "barRadius": 4
+      }
+    },
+    {
+      "id": 10,
+      "title": "Ingress Interface Traffic",
+      "type": "barchart",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 12,
+        "h": 8
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(raw_data->>'in_if', 'Unknown') AS interface,\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY bytes DESC\nLIMIT 10;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 2,
+          "mappings": [],
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2563EB",
+                "value": null
+              },
+              {
+                "color": "#06B6D4",
+                "value": 1000000
+              },
+              {
+                "color": "#22D3EE",
+                "value": 10000000
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 1,
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisWidth": 1,
+            "barAlignment": 0,
+            "barWidthFactor": 0.85,
+            "drawStyle": "bars",
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "interface"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": false,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 80,
+        "showValue": "always",
+        "barRadius": 0,
+        "groupWidth": 0.9,
+        "barWidth": 0.85,
+        "text": {
+          "valueSize": 13
+        },
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "Egress Interface Traffic",
+      "type": "barchart",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 22,
+        "w": 12,
+        "h": 8
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COALESCE(raw_data->>'out_if', 'Unknown') AS interface,\n       SUM(COALESCE(NULLIF(raw_data->>'bytes', '')::BIGINT, 0)) AS bytes\nFROM public.ipfix_flows WHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nGROUP BY 1\nORDER BY bytes DESC\nLIMIT 10;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 2,
+          "mappings": [],
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2563EB",
+                "value": null
+              },
+              {
+                "color": "#06B6D4",
+                "value": 1000000
+              },
+              {
+                "color": "#22D3EE",
+                "value": 10000000
+              }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 100,
+            "lineWidth": 1,
+            "gradientMode": "none",
+            "axisPlacement": "auto",
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisWidth": 1,
+            "barAlignment": 0,
+            "barWidthFactor": 0.85,
+            "drawStyle": "bars",
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "interface"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": false,
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 80,
+        "showValue": "always",
+        "barRadius": 0,
+        "groupWidth": 0.9,
+        "barWidth": 0.85,
+        "text": {
+          "valueSize": 13
+        },
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "title": "Recent Flow Records",
+      "type": "table",
+      "datasource": {
+        "type": "postgres",
+        "uid": "DS_IPFIX_POSTGRES"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 24,
+        "h": 10
+      },
+      "pluginVersion": "12.3.3",
+      "targets": [
+        {
+          "refId": "A",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n    created_at AS \"Time\",\n    cluster_id AS \"cluster_id\",\n    device AS \"device\",\n    raw_data->>'src_addr' AS \"src_addr\",\n    raw_data->>'dst_addr' AS \"dst_addr\",\n    raw_data->>'proto' AS \"proto\",\n    raw_data->>'etype' AS \"etype\",\n    NULLIF(raw_data->>'bytes', '')::BIGINT AS \"bytes\",\n    NULLIF(raw_data->>'packets', '')::BIGINT AS \"packets\",\n    raw_data->>'src_port' AS \"src_port\",\n    raw_data->>'dst_port' AS \"dst_port\",\n    raw_data->>'in_if' AS \"in_if\",\n    raw_data->>'out_if' AS \"out_if\",\n    raw_data->>'next_hop' AS \"next_hop\"\nFROM public.ipfix_flows\nWHERE $__timeFilter(created_at)\n  AND cluster_id ~ '${cluster:regex}'\n  AND device ~ '${device:regex}'\nORDER BY created_at DESC\nLIMIT 1000;"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "src_port"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "dst_port"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Time",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false,
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ]
+        },
+        "columnFilter": true
+      }
+    }
+  ],
+  "preload": false,
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": [
+    "IPFIX",
+    "Cflowd",
+    "BNG",
+    "NetOpsKube"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "cluster",
+        "label": "Cluster",
+        "type": "query",
+        "datasource": {
+          "type": "postgres",
+          "uid": "DS_IPFIX_POSTGRES"
+        },
+        "definition": "SELECT DISTINCT cluster_id AS \"__text\", cluster_id AS \"__value\" FROM public.ipfix_flows WHERE cluster_id IS NOT NULL ORDER BY 1",
+        "query": "SELECT DISTINCT cluster_id AS \"__text\", cluster_id AS \"__value\" FROM public.ipfix_flows WHERE cluster_id IS NOT NULL ORDER BY 1",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "refresh": 1,
+        "hide": 0,
+        "regex": "",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      },
+      {
+        "name": "device",
+        "label": "Device",
+        "type": "query",
+        "datasource": {
+          "type": "postgres",
+          "uid": "DS_IPFIX_POSTGRES"
+        },
+        "definition": "SELECT DISTINCT device AS \"__text\", device AS \"__value\" FROM public.ipfix_flows WHERE cluster_id ~ '${cluster:regex}' AND device IS NOT NULL ORDER BY 1",
+        "query": "SELECT DISTINCT device AS \"__text\", device AS \"__value\" FROM public.ipfix_flows WHERE cluster_id ~ '${cluster:regex}' AND device IS NOT NULL ORDER BY 1",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "refresh": 1,
+        "hide": 0,
+        "regex": "",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "BNG IPFIX Flow Analytics",
+  "uid": "bng-ipfix-flow",
+  "version": 3
+}
