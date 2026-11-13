@@ -1,0 +1,54 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: nok-cgnat
+  annotations:
+    config.kubernetes.io/local-config: "true"
+  namespace: nok-cgnat
+info:
+  description: observability automation apps for CG-NAT (DS-Lite + ICR) use case
+pipeline:
+  mutators:
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-namespace:v0.4
+      configMap:
+        namespace: nok-cgnat
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.1
+      configPath: apply-setters.yaml
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
+      configMap:
+        netopskube.io/bbm: "true"
+        netopskube.io/path: "/metrics"
+        netopskube.io/prober: "http"
+      selectors:
+        - kind: Service
+          name: tel-sping
+        - kind: Service
+          name: gnmic-metrics-svc
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
+      configMap:
+        netopskube.io/bbm: "true"
+        netopskube.io/prober: "tcp"
+      selectors:
+        - kind: Service
+          name: tel-fb
+        - kind: Service
+          name: tel-loki
+        - kind: Service
+          name: tel-pt
+    - image: ghcr.io/kptdev/krm-functions-catalog/set-annotations:v0.1.4
+      configMap:
+        netopskube.io/bbm: "true"
+        netopskube.io/prober: "http"
+      selectors:
+        - kind: Service
+          name: grafana-svc
+        - kind: Service
+          name: nok-apps-portal-service
+        - kind: Service
+          name: prometheus-svc
+        - kind: Service
+          name: tel-am
+        - kind: Ingress
+          name: nok-apps-ingress
+        - kind: Ingress
+          name: nok-apps-portal-ingress

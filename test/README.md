@@ -1,6 +1,6 @@
-# kpt recipe validation (Epic 9)
+# kpt recipe validation
 
-Validates **BNG** and **DIA** recipe packages before merge or publish. No KinD cluster or Docker required.
+Validates **BNG**, **DIA**, and **CG-NAT** recipe packages before merge or publish. No KinD cluster or Docker required.
 
 ## Run
 

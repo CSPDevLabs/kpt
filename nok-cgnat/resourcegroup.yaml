@@ -1,0 +1,7 @@
+apiVersion: kpt.dev/v1alpha1
+kind: ResourceGroup
+metadata:
+  name: inventory-cgnat-001
+  namespace: nok-cgnat
+  labels:
+    cli-utils.sigs.k8s.io/inventory-id: nok-cgnat-recipe-001
