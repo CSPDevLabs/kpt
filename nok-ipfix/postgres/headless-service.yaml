@@ -1,0 +1,19 @@
+
+# ============================================================
+# 1. PostgreSQL Headless Service
+# ============================================================
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ipfix-postgres-headless
+  namespace: nok-ipfix
+spec:
+  clusterIP: None
+  selector:
+    app: ipfix-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP
