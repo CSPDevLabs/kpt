@@ -17,7 +17,6 @@ spec:
         app: ${APP_LABEL}
         ipfix.cluster: ${CLUSTER_ID}
     spec:
-      hostNetwork: true
       containers:
         - name: goflow2
           image: ${GOFLOW_IMAGE}
