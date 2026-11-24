@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-create-topic-${TOPIC}
+  namespace: ${NAMESPACE}
+  labels:
+    ipfix.cluster: ${CLUSTER_ID}
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        ipfix.cluster: ${CLUSTER_ID}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: kafka-topic
+          image: ${KAFKA_IMAGE}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server ${KAFKA_BROKER} \
+                --create \
+                --if-not-exists \
+                --topic ${TOPIC} \
+                --partitions ${KAFKA_PARTITIONS} \
+                --replication-factor 1

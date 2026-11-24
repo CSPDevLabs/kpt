@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ipfix-consumer
+  namespace: nok-ipfix
+  labels:
+    app: ipfix-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipfix-consumer
+  template:
+    metadata:
+      labels:
+        app: ipfix-consumer
+    spec:
+      containers:
+        - name: consumer
+          image: netopskube-ipfix-consumer:3.0.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          env:
+            # Kafka
+            - name: KAFKA_BROKER
+              value: "kafka.nok-ipfix.svc.cluster.local:9092"
+
+            - name: KAFKA_GROUP_ID
+              value: "ipfix-postgres-consumer"
+
+            # PostgreSQL
+            - name: POSTGRES_HOST
+              value: "ipfix-postgres.nok-ipfix.svc.cluster.local"
+
+            - name: POSTGRES_PORT
+              value: "5432"
+
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_DB
+
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_USER
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_PASSWORD

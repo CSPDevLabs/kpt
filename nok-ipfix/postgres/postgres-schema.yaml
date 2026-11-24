@@ -1,0 +1,128 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ipfix-postgres-schema
+  namespace: nok-ipfix
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 600
+
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: postgres-schema
+          image: postgres:17
+
+          env:
+            - name: PGHOST
+              value: ipfix-postgres.nok-ipfix.svc.cluster.local
+
+            - name: PGPORT
+              value: "5432"
+
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_DB
+
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_USER
+
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ipfix-postgres-secret
+                  key: POSTGRES_PASSWORD
+
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+
+              echo "Waiting for PostgreSQL..."
+
+              until pg_isready \
+                -h "$PGHOST" \
+                -p "$PGPORT" \
+                -U "$PGUSER" \
+                -d "$PGDATABASE"; do
+                sleep 2
+              done
+
+              echo "PostgreSQL is ready."
+              echo "Initializing generic IPFIX schema..."
+
+              psql -v ON_ERROR_STOP=1 <<'SQL'
+
+              CREATE TABLE IF NOT EXISTS ipfix_flows (
+                  id BIGSERIAL PRIMARY KEY,
+
+                  -- Cluster identification
+                  cluster_id TEXT NOT NULL,
+
+                  -- Network exporter identification
+                  device TEXT,
+
+                  -- Kafka source metadata
+                  source_topic TEXT NOT NULL,
+                  source_partition INTEGER NOT NULL,
+                  source_offset BIGINT NOT NULL,
+
+                  -- GoFlow2 metadata
+                  time_received_ns BIGINT,
+                  observation_domain_id BIGINT,
+
+                  -- PostgreSQL ingestion timestamp
+                  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+                  -- Complete decoded IPFIX message
+                  raw_data JSONB NOT NULL
+              );
+
+              -- Cluster lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_cluster_id
+                  ON ipfix_flows (cluster_id);
+
+              -- Device lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_device
+                  ON ipfix_flows (device);
+
+              -- Kafka topic lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_source_topic
+                  ON ipfix_flows (source_topic);
+
+              -- Ingestion timestamp lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_created_at
+                  ON ipfix_flows (created_at);
+
+              -- Flow receive timestamp lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_time_received
+                  ON ipfix_flows (time_received_ns);
+
+              -- Observation domain lookup
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_observation_domain
+                  ON ipfix_flows (observation_domain_id);
+
+              -- Prevent duplicate Kafka message insertion
+              CREATE UNIQUE INDEX IF NOT EXISTS
+                  idx_ipfix_flows_kafka_message
+              ON ipfix_flows (
+                  source_topic,
+                  source_partition,
+                  source_offset
+              );
+
+              -- Flexible JSONB querying
+              CREATE INDEX IF NOT EXISTS idx_ipfix_flows_raw_data
+                  ON ipfix_flows USING GIN (raw_data);
+
+              SQL
+
+              echo "Generic IPFIX schema initialized successfully."

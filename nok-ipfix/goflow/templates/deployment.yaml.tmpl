@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${GOFLOW_NAME}
+  namespace: ${NAMESPACE}
+  labels:
+    app: ${APP_LABEL}
+    ipfix.cluster: ${CLUSTER_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APP_LABEL}
+  template:
+    metadata:
+      labels:
+        app: ${APP_LABEL}
+        ipfix.cluster: ${CLUSTER_ID}
+    spec:
+      containers:
+        - name: goflow2
+          image: ${GOFLOW_IMAGE}
+          imagePullPolicy: IfNotPresent
+
+          args:
+            - "-listen"
+            - "netflow://:4739?workers=4&queue_size=50000&blocking=false"
+
+            - "-addr"
+            - ":8081"
+
+            - "-format"
+            - "json"
+
+            - "-transport"
+            - "kafka"
+
+            - "-transport.kafka.brokers"
+            - "${KAFKA_BROKER}"
+
+            - "-transport.kafka.topic"
+            - "${TOPIC}"
+
+          ports:
+            - name: ipfix
+              containerPort: 4739
+              protocol: UDP
+
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          
+          resources:
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"

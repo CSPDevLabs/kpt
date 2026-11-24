@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-create-topic-ipfix-dlq
+  namespace: nok-ipfix
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: kafka-topic
+          image: apache/kafka:4.1.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              /opt/kafka/bin/kafka-topics.sh \
+                --bootstrap-server kafka.nok-ipfix.svc.cluster.local:9092 \
+                --create \
+                --if-not-exists \
+                --topic ipfix-dlq \
+                --partitions 3 \
+                --replication-factor 1

@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-controller-headless
+  namespace: nok-ipfix
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app: kafka-controller
+  ports:
+    - name: controller
+      port: 9093
+      targetPort: 9093
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka-controller
+  namespace: nok-ipfix
+spec:
+  serviceName: kafka-controller-headless
+  replicas: 1
+  ordinals:
+    start: 1
+  selector:
+    matchLabels:
+      app: kafka-controller
+  template:
+    metadata:
+      labels:
+        app: kafka-controller
+    spec:
+      initContainers:
+        - name: kafka-storage-format
+          image: apache/kafka:4.1.0
+          command:
+            - /bin/bash
+            - -ec
+          args:
+            - |
+              cp /templates/controller.properties /generated/server.properties
+              sed -i "s/__NODE_ID__/${POD_INDEX}/g" /generated/server.properties
+
+              if [ ! -f /var/lib/kafka/data/meta.properties ]; then
+                if [ "${POD_INDEX}" = "1" ]; then
+                  echo "Formatting initial standalone controller"
+                  /opt/kafka/bin/kafka-storage.sh format \
+                    --cluster-id "${KAFKA_CLUSTER_ID}" \
+                    --standalone \
+                    --feature kraft.version=1 \
+                    --config /generated/server.properties
+                else
+                  echo "Formatting additional controller"
+                  /opt/kafka/bin/kafka-storage.sh format \
+                    --cluster-id "${KAFKA_CLUSTER_ID}" \
+                    --no-initial-controllers \
+                    --config /generated/server.properties
+                fi
+              else
+                echo "Existing Kafka controller storage detected; skipping format"
+              fi
+          env:
+            - name: POD_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['apps.kubernetes.io/pod-index']
+            - name: KAFKA_CLUSTER_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: kafka-config
+                  key: CLUSTER_ID
+          volumeMounts:
+            - name: kafka-config-template
+              mountPath: /templates
+            - name: generated-config
+              mountPath: /generated
+            - name: kafka-data
+              mountPath: /var/lib/kafka/data
+
+      containers:
+        - name: kafka-controller
+          image: apache/kafka:4.1.0
+          command:
+            - /bin/bash
+            - -ec
+          args:
+            - |
+              exec /opt/kafka/bin/kafka-server-start.sh /generated/server.properties
+          ports:
+            - name: controller
+              containerPort: 9093
+              protocol: TCP
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          startupProbe:
+            tcpSocket:
+              port: 9093
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: 9093
+            periodSeconds: 10
+          volumeMounts:
+            - name: generated-config
+              mountPath: /generated
+            - name: kafka-data
+              mountPath: /var/lib/kafka/data
+
+      volumes:
+        - name: kafka-config-template
+          configMap:
+            name: kafka-config
+            items:
+              - key: controller.properties
+                path: controller.properties
+        - name: generated-config
+          emptyDir: {}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: kafka-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
