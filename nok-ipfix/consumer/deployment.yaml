@@ -17,9 +17,15 @@ spec:
     spec:
       containers:
         - name: consumer
-          image: netopskube-ipfix-consumer:2.0.0
+          image: netopskube-ipfix-consumer:3.0.0
           imagePullPolicy: IfNotPresent
-
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
           env:
             # Kafka
             - name: KAFKA_BROKER

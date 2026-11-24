@@ -24,7 +24,7 @@ spec:
 
           args:
             - "-listen"
-            - "netflow://:4739"
+            - "netflow://:4739?workers=4&queue_size=50000&blocking=false"
 
             - "-addr"
             - ":8081"
@@ -49,3 +49,11 @@ spec:
             - name: http
               containerPort: 8081
               protocol: TCP
+          
+          resources:
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
