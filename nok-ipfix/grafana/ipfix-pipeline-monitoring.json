@@ -4,14 +4,13 @@
   "title": "NetOpsKube IPFIX Pipeline Monitoring",
   "tags": [
     "ipfix",
-    "netopskube",
     "goflow2",
     "postgresql",
-    "monitoring"
+    "keda"
   ],
   "timezone": "browser",
   "schemaVersion": 41,
-  "version": 2,
+  "version": 3,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -665,7 +664,7 @@
             "h": 5,
             "w": 6,
             "x": 0,
-            "y": 0
+            "y": 49
           },
           "datasource": {
             "type": "prometheus",
@@ -747,8 +746,8 @@
           "gridPos": {
             "h": 5,
             "w": 6,
-            "x": 0,
-            "y": 0
+            "x": 6,
+            "y": 49
           },
           "datasource": {
             "type": "prometheus",
@@ -811,8 +810,8 @@
           "gridPos": {
             "h": 5,
             "w": 6,
-            "x": 0,
-            "y": 0
+            "x": 12,
+            "y": 49
           },
           "datasource": {
             "type": "prometheus",
@@ -883,8 +882,8 @@
           "gridPos": {
             "h": 5,
             "w": 6,
-            "x": 0,
-            "y": 0
+            "x": 18,
+            "y": 49
           },
           "datasource": {
             "type": "prometheus",
@@ -1428,6 +1427,560 @@
               "legendFormat": "PostgreSQL WAL Size",
               "range": true,
               "refId": "A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "type": "row",
+      "title": "03 · KEDA & Consumer Autoscaling",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 76
+      },
+      "panels": [
+        {
+          "id": 26,
+          "type": "stat",
+          "title": "Kafka Consumer Group Lag",
+          "description": "Lag value reported by the KEDA Kafka scaler for ipfix-consumer-scaler.",
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 0,
+            "y": 77
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaler_metrics_value{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 27,
+          "type": "stat",
+          "title": "KEDA Scaler Active",
+          "description": "1 = KEDA considers the Kafka trigger active; 0 = inactive.",
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 6,
+            "y": 77
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "custom": {},
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "INACTIVE",
+                      "color": "green"
+                    },
+                    "1": {
+                      "text": "ACTIVE",
+                      "color": "orange"
+                    }
+                  }
+                }
+              ]
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaler_active{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 28,
+          "type": "stat",
+          "title": "KEDA Errors",
+          "description": "Current cumulative error counters. Both should remain at zero.",
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 12,
+            "y": 77
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaled_object_errors_total{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A",
+              "legendFormat": "ScaledObject errors"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaler_detail_errors_total{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "B",
+              "legendFormat": "Scaler detail errors"
+            }
+          ]
+        },
+        {
+          "id": 29,
+          "type": "stat",
+          "title": "ScaledObject Paused",
+          "description": "1 = ScaledObject is paused; 0 = normal autoscaling operation.",
+          "gridPos": {
+            "h": 6,
+            "w": 6,
+            "x": 18,
+            "y": 77
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "custom": {},
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "NOT PAUSED",
+                      "color": "green"
+                    },
+                    "1": {
+                      "text": "PAUSED",
+                      "color": "orange"
+                    }
+                  }
+                }
+              ]
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaled_object_paused{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 30,
+          "type": "timeseries",
+          "title": "Consumer Replicas — Current vs Desired",
+          "description": "HPA's observed current replica count compared with its desired replica count.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 83
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never",
+                "spanNulls": false
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "kube_horizontalpodautoscaler_status_current_replicas{namespace=\"nok-ipfix\",horizontalpodautoscaler=\"keda-hpa-ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A",
+              "legendFormat": "Current"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "kube_horizontalpodautoscaler_status_desired_replicas{namespace=\"nok-ipfix\",horizontalpodautoscaler=\"keda-hpa-ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "B",
+              "legendFormat": "Desired"
+            }
+          ]
+        },
+        {
+          "id": 31,
+          "type": "timeseries",
+          "title": "Consumer Replica Limits — Min vs Max",
+          "description": "Configured minimum and maximum replicas for the IPFIX consumer HPA.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 83
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never",
+                "spanNulls": false
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "kube_horizontalpodautoscaler_spec_min_replicas{namespace=\"nok-ipfix\",horizontalpodautoscaler=\"keda-hpa-ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A",
+              "legendFormat": "Minimum"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "kube_horizontalpodautoscaler_spec_max_replicas{namespace=\"nok-ipfix\",horizontalpodautoscaler=\"keda-hpa-ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "B",
+              "legendFormat": "Maximum"
+            }
+          ]
+        },
+        {
+          "id": 32,
+          "type": "timeseries",
+          "title": "KEDA Metric Retrieval Latency",
+          "description": "Time taken by KEDA to retrieve the Kafka scaler metric.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 91
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 4,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never",
+                "spanNulls": false
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_scaler_metrics_latency_seconds{namespace=\"keda\",scaledObject=\"ipfix-consumer-scaler\"}",
+              "range": true,
+              "refId": "A",
+              "legendFormat": "Metric retrieval"
+            }
+          ]
+        },
+        {
+          "id": 33,
+          "type": "timeseries",
+          "title": "KEDA Scaling Loop Latency",
+          "description": "Time taken by KEDA's internal scaling loop for the ScaledObject.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 91
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 4,
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never",
+                "spanNulls": false
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "keda_internal_scale_loop_latency_seconds{namespace=\"keda\",resource=\"ipfix-consumer-scaler\",type=\"scaledobject\"}",
+              "range": true,
+              "refId": "A",
+              "legendFormat": "Scale loop"
             }
           ]
         }
