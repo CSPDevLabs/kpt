@@ -1,0 +1,11 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ipfix-pipeline-monitoring
+  namespace: nok-bbm
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: bbm
+  resyncPeriod: 5m
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/deploy-ipfix/nok-ipfix/grafana/ipfix-pipeline-monitoring-grafanadashboard.yaml
