@@ -8,4 +8,4 @@ spec:
     matchLabels:
       dashboards: bbm
   resyncPeriod: 5m
-  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/deploy-ipfix/nok-ipfix/grafana/ipfix-pipeline-monitoring-grafanadashboard.yaml
+  url: https://raw.githubusercontent.com/CSPDevLabs/kpt/deploy-ipfix/nok-ipfix/grafana/ipfix-pipeline-monitoring.json
