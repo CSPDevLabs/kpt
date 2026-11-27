@@ -5,11 +5,13 @@
   "tags": [
     "ipfix",
     "netopskube",
-    "goflow2"
+    "goflow2",
+    "postgresql",
+    "monitoring"
   ],
   "timezone": "browser",
   "schemaVersion": 41,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
   "time": {
     "from": "now-1h",
@@ -46,7 +48,7 @@
     "list": [
       {
         "name": "cluster",
-        "label": "Cluster",
+        "label": "GoFlow2 Cluster",
         "type": "query",
         "datasource": {
           "type": "prometheus",
@@ -80,551 +82,1354 @@
   },
   "panels": [
     {
-      "id": 1,
-      "type": "timeseries",
-      "title": "Incoming Packets / sec",
-      "description": "Rate of packets received by GoFlow2, grouped by exporter address.",
+      "id": 11,
+      "type": "row",
+      "title": "01 · GoFlow2 Monitoring",
+      "collapsed": true,
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "pps",
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 12,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
+      "panels": [
         {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Incoming Packets / sec",
+          "description": "Rate of packets received by GoFlow2, grouped by exporter address.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
           "datasource": {
             "type": "prometheus",
             "uid": "DATASOURCE"
           },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id, remote_ip) (rate(goflow2_flow_traffic_packets_total{cluster_id=~\"$cluster\"}[5m]))",
-          "legendFormat": "{{cluster_id}} / {{remote_ip}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "type": "timeseries",
-      "title": "Incoming Traffic (Mbps)",
-      "description": "Ingress traffic rate derived from GoFlow2 received-byte counter.",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Mbits",
-          "decimals": 2,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 12,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id, remote_ip) (rate(goflow2_flow_traffic_bytes_total{cluster_id=~\"$cluster\"}[5m])) * 8 / 1000000",
-          "legendFormat": "{{cluster_id}} / {{remote_ip}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "type": "timeseries",
-      "title": "Decoded Data Records / sec",
-      "description": "Rate of records in DataFlowSet messages. Template and options records are intentionally excluded.",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "decimals": 2,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 12,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id) (rate(goflow2_flow_process_nf_flowset_records_total{cluster_id=~\"$cluster\",type=\"DataFlowSet\"}[5m]))",
-          "legendFormat": "{{cluster_id}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "type": "timeseries",
-      "title": "NetFlow Messages Processed / sec",
-      "description": "Rate of NetFlow messages processed by GoFlow2.",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "decimals": 2,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 12,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id) (rate(goflow2_flow_process_nf_total{cluster_id=~\"$cluster\"}[5m]))",
-          "legendFormat": "{{cluster_id}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "type": "timeseries",
-      "title": "Decoder Errors / sec",
-      "description": "Rate of GoFlow2 decoder errors, grouped by decoder name.",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 16
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "decimals": 3,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 10,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id, name) (rate(goflow2_flow_decoder_error_total{cluster_id=~\"$cluster\"}[5m]))",
-          "legendFormat": "{{cluster_id}} / {{name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "type": "timeseries",
-      "title": "Processing Errors / sec",
-      "description": "Rate of GoFlow2 NetFlow processing errors, grouped by error type.",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 16
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops",
-          "decimals": 3,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 10,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "sum by (cluster_id, error) (rate(goflow2_flow_process_nf_errors_total{cluster_id=~\"$cluster\"}[5m]))",
-          "legendFormat": "{{cluster_id}} / {{error}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "type": "timeseries",
-      "title": "Flow-to-Processing Delay",
-      "description": "GoFlow2 Summary quantiles for flow timestamp-to-processing delay. These are exporter-reported quantiles, not CPU decode duration; do not aggregate quantiles across instances.",
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 24
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s",
-          "decimals": 2,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "goflow2_flow_process_nf_delay_seconds{cluster_id=~\"$cluster\",quantile=~\"0.5|0.9|0.99\"}",
-          "legendFormat": "{{cluster_id}} / p{{quantile}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 8,
-      "type": "timeseries",
-      "title": "GoFlow2 Resident Memory",
-      "description": "Current resident memory of the GoFlow2 process.",
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 33
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "decimals": 1,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "fillOpacity": 10,
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "process_resident_memory_bytes{cluster_id=~\"$cluster\",container=\"goflow2\"}",
-          "legendFormat": "{{cluster_id}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "type": "timeseries",
-      "title": "Go Runtime Goroutines",
-      "description": "Current number of Go goroutines in the GoFlow2 process.",
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 33
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "decimals": 0,
-          "custom": {
-            "drawStyle": "line",
-            "lineInterpolation": "smooth",
-            "showPoints": "never"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DATASOURCE"
-          },
-          "editorMode": "code",
-          "expr": "go_goroutines{cluster_id=~\"$cluster\",container=\"goflow2\"}",
-          "legendFormat": "{{cluster_id}}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "type": "stat",
-      "title": "GoFlow2 Metrics Scrape",
-      "description": "Prometheus target health for the GoFlow2 metrics Service.",
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DATASOURCE"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "DOWN",
-                  "color": "red"
-                },
-                "1": {
-                  "text": "UP",
-                  "color": "green"
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
+          "fieldConfig": {
+            "defaults": {
+              "unit": "pps",
+              "color": {
+                "mode": "palette-classic"
               },
-              {
-                "color": "green",
-                "value": 1
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
               }
-            ]
+            },
+            "overrides": []
           },
-          "color": {
-            "mode": "thresholds"
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
           },
-          "unit": "short"
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id, remote_ip) (rate(goflow2_flow_traffic_packets_total{cluster_id=~\"$cluster\"}[5m]))",
+              "legendFormat": "{{cluster_id}} / {{remote_ip}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
         },
-        "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto",
-        "textMode": "value_and_name",
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "showPercentChange": false
-      },
-      "targets": [
         {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Incoming Traffic (Mbps)",
+          "description": "Ingress traffic rate derived from GoFlow2 received-byte counter.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
           "datasource": {
             "type": "prometheus",
             "uid": "DATASOURCE"
           },
-          "editorMode": "code",
-          "expr": "min(up{cluster_id=~\"$cluster\",job=~\"goflow-.*-metrics\"})",
-          "legendFormat": "GoFlow2 scrape",
-          "range": true,
-          "refId": "A"
+          "fieldConfig": {
+            "defaults": {
+              "unit": "Mbits",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id, remote_ip) (rate(goflow2_flow_traffic_bytes_total{cluster_id=~\"$cluster\"}[5m])) * 8 / 1000000",
+              "legendFormat": "{{cluster_id}} / {{remote_ip}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "timeseries",
+          "title": "Decoded Data Records / sec",
+          "description": "Rate of records in DataFlowSet messages. Template and options records are intentionally excluded.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id) (rate(goflow2_flow_process_nf_flowset_records_total{cluster_id=~\"$cluster\",type=\"DataFlowSet\"}[5m]))",
+              "legendFormat": "{{cluster_id}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "timeseries",
+          "title": "NetFlow Messages Processed / sec",
+          "description": "Rate of NetFlow messages processed by GoFlow2.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 8
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id) (rate(goflow2_flow_process_nf_total{cluster_id=~\"$cluster\"}[5m]))",
+              "legendFormat": "{{cluster_id}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "Decoder Errors / sec",
+          "description": "Rate of GoFlow2 decoder errors, grouped by decoder name.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 16
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 3,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id, name) (rate(goflow2_flow_decoder_error_total{cluster_id=~\"$cluster\"}[5m]))",
+              "legendFormat": "{{cluster_id}} / {{name}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "timeseries",
+          "title": "Processing Errors / sec",
+          "description": "Rate of GoFlow2 NetFlow processing errors, grouped by error type.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 16
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 3,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (cluster_id, error) (rate(goflow2_flow_process_nf_errors_total{cluster_id=~\"$cluster\"}[5m]))",
+              "legendFormat": "{{cluster_id}} / {{error}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "Flow-to-Processing Delay",
+          "description": "GoFlow2 Summary quantiles for flow timestamp-to-processing delay. These are exporter-reported quantiles, not CPU decode duration; do not aggregate quantiles across instances.",
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 24
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "goflow2_flow_process_nf_delay_seconds{cluster_id=~\"$cluster\",quantile=~\"0.5|0.9|0.99\"}",
+              "legendFormat": "{{cluster_id}} / p{{quantile}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "GoFlow2 Resident Memory",
+          "description": "Current resident memory of the GoFlow2 process.",
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "decimals": 1,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 10,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "process_resident_memory_bytes{cluster_id=~\"$cluster\",container=\"goflow2\"}",
+              "legendFormat": "{{cluster_id}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "type": "timeseries",
+          "title": "Go Runtime Goroutines",
+          "description": "Current number of Go goroutines in the GoFlow2 process.",
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "go_goroutines{cluster_id=~\"$cluster\",container=\"goflow2\"}",
+              "legendFormat": "{{cluster_id}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 10,
+          "type": "stat",
+          "title": "GoFlow2 Metrics Scrape",
+          "description": "Prometheus target health for the GoFlow2 metrics Service.",
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 40
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "DOWN",
+                      "color": "red"
+                    },
+                    "1": {
+                      "text": "UP",
+                      "color": "green"
+                    }
+                  }
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              },
+              "color": {
+                "mode": "thresholds"
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "min(up{cluster_id=~\"$cluster\",job=~\"goflow-.*-metrics\"})",
+              "legendFormat": "GoFlow2 scrape",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "row",
+      "title": "02 · PostgreSQL Monitoring",
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "panels": [
+        {
+          "id": 13,
+          "type": "stat",
+          "title": "PostgreSQL Availability",
+          "description": "Exporter connection health: 1 = reachable, 0 = unavailable.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "type": "value",
+                  "options": {
+                    "0": {
+                      "text": "DOWN",
+                      "color": "red"
+                    },
+                    "1": {
+                      "text": "UP",
+                      "color": "green"
+                    }
+                  }
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "green",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_up",
+              "legendFormat": "PostgreSQL Availability",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 14,
+          "type": "stat",
+          "title": "IPFIX Database Size",
+          "description": "Current size of the shared ipfix database.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "decimals": 2,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_database_size_bytes{datname=\"ipfix\"}",
+              "legendFormat": "IPFIX Database Size",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 15,
+          "type": "stat",
+          "title": "Database Connections",
+          "description": "Current backend connections to the ipfix database.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_stat_database_numbackends{datname=\"ipfix\"}",
+              "legendFormat": "Database Connections",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 16,
+          "type": "stat",
+          "title": "Connection Capacity Used",
+          "description": "Percentage of PostgreSQL max_connections used by ipfix database backends.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 0
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 1,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 70
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "100 * scalar(pg_stat_database_numbackends{datname=\"ipfix\"}) / clamp_min(scalar(pg_settings_max_connections), 1)",
+              "legendFormat": "Connection Capacity Used",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 17,
+          "type": "timeseries",
+          "title": "PostgreSQL Connection States",
+          "description": "Current connections grouped by backend state for the shared ipfix database.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 54
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum by (state) (pg_stat_activity_count{datname=\"ipfix\"})",
+              "legendFormat": "{{state}}",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 18,
+          "type": "timeseries",
+          "title": "Transaction Rate",
+          "description": "Committed and rolled-back transactions per second in the ipfix database.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 54
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "sum(rate(pg_stat_database_xact_commit{datname=\"ipfix\"}[5m])) + sum(rate(pg_stat_database_xact_rollback{datname=\"ipfix\"}[5m]))",
+              "legendFormat": "Transactions / sec",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 19,
+          "type": "timeseries",
+          "title": "Transaction Rollbacks / sec",
+          "description": "Rate of transaction rollbacks. A rollback is not necessarily an application failure.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 62
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "decimals": 3,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "rate(pg_stat_database_xact_rollback{datname=\"ipfix\"}[5m])",
+              "legendFormat": "Rollbacks / sec",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "type": "gauge",
+          "title": "Database Cache Hit Ratio",
+          "description": "Shared-buffer cache hit ratio based on cumulative block hit and read counters.",
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 62
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 2,
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth",
+                "fillOpacity": 12,
+                "showPoints": "never"
+              },
+              "min": 0,
+              "max": 100,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 90
+                  },
+                  {
+                    "color": "green",
+                    "value": 95
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "100 * sum(pg_stat_database_blks_hit{datname=\"ipfix\"}) / clamp_min(sum(pg_stat_database_blks_hit{datname=\"ipfix\"}) + sum(pg_stat_database_blks_read{datname=\"ipfix\"}), 1)",
+              "legendFormat": "Cache hit ratio",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 21,
+          "type": "stat",
+          "title": "Database Deadlocks",
+          "description": "Cumulative deadlocks recorded for the ipfix database since statistics reset.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 70
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_stat_database_deadlocks{datname=\"ipfix\"}",
+              "legendFormat": "Database Deadlocks",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 22,
+          "type": "stat",
+          "title": "IPFIX Table Rows",
+          "description": "Estimated live row count in public.ipfix_flows.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 6,
+            "y": 70
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_stat_user_tables_n_live_tup{datname=\"ipfix\",schemaname=\"public\",relname=\"ipfix_flows\"}",
+              "legendFormat": "IPFIX Table Rows",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 23,
+          "type": "stat",
+          "title": "IPFIX Table Size",
+          "description": "On-disk table storage for public.ipfix_flows as reported by the exporter; index storage is tracked separately.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 12,
+            "y": 70
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "decimals": 2,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_stat_user_tables_table_size_bytes{datname=\"ipfix\",schemaname=\"public\",relname=\"ipfix_flows\"}",
+              "legendFormat": "IPFIX Table Size",
+              "range": true,
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "id": 24,
+          "type": "stat",
+          "title": "PostgreSQL WAL Size",
+          "description": "Current size of PostgreSQL write-ahead log files.",
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 18,
+            "y": 70
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DATASOURCE"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bytes",
+              "decimals": 2,
+              "custom": {},
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "orientation": "auto",
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "showPercentChange": false
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "DATASOURCE"
+              },
+              "editorMode": "code",
+              "expr": "pg_wal_size_bytes",
+              "legendFormat": "PostgreSQL WAL Size",
+              "range": true,
+              "refId": "A"
+            }
+          ]
         }
       ]
     }
