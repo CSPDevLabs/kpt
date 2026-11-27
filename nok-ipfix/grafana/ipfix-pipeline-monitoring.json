@@ -116,8 +116,15 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
               }
             },
             "overrides": []
@@ -125,7 +132,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -168,8 +177,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -177,7 +196,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -220,8 +241,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -229,7 +260,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -272,8 +305,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -281,7 +324,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -325,7 +370,17 @@
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
                 "fillOpacity": 10,
-                "showPoints": "never"
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -333,7 +388,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -377,7 +434,17 @@
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
                 "fillOpacity": 10,
-                "showPoints": "never"
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -385,7 +452,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -428,7 +497,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "showPoints": "never"
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -436,7 +516,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -480,7 +562,17 @@
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
                 "fillOpacity": 10,
-                "showPoints": "never"
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -488,7 +580,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -531,7 +625,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "showPoints": "never"
+                "showPoints": "never",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -539,7 +644,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -621,9 +728,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
-            "colorMode": "background",
-            "graphMode": "area",
+            "textMode": "value",
+            "colorMode": "value",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -718,9 +825,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -782,9 +889,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -854,9 +961,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -926,9 +1033,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -968,8 +1075,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -977,7 +1094,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1020,8 +1139,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -1029,7 +1158,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1072,8 +1203,18 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
-                "showPoints": "never"
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "spanNulls": false,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
+              },
+              "color": {
+                "mode": "palette-classic"
               }
             },
             "overrides": []
@@ -1081,7 +1222,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1145,6 +1288,9 @@
                     "value": 95
                   }
                 ]
+              },
+              "color": {
+                "mode": "thresholds"
               }
             },
             "overrides": []
@@ -1218,9 +1364,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1282,9 +1428,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1346,9 +1492,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1410,9 +1556,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1488,9 +1634,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
+            "textMode": "value",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1566,9 +1712,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
-            "colorMode": "background",
-            "graphMode": "area",
+            "textMode": "value",
+            "colorMode": "value",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1631,7 +1777,7 @@
             "orientation": "auto",
             "textMode": "value_and_name",
             "colorMode": "value",
-            "graphMode": "area",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1719,9 +1865,9 @@
               "values": false
             },
             "orientation": "auto",
-            "textMode": "value_and_name",
-            "colorMode": "background",
-            "graphMode": "area",
+            "textMode": "value",
+            "colorMode": "value",
+            "graphMode": "none",
             "justifyMode": "center",
             "showPercentChange": false
           },
@@ -1763,9 +1909,15 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
+                "fillOpacity": 10,
                 "showPoints": "never",
-                "spanNulls": false
+                "spanNulls": false,
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
               }
             },
             "overrides": []
@@ -1773,7 +1925,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1830,9 +1984,15 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
+                "fillOpacity": 10,
                 "showPoints": "never",
-                "spanNulls": false
+                "spanNulls": false,
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
               }
             },
             "overrides": []
@@ -1840,7 +2000,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1897,9 +2059,15 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
+                "fillOpacity": 10,
                 "showPoints": "never",
-                "spanNulls": false
+                "spanNulls": false,
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
               }
             },
             "overrides": []
@@ -1907,7 +2075,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
@@ -1953,9 +2123,15 @@
               "custom": {
                 "drawStyle": "line",
                 "lineInterpolation": "smooth",
-                "fillOpacity": 12,
+                "fillOpacity": 10,
                 "showPoints": "never",
-                "spanNulls": false
+                "spanNulls": false,
+                "lineWidth": 2,
+                "gradientMode": "opacity",
+                "pointSize": 4,
+                "axisBorderShow": false,
+                "axisGridShow": true,
+                "axisCenteredZero": false
               }
             },
             "overrides": []
@@ -1963,7 +2139,9 @@
           "options": {
             "legend": {
               "displayMode": "list",
-              "placement": "bottom"
+              "placement": "bottom",
+              "calcs": [],
+              "showLegend": true
             },
             "tooltip": {
               "mode": "multi",
